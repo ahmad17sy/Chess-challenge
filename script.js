@@ -48,9 +48,31 @@ let draggedSquare = null;
 let playerColor = "w";
 let computerRating = 2000;
 let stockfish = new Worker("stockfish-18-lite-single.js");
-
 stockfish.onmessage = function(event) {
-    console.log("Stockfish:", event.data);
+
+    const message = event.data;
+
+    console.log("Stockfish:", message);
+
+    if (message.startsWith("bestmove")) {
+
+        const parts = message.split(" ");
+        const move = parts[1];
+
+        if (!move || move === "(none)") {
+            return;
+        }
+
+        const from = algebraicToIndex(move.substring(0, 2));
+        const to = algebraicToIndex(move.substring(2, 4));
+
+        setTimeout(function() {
+
+            makeMove(from, to);
+
+        }, 300);
+    }
+};
 };
 
 stockfish.postMessage("uci");
@@ -1327,37 +1349,122 @@ document
 // ===============================
 
 updateGameStatus();
+function algebraicToIndex(square) {
+
+    const file = square.charCodeAt(0) - 97;
+
+    const rank = parseInt(square[1], 10);
+
+    const row = 8 - rank;
+
+    return row * 8 + file;
+}
+function getFEN() {
+
+    let fen = "";
+
+    for (let row = 0; row < 8; row++) {
+
+        let empty = 0;
+
+        for (let col = 0; col < 8; col++) {
+
+            const piece = pieces[row * 8 + col];
+
+            if (!piece) {
+                empty++;
+            } else {
+
+                if (empty > 0) {
+                    fen += empty;
+                    empty = 0;
+                }
+
+                const symbols = {
+                    wP: "P",
+                    wN: "N",
+                    wB: "B",
+                    wR: "R",
+                    wQ: "Q",
+                    wK: "K",
+                    bP: "p",
+                    bN: "n",
+                    bB: "b",
+                    bR: "r",
+                    bQ: "q",
+                    bK: "k"
+                };
+
+                fen += symbols[piece];
+            }
+        }
+
+        if (empty > 0) {
+            fen += empty;
+        }
+
+        if (row < 7) {
+            fen += "/";
+        }
+    }
+
+    fen += " ";
+    fen += currentTurn === "w" ? "w" : "b";
+    fen += " ";
+
+    let castling = "";
+
+    if (castlingRights.wK) castling += "K";
+    if (castlingRights.wQ) castling += "Q";
+    if (castlingRights.bK) castling += "k";
+    if (castlingRights.bQ) castling += "q";
+
+    fen += castling || "-";
+
+    fen += " ";
+
+    if (enPassantSquare !== null) {
+
+        const row = Math.floor(enPassantSquare / 8);
+        const col = enPassantSquare % 8;
+
+        fen +=
+            String.fromCharCode(97 + col) +
+            (8 - row);
+
+    } else {
+        fen += "-";
+    }
+
+    fen += " 0 1";
+
+    return fen;
+}
 // ===============================
 // الكمبيوتر
 // ===============================
-
 function computerMove() {
 
-    // إذا كان الدور ليس للكمبيوتر
     if (currentTurn === playerColor) {
         return;
     }
 
-    // الحصول على جميع الحركات القانونية
     const moves = getLegalMoves(currentTurn);
 
-    // لا توجد حركات
     if (moves.length === 0) {
         updateGameStatus();
         return;
     }
 
-    // اختيار حركة عشوائية مؤقتاً
-    const randomMove =
-        moves[Math.floor(Math.random() * moves.length)];
+    // إرسال الوضع الحالي إلى Stockfish
+    stockfish.postMessage("ucinewgame");
+    stockfish.postMessage("isready");
 
-    // تأخير بسيط حتى يبدو أن الكمبيوتر يفكر
-    setTimeout(function () {
+    stockfish.postMessage(
+        "position fen " + getFEN()
+    );
 
-        makeMove(
-            randomMove.from,
-            randomMove.to
-        );
-
-    }, 500);
+    stockfish.postMessage(
+        "go movetime 1000"
+    );
 }
