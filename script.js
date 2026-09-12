@@ -48,11 +48,22 @@ let draggedSquare = null;
 let playerColor = "w";
 let computerRating = 2000;
 let stockfish = new Worker("stockfish-18-lite-single.js");
+let stockfishEvaluation = 0;
 stockfish.onmessage = function(event) {
 
     const message = event.data;
 
     console.log("Stockfish:", message);
+    if (message.startsWith("info") && message.includes("score cp")) {
+
+    const match = message.match(/score cp (-?\d+)/);
+
+    if (match) {
+        stockfishEvaluation = parseInt(match[1], 10) / 100;
+        console.log("Evaluation:", stockfishEvaluation);
+    }
+
+}
 if (message.startsWith("bestmove")) {
 
     const parts = message.split(" ");
@@ -748,7 +759,8 @@ function makeMove(from, to) {
     selectedSquare = null;
 
     createBoard();
-
+stockfish.postMessage("position fen " + getFEN());
+stockfish.postMessage("go depth 12");
 updateGameStatus();
 // تشغيل الكمبيوتر
 if (currentTurn !== playerColor) {
@@ -1143,24 +1155,24 @@ function calculateMaterial() {
 
     return score;
 }
-
 function updateEvaluationBar() {
 
-    let bar =
-        document.getElementById(
-            "evaluationBar"
-        );
+    const bar =
+        document.getElementById("evaluationBar");
 
     if (!bar) {
         return;
     }
 
-    const score =
-        calculateMaterial();
+    let score = stockfishEvaluation;
 
-    // قيمة تقريبية مؤقتة
-    // سنستبدلها بـ Stockfish لاحقاً
+    // Stockfish يعطي التقييم من منظور الطرف الذي عليه الدور.
+    // نجعله دائمًا من منظور الأبيض.
+    if (currentTurn === "b") {
+        score = -score;
+    }
 
+    // تحديد التقييم بين -10 و +10
     const limited =
         Math.max(-10, Math.min(10, score));
 
@@ -1173,9 +1185,7 @@ function updateEvaluationBar() {
     );
 
     const number =
-        document.getElementById(
-            "evaluationNumber"
-        );
+        document.getElementById("evaluationNumber");
 
     if (number) {
 
