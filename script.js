@@ -86,7 +86,41 @@ if (message.startsWith("bestmove")) {
 stockfish.postMessage("uci");
 
 let history = [];
+let moveHistory = [];
 
+function updateMoveHistory() {
+
+    const movesList =
+        document.getElementById("movesList");
+
+    if (!movesList) {
+        return;
+    }
+
+    movesList.innerHTML = "";
+
+    for (let i = 0; i < moveHistory.length; i += 2) {
+
+        const moveNumber = Math.floor(i / 2) + 1;
+
+        const whiteMove = moveHistory[i] || "";
+        const blackMove = moveHistory[i + 1] || "";
+
+        const row = document.createElement("div");
+
+        row.classList.add("move-row");
+
+        row.innerHTML =
+            "<span>" + moveNumber + ".</span>" +
+            "<span>" + whiteMove + "</span>" +
+            "<span>" + blackMove + "</span>";
+
+        movesList.appendChild(row);
+    }
+
+    movesList.scrollTop =
+        movesList.scrollHeight;
+}
 let castlingRights = {
     wK: true,
     wQ: true,
@@ -694,6 +728,28 @@ function makeMove(from, to) {
     const piece = pieces[from];
     const color = getColor(piece);
     const type = getType(piece);
+const fromSquare =
+    String.fromCharCode(97 + (from % 8)) +
+    (8 - Math.floor(from / 8));
+
+const toSquare =
+    String.fromCharCode(97 + (to % 8)) +
+    (8 - Math.floor(to / 8));
+
+    const pieceType = getType(piece);
+
+const pieceLetters = {
+    K: "K",
+    Q: "Q",
+    R: "R",
+    B: "B",
+    N: "N",
+    P: ""
+};
+
+let moveNotation =
+    pieceLetters[pieceType] +
+    toSquare;
 
     const oldEnPassant = enPassantSquare;
 
@@ -755,12 +811,12 @@ function makeMove(from, to) {
 
     currentTurn =
         currentTurn === "w" ? "b" : "w";
-
+moveHistory.push(moveNotation);
+updateMoveHistory();
     selectedSquare = null;
 
     createBoard();
-stockfish.postMessage("position fen " + getFEN());
-stockfish.postMessage("go depth 12");
+
 updateGameStatus();
 // تشغيل الكمبيوتر
 if (currentTurn !== playerColor) {
@@ -903,27 +959,70 @@ function updateGameStatus() {
 
 function undoMove() {
 
+    // لا توجد نقلات
     if (history.length === 0) {
         return;
     }
 
-    const previous =
+    // إذا كانت اللعبة ضد الكمبيوتر،
+    // نحاول التراجع عن آخر نقلتين:
+    // نقلة الكمبيوتر + نقلة اللاعب
+
+    if (history.length >= 2) {
+
         history.pop();
 
-    pieces = [...previous.pieces];
+        const previous = history.pop();
 
-    currentTurn =
-        previous.currentTurn;
+        pieces = [...previous.pieces];
 
-    castlingRights =
-        {...previous.castlingRights};
+        currentTurn = previous.currentTurn;
 
-    enPassantSquare =
-        previous.enPassantSquare;
+        castlingRights =
+            {...previous.castlingRights};
+
+        enPassantSquare =
+            previous.enPassantSquare;
+
+        if (moveHistory.length >= 2) {
+            moveHistory.pop();
+            moveHistory.pop();
+        }
+
+    } else {
+
+        const previous = history.pop();
+
+        pieces = [...previous.pieces];
+
+        currentTurn =
+            previous.currentTurn;
+
+        castlingRights =
+            {...previous.castlingRights};
+
+        enPassantSquare =
+            previous.enPassantSquare;
+
+        if (moveHistory.length > 0) {
+            moveHistory.pop();
+        }
+    }
 
     selectedSquare = null;
+draggedSquare = null;
 
-    createBoard();
+createBoard();
+
+updateMoveHistory();
+
+updateGameStatus();
+}
+
+createBoard();
+updateMoveHistory();
+
+    updateMoveHistory();
 
     updateGameStatus();
 }
@@ -945,7 +1044,7 @@ function newGame() {
     draggedSquare = null;
 
     history = [];
-
+moveHistory = [];
     castlingRights = {
         wK: true,
         wQ: true,
@@ -956,7 +1055,7 @@ function newGame() {
     enPassantSquare = null;
 
     createBoard();
-
+updateMoveHistory();
     updateGameStatus();
 
     if (currentTurn !== playerColor) {
