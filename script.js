@@ -73,7 +73,6 @@ stockfish.onmessage = function(event) {
         }, 300);
     }
 };
-};
 
 stockfish.postMessage("uci");
 
