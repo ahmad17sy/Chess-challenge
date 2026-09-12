@@ -1031,7 +1031,7 @@ function createBoard() {
 
             const image = document.createElement("img");
 
-            image.src = "pieces/" + piece + ".svg";
+            image.src = piece + ".svg";
 
             image.classList.add("chess-piece");
 
