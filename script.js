@@ -53,26 +53,24 @@ stockfish.onmessage = function(event) {
     const message = event.data;
 
     console.log("Stockfish:", message);
+if (message.startsWith("bestmove")) {
 
-    if (message.startsWith("bestmove")) {
+    const parts = message.split(" ");
+    const move = parts[1];
 
-        const parts = message.split(" ");
-        const move = parts[1];
+    if (!move || move === "(none)") {
+        return;
+    }
 
-        if (!move || move === "(none)") {
-            return;
-        }
+    const from = algebraicToIndex(move.substring(0, 2));
+    const to = algebraicToIndex(move.substring(2, 4));
 
-        const from = algebraicToIndex(move.substring(0, 2));
-        const to = algebraicToIndex(move.substring(2, 4));
-
-        setTimeout(function() {
-
-            makeMove(from, to);
-
-        }, 300);
+    setTimeout(function() {
+        makeMove(from, to);
+    }, 300);
     }
 };
+
 
 stockfish.postMessage("uci");
 
@@ -1455,7 +1453,9 @@ function computerMove() {
         return;
     }
 
-    // إرسال الوضع الحالي إلى Stockfish
+    stockfish.postMessage("setoption name UCI_LimitStrength true");
+    stockfish.postMessage("setoption name UCI_Elo " + computerRating);
+
     stockfish.postMessage("ucinewgame");
     stockfish.postMessage("isready");
 
