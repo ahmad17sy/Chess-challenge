@@ -1589,6 +1589,9 @@ createEvaluationBar();
 
 createBoard();
 
+resetClocks();
+startClock();
+
 document
     .getElementById("whiteButton")
     .addEventListener("click", function () {
