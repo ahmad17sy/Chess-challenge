@@ -1233,24 +1233,41 @@ function promotePawn(square) {
 
     const color = getColor(pieces[square]);
 
-    let choice = prompt(
-        "ترقية البيدق:\n\n" +
-        "Q = وزير\n" +
-        "R = رخ\n" +
-        "B = فيل\n" +
-        "N = حصان",
-        "Q"
-    );
+    const promotionBox = document.createElement("div");
+    promotionBox.className = "promotion-box";
 
-    choice = choice ? choice.toUpperCase() : "Q";
+    const title = document.createElement("div");
+    title.className = "promotion-title";
+    title.textContent = "Choose promotion";
 
-    if (!["Q","R","B","N"].includes(choice)) {
-        choice = "Q";
-    }
+    promotionBox.appendChild(title);
 
-    pieces[square] = color + choice;
+    const piecesToChoose = ["Q", "R", "B", "N"];
+
+    piecesToChoose.forEach(function(type) {
+
+        const button = document.createElement("button");
+        button.className = "promotion-piece";
+
+        const image = document.createElement("img");
+        image.src = color + type + ".svg";
+
+        button.appendChild(image);
+
+        button.addEventListener("click", function() {
+
+            pieces[square] = color + type;
+
+            promotionBox.remove();
+
+            createBoard();
+        });
+
+        promotionBox.appendChild(button);
+    });
+
+    document.body.appendChild(promotionBox);
 }
-
 // ===============================
 // معرفة الحركات القانونية
 // ===============================
@@ -2582,4 +2599,8 @@ document
                 blackAnalysis.classification;
         }
     }
+}
+function flipBoard() {
+    playerColor = playerColor === "w" ? "b" : "w";
+    createBoard();
 }

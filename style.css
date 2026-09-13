@@ -574,3 +574,68 @@ nav a:hover {
     top: 3px;
     left: 4px;
 }
+.coordinates {
+    position: absolute;
+    font-size: 12px;
+    font-weight: bold;
+    pointer-events: none;
+    opacity: 0.8;
+    z-index: 5;
+}
+
+.rank-coordinate {
+    top: 3px;
+    left: 4px;
+}
+
+.file-coordinate {
+    bottom: 3px;
+    right: 4px;
+}
+
+.square.light .coordinates {
+    color: #b58863;
+}
+
+.square.dark .coordinates {
+    color: #f0d9b5;
+}
+.promotion-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #262421;
+    padding: 18px;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+    z-index: 100000;
+    text-align: center;
+}
+
+.promotion-title {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+.promotion-piece {
+    width: 70px;
+    height: 70px;
+    margin: 5px;
+    border: none;
+    border-radius: 8px;
+    background: #3c3936;
+    cursor: pointer;
+}
+
+.promotion-piece:hover {
+    background: #66615c;
+}
+
+.promotion-piece img {
+    width: 90%;
+    height: 90%;
+    object-fit: contain;
+}
