@@ -1569,6 +1569,7 @@ currentTurn = null;
 }
 
 function newGame() {
+    console.log("NEW GAME CLICKED");
     gameSessionId++;
 engineRequestId++;
 currentEngineRequest = engineRequestId;
