@@ -681,26 +681,38 @@ nav a:hover {
     margin-left: 8px;
     opacity: 0.85;
 }
-/* تحسين وضوح إحداثيات الرقعة */
-.square .coordinate {
+/* =========================
+   Board Coordinates
+========================= */
+
+.coordinates {
     position: absolute;
     font-size: 13px;
     font-weight: 700;
     line-height: 1;
     pointer-events: none;
-    z-index: 5;
+    z-index: 10;
 }
 
-/* الحروف والأرقام تكون واضحة */
-.square.light .coordinate {
+.rank-coordinate {
+    top: 4px;
+    left: 4px;
+}
+
+.file-coordinate {
+    bottom: 4px;
+    right: 4px;
+}
+
+.square.light .coordinates {
     color: #555;
 }
 
-.square.dark .coordinate {
+.square.dark .coordinates {
     color: #eee;
 }
 
-/* الإحداثيات لا تنقلب مع القطع */
-#chessboard.flipped .coordinate {
-    transform: none;
+/* عند تدوير الرقعة تبقى الإحداثيات واضحة */
+#chessboard.flipped .coordinates {
+    transform: rotate(180deg);
 }

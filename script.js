@@ -2735,7 +2735,7 @@ function updateCapturedPieces() {
         const image =
             document.createElement("img");
 
-        image.src = piece + ".svg";
+        image.src = "pieces/" + piece + ".svg";
         image.alt = piece;
 
         whiteContainer.appendChild(image);
