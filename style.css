@@ -687,8 +687,8 @@ nav a:hover {
 
 .coordinates {
     position: absolute;
-    font-size: 18px;
-    font-weight: 900;
+    font-size: 25px;
+    font-weight: 1000;
     line-height: 1;
     pointer-events: none;
     z-index: 10;
