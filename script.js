@@ -2805,22 +2805,6 @@ function generatePGN() {
 }
 
 
-document.getElementById("copyPGN").addEventListener("click", function () {
-
-    const pgn = generatePGN();
-
-    navigator.clipboard.writeText(pgn);
-
-    this.textContent = "✅ Copied!";
-
-    const button = this;
-
-    setTimeout(function () {
-        button.textContent = "📋 Copy PGN";
-    }, 1500);
-});
-
-
 document.getElementById("downloadPGN").addEventListener("click", function () {
 
     const pgn = generatePGN();
@@ -2844,4 +2828,52 @@ document.getElementById("downloadPGN").addEventListener("click", function () {
     document.body.removeChild(link);
 
     URL.revokeObjectURL(url);
+});
+
+document.getElementById("copyPGN").addEventListener("click", async function () {
+
+    const button = this;
+
+    const pgn = generatePGN();
+
+    if (!pgn) {
+        button.textContent = "No moves!";
+        
+        setTimeout(function () {
+            button.textContent = "📋 Copy PGN";
+        }, 1500);
+
+        return;
+    }
+
+    try {
+
+        await navigator.clipboard.writeText(pgn);
+
+        button.textContent = "✅ Copied!";
+
+    } catch (error) {
+
+        const textarea = document.createElement("textarea");
+
+        textarea.value = pgn;
+
+        textarea.style.position = "fixed";
+        textarea.style.left = "-9999px";
+
+        document.body.appendChild(textarea);
+
+        textarea.focus();
+        textarea.select();
+
+        document.execCommand("copy");
+
+        document.body.removeChild(textarea);
+
+        button.textContent = "✅ Copied!";
+    }
+
+    setTimeout(function () {
+        button.textContent = "📋 Copy PGN";
+    }, 1500);
 });
