@@ -1188,7 +1188,17 @@ currentTurn = null;
 }
 
 function newGame() {
-gameOver = false;
+
+    const timeSelect = document.getElementById("timeSelect");
+
+    if (timeSelect) {
+        const values = timeSelect.value.split(",");
+
+        selectedTime = Number(values[0]);
+        incrementTime = Number(values[1]);
+    }
+
+    gameOver = false;
     pieces = [...startingPosition];
 
     currentTurn = "w";
