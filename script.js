@@ -1825,7 +1825,7 @@ if (piece) {
 
     const image = document.createElement("img");
 
-    image.src = piece + ".svg";
+    image.src = "pieces/" + piece + ".svg";
     image.classList.add("chess-piece");
 
     // السماح بسحب قطعة اللاعب فقط
@@ -2747,7 +2747,7 @@ function updateCapturedPieces() {
         const image =
             document.createElement("img");
 
-        image.src = piece + ".svg";
+        image.src = "pieces/" + piece + ".svg";
         image.alt = piece;
 
         blackContainer.appendChild(image);

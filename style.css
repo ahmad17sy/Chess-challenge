@@ -681,4 +681,26 @@ nav a:hover {
     margin-left: 8px;
     opacity: 0.85;
 }
+/* تحسين وضوح إحداثيات الرقعة */
+.square .coordinate {
+    position: absolute;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    pointer-events: none;
+    z-index: 5;
+}
 
+/* الحروف والأرقام تكون واضحة */
+.square.light .coordinate {
+    color: #555;
+}
+
+.square.dark .coordinate {
+    color: #eee;
+}
+
+/* الإحداثيات لا تنقلب مع القطع */
+#chessboard.flipped .coordinate {
+    transform: none;
+}
