@@ -1,12 +1,16 @@
     body {
-        background-color: lightblue;
-        text-align: center;
-    }
+    margin: 0;
+    background: #d9d9d9;
+    color: #222;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+}
 
     h1 {
-        color: darkblue;
-        font-size: 60px;
-    }
+    color: #262522;
+    font-size: 46px;
+    margin: 20px 0 12px 0;
+}
 
     h2 {
     
@@ -73,27 +77,17 @@ nav a:hover {
 .dark {
     background-color: #000000;
 }
-
 .chess-piece {
-    width: 85%;
-    height: 85%;
-    object-fit: contain;
-}
-
-.chess-piece {
-    width: 85%;
-    height: 85%;
+    width: 88%;
+    height: 88%;
     object-fit: contain;
     cursor: grab;
+    user-select: none;
+    -webkit-user-drag: none;
 }
 
 .chess-piece:active {
     cursor: grabbing;
-}
-
-.selected {
-    outline: 4px solid yellow;
-    outline-offset: -4px;
 }
 
 /* =========================
@@ -166,52 +160,44 @@ nav a:hover {
 
 #chessControls {
     width: 640px;
-    margin: 10px auto 30px auto;
-    text-align: center;
+    margin: 15px auto 20px auto;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 #chessControls button {
-    background-color: #333;
+    background: #262522;
     color: white;
     border: none;
-    border-radius: 8px;
-    padding: 11px 18px;
-    margin: 5px 3px;
+    border-radius: 7px;
+    padding: 10px 17px;
+    margin: 0;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
-    transition: 0.2s;
+    transition: 0.15s ease;
     box-shadow: 0 2px 5px rgba(0,0,0,0.25);
 }
 
 #chessControls button:hover {
-    background-color: #555;
+    background: #44423f;
     transform: translateY(-1px);
 }
 
 #chessControls button:active {
     transform: translateY(1px);
 }
+
 #resignButton {
-    background-color: #8b1e1e !important;
+    background: #8b1e1e !important;
 }
 
 #resignButton:hover {
-    background-color: #b52a2a !important;
+    background: #b52a2a !important;
 }
 
-#chessControls button:hover {
-    background-color: blue;
-}
-
-/* =========================
-   Selected Square
-========================= */
-
-.selected {
-    outline: 4px solid yellow;
-    outline-offset: -4px;
-}
 /* =========================
    Rotated Chess Board
 ========================= */
@@ -225,21 +211,23 @@ nav a:hover {
 }
 #moveHistory {
     position: absolute;
-
     width: 320px;
     height: 640px;
-
     left: -400px;
     top: 0;
-
     margin: 0;
-    padding: 15px;
-
-    background: #222;
+    padding: 12px;
+    background: #262522;
     color: white;
     border-radius: 10px;
-
     box-sizing: border-box;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+}
+
+#moveHistory h3 {
+    margin: 0 0 12px 0;
+    font-size: 20px;
+    color: white;
 }
 
 #movesList {
@@ -254,6 +242,11 @@ nav a:hover {
     padding: 7px 5px;
     border-bottom: 1px solid #444;
     font-family: Arial, sans-serif;
+    border-radius: 4px;
+}
+
+.move-row:hover {
+    background: #3a3937;
 }
 
 .move-row span:first-child {
@@ -263,15 +256,11 @@ nav a:hover {
 .move-row span:nth-child(2) {
     text-align: center;
     font-weight: bold;
+    color: #aaa;
 }
 
 .move-row span:nth-child(3) {
     text-align: right;
-}
-#colorControls {
-    width: 640px;
-    margin: 0 auto 10px auto;
-    text-align: center;
 }
 #computerRatingLabel {
     display: block;
@@ -289,18 +278,12 @@ nav a:hover {
 
 #gameStatus {
     width: 640px;
-    margin: 15px auto 5px auto;
+    margin: 12px auto 6px auto;
     text-align: center;
     font-size: 18px;
     font-weight: bold;
     min-height: 25px;
-}
-.last-move {
-    box-shadow: inset 0 0 0 4px rgba(255, 215, 0, 0.7);
-}
-.check {
-    box-shadow: inset 0 0 0 5px #ff3333;
-    animation: checkPulse 0.8s infinite alternate;
+    color: #262522;
 }
 
 @keyframes checkPulse {
@@ -311,6 +294,7 @@ nav a:hover {
         filter: brightness(1.4);
     }
 }
+
 #chessClock {
     width: 640px;
     margin: 10px auto;
@@ -320,14 +304,16 @@ nav a:hover {
 }
 
 .clock {
-    background: #222;
+    background: #262522;
     color: white;
-    padding: 8px 18px;
+    padding: 10px 20px;
     border-radius: 8px;
-    font-size: 24px;
+    font-size: 26px;
     font-weight: bold;
-    min-width: 90px;
+    min-width: 105px;
     box-sizing: border-box;
+    transition: all 0.2s ease;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.25);
 }
 
 .white-clock {
@@ -338,34 +324,129 @@ nav a:hover {
     order: 2;
 }
 
+/* الساعة التي عليها الدور */
+.clock.active {
+    background: #ffffff;
+    color: #222;
+    transform: scale(1.05);
+    box-shadow: 0 0 0 3px #666;
+}
 
+/* تحذير الوقت */
+.clock.low-time {
+    background: #8b1e1e;
+    color: white;
+}
+
+/* آخر 10 ثوانٍ */
+.clock.critical-time {
+    background: #d32f2f;
+    color: white;
+    animation: clockPulse 0.6s infinite alternate;
+}
+
+@keyframes clockPulse {
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(1.08);
+    }
+}
+
+.time-title {
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+#timeSelect {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #555;
+    border-radius: 8px;
+    background: #3c3b39;
+    color: white;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+}
+
+#timeSelect:hover {
+    background: #4a4947;
+}
+
+#timeSelect:focus {
+    border-color: #888;
+}
+
+#colorControls {
+    width: 640px;
+    margin: 0 auto 12px auto;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+#colorControls button {
+    background: #262522;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    padding: 10px 18px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: 0.15s ease;
+}
+
+#colorControls button:hover {
+    background: #44423f;
+    transform: translateY(-1px);
+}
+#chessboard {
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.35);
+}
+
+.square {
+    transition: filter 0.12s ease;
+}
+
+.square:hover {
+    filter: brightness(1.08);
+}
+
+.selected {
+    outline: 4px solid #f5c542;
+    outline-offset: -4px;
+    z-index: 2;
+}
+
+.last-move {
+    box-shadow: inset 0 0 0 4px rgba(255, 215, 0, 0.75);
+}
+
+.check {
+    box-shadow: inset 0 0 0 5px #e53935;
+}
 #timeControl {
     position: absolute;
     left: 680px;
     top: 0;
     width: 220px;
     background: #262522;
-    padding: 15px;
-    border-radius: 10px;
+    padding: 16px;
+    border-radius: 12px;
     box-sizing: border-box;
     text-align: center;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.35);
 }
 
-.time-title {
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-#timeSelect {
-    width: 100%;
-    font-size: 16px;
-    padding: 9px 10px;
-    border-radius: 6px;
-    border: 1px solid #555;
-    background: #3c3b39;
-    color: white;
-    cursor: pointer;
+#timeSelect:hover {
+    background: #4a4947;
 }

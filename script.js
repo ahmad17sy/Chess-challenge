@@ -1645,6 +1645,17 @@ document
         newGame();
     });
 
+document
+    .getElementById("randomButton")
+    .addEventListener("click", function () {
+        playerColor = Math.random() < 0.5 ? "w" : "b";
+        newGame();
+    });
+    .addEventListener("click", function () {
+        playerColor = "b";
+        newGame();
+    });
+
 // ===============================
 // تحديث اللعبة عند التشغيل
 // ===============================
@@ -1793,26 +1804,42 @@ function formatTime(seconds) {
         String(remainingSeconds).padStart(2, "0")
     );
 }
-
 function updateClocks() {
+    const whiteClock = document.getElementById("whiteClock");
+    const blackClock = document.getElementById("blackClock");
 
-    const whiteClock =
-        document.getElementById("whiteClock");
+    if (!whiteClock || !blackClock) return;
 
-    const blackClock =
-        document.getElementById("blackClock");
+    whiteClock.textContent = formatTime(whiteTime);
+    blackClock.textContent = formatTime(blackTime);
 
-    if (!whiteClock || !blackClock) {
-        return;
+    whiteClock.classList.remove("active", "low-time", "critical-time");
+    blackClock.classList.remove("active", "low-time", "critical-time");
+
+    if (!gameOver && currentTurn === "w") {
+        whiteClock.classList.add("active");
     }
 
-    whiteClock.textContent =
-        formatTime(whiteTime);
+    if (!gameOver && currentTurn === "b") {
+        blackClock.classList.add("active");
+    }
 
-    blackClock.textContent =
-        formatTime(blackTime);
+    if (whiteTime <= 60 && whiteTime > 10) {
+        whiteClock.classList.add("low-time");
+    }
+
+    if (blackTime <= 60 && blackTime > 10) {
+        blackClock.classList.add("low-time");
+    }
+
+    if (whiteTime <= 10 && whiteTime > 0) {
+        whiteClock.classList.add("critical-time");
+    }
+
+    if (blackTime <= 10 && blackTime > 0) {
+        blackClock.classList.add("critical-time");
+    }
 }
-
 function startClock() {
 
     if (clockInterval) {
