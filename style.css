@@ -100,12 +100,15 @@ nav a:hover {
     width: 88%;
     height: 88%;
     object-fit: contain;
-    cursor: grab;
     user-select: none;
-    -webkit-user-drag: none;
+    pointer-events: none;
 }
 
-.chess-piece:active {
+.square[draggable="true"] {
+    cursor: grab;
+}
+
+.square[draggable="true"]:active {
     cursor: grabbing;
 }
 

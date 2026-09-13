@@ -1738,87 +1738,93 @@ function createBoard() {
             square.classList.add("last-move");
         }
 
-        const piece = pieces[i];
+    const piece = pieces[i];
 
-        if (piece) {
+if (piece) {
 
-            const image = document.createElement("img");
+    const image = document.createElement("img");
 
-            image.src = piece + ".svg";
-            image.classList.add("chess-piece");
+    image.src = piece + ".svg";
+    image.classList.add("chess-piece");
 
-            // ===============================
-// Drag & Drop
-// ===============================
+    // ===============================
+    // Drag & Drop
+    // ===============================
 
-image.draggable = true;
-
-image.addEventListener("dragstart", function (event) {
-
-    // لا تسمح بسحب قطعة الخصم
-    if (getColor(piece) !== playerColor) {
-        event.preventDefault();
-        draggedSquare = null;
-        return;
+    if (getColor(piece) === playerColor) {
+        square.draggable = true;
     }
 
-    // لا تسمح بالسحب أثناء Game Over
-    if (gameOver) {
-        event.preventDefault();
-        draggedSquare = null;
-        return;
-    }
+    square.addEventListener("dragstart", function (event) {
 
-    draggedSquare = i;
-    selectedSquare = i;
+        if (gameOver) {
+            event.preventDefault();
+            return;
+        }
 
-    if (event.dataTransfer) {
+        if (!pieces[i]) {
+            event.preventDefault();
+            return;
+        }
+
+        if (getColor(pieces[i]) !== playerColor) {
+            event.preventDefault();
+            return;
+        }
+
+        draggedSquare = i;
+        selectedSquare = i;
+
         event.dataTransfer.effectAllowed = "move";
         event.dataTransfer.setData(
             "text/plain",
             String(i)
         );
+    });
+
+    square.addEventListener("dragend", function () {
+        draggedSquare = null;
+    });
+
+    square.appendChild(image);
+}
+
+// ===============================
+// النقر العادي
+// ===============================
+
+square.addEventListener("click", function () {
+    clickMove(i);
+});
+
+// ===============================
+// Drag over
+// ===============================
+
+square.addEventListener("dragover", function (event) {
+    event.preventDefault();
+
+    if (event.dataTransfer) {
+        event.dataTransfer.dropEffect = "move";
     }
-
-    createBoard();
 });
 
-image.addEventListener("dragend", function () {
-
-    draggedSquare = null;
-});
-
-            square.appendChild(image);
-        }
-
-        // النقر العادي
-        square.addEventListener("click", function () {
-            clickMove(i);
-        });
-
-        // السماح بالإفلات
-        square.addEventListener("dragover", function (event) {
-            event.preventDefault();
-        });
-
-        // ===============================
-// إفلات القطعة
+// ===============================
+// Drop
 // ===============================
 
 square.addEventListener("drop", function (event) {
 
     event.preventDefault();
+    event.stopPropagation();
 
     let from = draggedSquare;
 
-    if (event.dataTransfer) {
+    const savedFrom =
+        event.dataTransfer.getData("text/plain");
 
-        const savedFrom =
-            event.dataTransfer.getData("text/plain");
-
-        if (savedFrom !== "") {
-            from = Number(savedFrom);
-        }
+    if (savedFrom !== "") {
+        from = Number(savedFrom);
     }
 
     draggedSquare = null;
@@ -1852,24 +1858,23 @@ square.addEventListener("drop", function (event) {
 
         selectedSquare = null;
         createBoard();
-
         return;
     }
 
     // ===============================
-    // الحركة العادية
+    // تنفيذ النقلة
     // ===============================
 
-    const moved = makeMove(from, i);
-
-    selectedSquare = null;
-    draggedSquare = null;
-
-    if (!moved) {
-        createBoard();
+    if (makeMove(from, i)) {
+        selectedSquare = null;
     }
+
+    draggedSquare = null;
+    createBoard();
 });
-        board.appendChild(square);
+
+    board.appendChild(square);
+    
     }
 
     updateEvaluationBar();
