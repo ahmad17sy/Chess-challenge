@@ -65,6 +65,8 @@ let draggedSquare = null;
 let playerColor = "w";
 let premove = null;
 let computerRating = 2000;
+let capturedWhite = [];
+let capturedBlack = [];
 function getEngineSkill(rating) {
     if (rating <= 1500) return 2;
     if (rating <= 1600) return 4;
@@ -1708,7 +1710,26 @@ function createBoard() {
 
         const square = document.createElement("div");
         square.classList.add("square");
+const row = Math.floor(i / 8);
+const col = i % 8;
 
+if (col === 0) {
+    const rank = document.createElement("span");
+    rank.classList.add("coordinates", "rank-coordinate");
+    rank.textContent = playerColor === "w"
+        ? 8 - row
+        : row + 1;
+    square.appendChild(rank);
+}
+
+if (row === 7) {
+    const file = document.createElement("span");
+    file.classList.add("coordinates", "file-coordinate");
+    file.textContent = playerColor === "w"
+        ? String.fromCharCode(97 + col)
+        : String.fromCharCode(104 - col);
+    square.appendChild(file);
+}
         // ألوان الرقعة
         if (Math.floor(i / 8) % 2 === i % 2) {
             square.classList.add("light");
