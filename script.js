@@ -3805,9 +3805,11 @@ function analyzeFullGame() {
         document.getElementById("gameAnalysisResults");
 
     if (results) {
-        results.innerHTML =
-            "<p>🤖 Analyzing game...</p>";
-    }
+    results.innerHTML =
+        "<p id=\"analysisProgress\">🤖 Analyzing game... 0 / " +
+        importedMoves.length +
+        "</p>";
+}
 
     analyzeNextGamePosition();
 }
@@ -3835,8 +3837,8 @@ function analyzeNextGamePosition() {
     );
 
     analysisEngine.postMessage(
-        "go depth 18"
-    );
+    "go movetime 300"
+);
 
 
     const oldHandler =
@@ -3867,6 +3869,16 @@ function analyzeNextGamePosition() {
                     bestMove:
                         bestMove
                 });
+                const progress =
+    document.getElementById("analysisProgress");
+
+if (progress) {
+    progress.textContent =
+        "🤖 Analyzing game... " +
+        (fullGameIndex + 1) +
+        " / " +
+        importedMoves.length;
+}
 
 
                 fullGameIndex++;
