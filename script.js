@@ -2924,3 +2924,14 @@ document.getElementById("shareGame").addEventListener("click", async function ()
         this.textContent = "🔗 Share Game";
     }, 1500);
 });
+document.getElementById("startOpening").addEventListener("click", function () {
+
+    const opening = document.getElementById("openingSelect").value;
+
+    if (!opening) {
+        alert("Please choose an opening first.");
+        return;
+    }
+
+    alert("Training started: " + opening);
+});
