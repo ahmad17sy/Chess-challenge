@@ -26,14 +26,20 @@
 <div id="gameStatus"></div>
 
 <div id="timeControl">
-    <label for="timeSelect">Time:</label>
+    <div class="time-title">Time control</div>
 
     <select id="timeSelect">
         <option value="60,0">1 + 0</option>
+        <option value="60,1">1 + 1</option>
+        <option value="120,1">2 + 1</option>
         <option value="180,0">3 + 0</option>
+        <option value="180,2">3 + 2</option>
         <option value="300,0">5 + 0</option>
+        <option value="300,3">5 + 3</option>
         <option value="600,0" selected>10 + 0</option>
+        <option value="600,5">10 + 5</option>
         <option value="900,10">15 + 10</option>
+        <option value="1800,0">30 + 0</option>
     </select>
 </div>
 
@@ -44,7 +50,25 @@
 
     <div id="chessGameArea">
 
-        <div id="moveHistory">
+    <div id="timeControl">
+        <div class="time-title">Time control</div>
+
+        <select id="timeSelect">
+            <option value="60,0">1 + 0</option>
+            <option value="60,1">1 + 1</option>
+            <option value="120,1">2 + 1</option>
+            <option value="180,0">3 + 0</option>
+            <option value="180,2">3 + 2</option>
+            <option value="300,0">5 + 0</option>
+            <option value="300,3">5 + 3</option>
+            <option value="600,0" selected>10 + 0</option>
+            <option value="600,5">10 + 5</option>
+            <option value="900,10">15 + 10</option>
+            <option value="1800,0">30 + 0</option>
+        </select>
+    </div>
+
+    <div id="moveHistory">
             <h3>Moves</h3>
             <div id="movesList"></div>
         </div>
