@@ -24,10 +24,24 @@
         <button id="blackButton">♟ Play Black</button>
     </div>
 <div id="gameStatus"></div>
+
+<div id="timeControl">
+    <label for="timeSelect">Time:</label>
+
+    <select id="timeSelect">
+        <option value="60,0">1 + 0</option>
+        <option value="180,0">3 + 0</option>
+        <option value="300,0">5 + 0</option>
+        <option value="600,0" selected>10 + 0</option>
+        <option value="900,10">15 + 10</option>
+    </select>
+</div>
+
 <div id="chessClock">
     <div class="clock black-clock" id="blackClock">10:00</div>
     <div class="clock white-clock" id="whiteClock">10:00</div>
 </div>
+
     <div id="chessGameArea">
 
         <div id="moveHistory">

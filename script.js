@@ -52,6 +52,8 @@ let selectedSquare = null;
 
 let whiteTime = 600;
 let blackTime = 600;
+let incrementTime = 0;
+let selectedTime = 600;
 let clockInterval = null;
 let draggedSquare = null;
 let playerColor = "w";
@@ -804,11 +806,13 @@ function makeMove(from, to) {
 
     // حفظ الحالة للـ Undo
     history.push({
-        pieces: [...pieces],
-        currentTurn: currentTurn,
-        castlingRights: {...castlingRights},
-        enPassantSquare: enPassantSquare
-    });
+    pieces: [...pieces],
+    currentTurn: currentTurn,
+    castlingRights: {...castlingRights},
+    enPassantSquare: enPassantSquare,
+    whiteTime: whiteTime,
+    blackTime: blackTime
+});
 
     const piece = pieces[from];
     const color = getColor(piece);
@@ -874,9 +878,16 @@ function makeMove(from, to) {
         promotePawn(to);
     }
 
-    currentTurn =
-        currentTurn === "w" ? "b" : "w";
-        updateClocks();
+    if (currentTurn === "w") {
+    whiteTime += incrementTime;
+} else {
+    blackTime += incrementTime;
+}
+
+currentTurn =
+    currentTurn === "w" ? "b" : "w";
+
+updateClocks();
 moveHistory.push(moveNotation);
 lastMove = {
     from: from,
@@ -1042,13 +1053,15 @@ function undoMove() {
     }
 
     // حفظ الحالة الحالية لكي يستطيع Redo إعادتها
-    redoHistory.push({
-        pieces: [...pieces],
-        currentTurn: currentTurn,
-        castlingRights: { ...castlingRights },
-        enPassantSquare: enPassantSquare,
-        moveHistory: [...moveHistory]
-    });
+   redoHistory.push({
+    pieces: [...pieces],
+    currentTurn: currentTurn,
+    castlingRights: { ...castlingRights },
+    enPassantSquare: enPassantSquare,
+    moveHistory: [...moveHistory],
+    whiteTime: whiteTime,
+    blackTime: blackTime
+});
 
     if (history.length >= 2) {
 
@@ -1066,6 +1079,9 @@ function undoMove() {
 
         enPassantSquare =
             previous.enPassantSquare;
+            whiteTime = previous.whiteTime;
+            blackTime = previous.blackTime;
+            updateClocks();
 
         if (moveHistory.length >= 2) {
             moveHistory.pop();
@@ -1085,11 +1101,15 @@ function undoMove() {
         };
 
         enPassantSquare =
-            previous.enPassantSquare;
+    previous.enPassantSquare;
 
-        if (moveHistory.length > 0) {
-            moveHistory.pop();
-        }
+whiteTime = previous.whiteTime;
+blackTime = previous.blackTime;
+updateClocks();
+
+if (moveHistory.length > 0) {
+    moveHistory.pop();
+}
     }
 
     selectedSquare = null;
@@ -1118,6 +1138,9 @@ function redoMove() {
     };
 
     enPassantSquare = next.enPassantSquare;
+    whiteTime = next.whiteTime;
+    blackTime = next.blackTime;
+    updateClocks();
 
     moveHistory = [...next.moveHistory];
 
@@ -1149,7 +1172,13 @@ function resignGame() {
             : "White";
 
     gameOver = true;
-    currentTurn = null;
+
+if (clockInterval) {
+    clearInterval(clockInterval);
+    clockInterval = null;
+}
+
+currentTurn = null;
 
     alert(
         "Game over!\n" +
@@ -1828,9 +1857,21 @@ function startClock() {
 }
 
 function resetClocks() {
-
-    whiteTime = 600;
-    blackTime = 600;
-
+    whiteTime = selectedTime;
+    blackTime = selectedTime;
     updateClocks();
 }
+const timeSelect = document.getElementById("timeSelect");
+
+if (timeSelect) {
+    timeSelect.addEventListener("change", function () {
+
+        const values = this.value.split(",");
+
+        selectedTime = Number(values[0]);
+        incrementTime = Number(values[1]);
+
+        newGame();
+    });
+}
+

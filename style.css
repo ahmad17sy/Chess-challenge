@@ -337,3 +337,23 @@ nav a:hover {
 .black-clock {
     order: 2;
 }
+
+#timeControl {
+    width: 640px;
+    margin: 10px auto;
+    text-align: center;
+}
+
+#timeControl label {
+    font-size: 18px;
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+#timeSelect {
+    font-size: 16px;
+    padding: 7px 12px;
+    border-radius: 6px;
+    border: 1px solid #aaa;
+    cursor: pointer;
+}
