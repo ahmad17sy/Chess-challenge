@@ -2959,3 +2959,37 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 });
+document.addEventListener("DOMContentLoaded", function () {
+
+    const pgnFile = document.getElementById("pgnFile");
+    const importPGN = document.getElementById("importPGN");
+
+    if (!pgnFile || !importPGN) {
+        return;
+    }
+
+    importPGN.addEventListener("click", function () {
+
+        if (!pgnFile.files.length) {
+            alert("Please choose a PGN file first.");
+            return;
+        }
+
+        const file = pgnFile.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function (event) {
+
+            const pgnText = event.target.result;
+
+            console.log("PGN IMPORTED:");
+            console.log(pgnText);
+
+            alert("PGN imported successfully!");
+
+        };
+
+        reader.readAsText(file);
+    });
+
+});
