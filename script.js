@@ -1070,6 +1070,22 @@ function undoMove() {
 // ===============================
 // حركة الكمبيوتر
 // ===============================
+
+function resignGame() {
+
+    const winner =
+        playerColor === "w"
+            ? "Black"
+            : "White";
+
+    alert(
+        "Game over!\n" +
+        winner + " wins by resignation."
+    );
+
+    currentTurn = null;
+}
+
 function newGame() {
 
     pieces = [...startingPosition];
@@ -1365,6 +1381,10 @@ function createControls() {
             ↩ Undo
         </button>
 
+        <button id="resignButton">
+            🏳 Resign
+        </button>
+
         <label id="computerRatingLabel">
             Computer:
             <select id="computerRating">
@@ -1384,7 +1404,7 @@ function createControls() {
 
     board.parentNode.insertBefore(
         controls,
-        board
+        board.nextSibling
     );
 
     document
@@ -1399,6 +1419,13 @@ function createControls() {
         .addEventListener(
             "click",
             undoMove
+        );
+
+    document
+        .getElementById("resignButton")
+        .addEventListener(
+            "click",
+            resignGame
         );
 
     document
