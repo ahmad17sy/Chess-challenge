@@ -2148,8 +2148,13 @@ function createControls() {
         </label>
     `;
 
-    const gameArea =
+   const gameArea =
     document.getElementById("chessGameArea");
+
+if (!gameArea) {
+    console.error("chessGameArea not found");
+    return;
+}
 
 gameArea.parentNode.insertBefore(
     controls,
