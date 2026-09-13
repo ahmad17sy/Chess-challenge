@@ -98,8 +98,7 @@ let moveHistory = [];
 
 function updateMoveHistory() {
 
-    const movesList =
-        document.getElementById("movesList");
+    const movesList = document.getElementById("movesList");
 
     if (!movesList) {
         return;
@@ -109,32 +108,27 @@ function updateMoveHistory() {
 
     for (let i = 0; i < moveHistory.length; i += 2) {
 
-        const moveNumber = Math.floor(i / 2) + 1;
-
-        const whiteMove = moveHistory[i] || "";
-        const blackMove = moveHistory[i + 1] || "";
-
         const row = document.createElement("div");
+        row.className = "move-row";
 
-        row.classList.add("move-row");
+        const number = document.createElement("span");
+        number.textContent = (Math.floor(i / 2) + 1) + ".";
 
-        row.innerHTML =
-            "<span>" + moveNumber + ".</span>" +
-            "<span>" + whiteMove + "</span>" +
-            "<span>" + blackMove + "</span>";
+        const white = document.createElement("span");
+        white.textContent = moveHistory[i] || "";
+
+        const black = document.createElement("span");
+        black.textContent = moveHistory[i + 1] || "";
+
+        row.appendChild(number);
+        row.appendChild(white);
+        row.appendChild(black);
 
         movesList.appendChild(row);
     }
 
-    movesList.scrollTop =
-        movesList.scrollHeight;
+    movesList.scrollTop = movesList.scrollHeight;
 }
-let castlingRights = {
-    wK: true,
-    wQ: true,
-    bK: true,
-    bQ: true
-};
 
 let enPassantSquare = null;
 
