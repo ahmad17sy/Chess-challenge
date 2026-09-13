@@ -2924,14 +2924,26 @@ document.getElementById("shareGame").addEventListener("click", async function ()
         this.textContent = "🔗 Share Game";
     }, 1500);
 });
-document.getElementById("startOpening").addEventListener("click", function () {
+document.addEventListener("DOMContentLoaded", function () {
 
-    const opening = document.getElementById("openingSelect").value;
+    const startOpening = document.getElementById("startOpening");
 
-    if (!opening) {
-        alert("Please choose an opening first.");
+    if (!startOpening) {
+        console.log("Start Opening button not found");
         return;
     }
 
-    alert("Training started: " + opening);
+    startOpening.addEventListener("click", function () {
+
+        const opening =
+            document.getElementById("openingSelect").value;
+
+        if (!opening) {
+            alert("Please choose an opening first.");
+            return;
+        }
+
+        alert("Training started: " + opening);
+    });
+
 });
