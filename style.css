@@ -119,12 +119,10 @@ nav a:hover {
 
 #evaluationWrapper {
     position: absolute;
-
-    width: 32px;
-    height: 640px;
-
     left: -36px;
     top: 0;
+    width: 32px;
+    height: 640px;
 }
 
 #evaluationBar {
@@ -211,7 +209,7 @@ nav a:hover {
     width: 320px;
     height: 640px;
 
-    left: -324px;
+    left: -360px;
     top: 0;
 
     margin: 0;
