@@ -2105,8 +2105,8 @@ function createControls() {
         );
 
     if (controls) {
-        return;
-    }
+    controls.remove();
+}
 
     controls =
         document.createElement("div");
