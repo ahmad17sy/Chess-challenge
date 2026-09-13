@@ -712,7 +712,7 @@ nav a:hover {
     color: #eee;
 }
 
-/* عند تدوير الرقعة تبقى الإحداثيات واضحة */
+/* الإحداثيات تبقى باتجاه صحيح */
 #chessboard.flipped .coordinates {
     transform: rotate(180deg);
 }

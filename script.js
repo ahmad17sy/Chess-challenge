@@ -1771,18 +1771,14 @@ const col = i % 8;
 if (col === 0) {
     const rank = document.createElement("span");
     rank.classList.add("coordinates", "rank-coordinate");
-    rank.textContent = playerColor === "w"
-        ? 8 - row
-        : row + 1;
+    rank.textContent = 8 - row;
     square.appendChild(rank);
 }
 
 if (row === 7) {
     const file = document.createElement("span");
     file.classList.add("coordinates", "file-coordinate");
-    file.textContent = playerColor === "w"
-        ? String.fromCharCode(97 + col)
-        : String.fromCharCode(104 - col);
+    file.textContent = String.fromCharCode(97 + col);
     square.appendChild(file);
 }
         // ألوان الرقعة
