@@ -1695,21 +1695,18 @@ function clickMove(index) {
 // ===============================
 // إنشاء الرقعة
 // ===============================
-
 function createBoard() {
-console.log("CREATE BOARD WORKING");
     board.innerHTML = "";
+
     if (playerColor === "b") {
-    board.classList.add("flipped");
-} else {
-    board.classList.remove("flipped");
-}
+        board.classList.add("flipped");
+    } else {
+        board.classList.remove("flipped");
+    }
 
     for (let i = 0; i < 64; i++) {
-    console.log(i, pieces[i]);
 
         const square = document.createElement("div");
-
         square.classList.add("square");
 
         // ألوان الرقعة
@@ -1723,22 +1720,24 @@ console.log("CREATE BOARD WORKING");
         if (selectedSquare === i) {
             square.classList.add("selected");
         }
-        // تمييز الملك عندما يكون في Check
-if (
-    pieces[i] &&
-    getType(pieces[i]) === "K" &&
-    isInCheck(getColor(pieces[i]))
-) {
-    square.classList.add("check");
-}
 
-if (
-    lastMove &&
-    (lastMove.from === i || lastMove.to === i)
-) {
-    square.classList.add("last-move");
-}
-        // القطعة الموجودة في هذا المربع
+        // تمييز الملك عند Check
+        if (
+            pieces[i] &&
+            getType(pieces[i]) === "K" &&
+            isInCheck(getColor(pieces[i]))
+        ) {
+            square.classList.add("check");
+        }
+
+        // آخر نقلة
+        if (
+            lastMove &&
+            (lastMove.from === i || lastMove.to === i)
+        ) {
+            square.classList.add("last-move");
+        }
+
         const piece = pieces[i];
 
         if (piece) {
@@ -1746,90 +1745,134 @@ if (
             const image = document.createElement("img");
 
             image.src = piece + ".svg";
-
             image.classList.add("chess-piece");
 
-            image.draggable = true;
+            // ===============================
+// Drag & Drop
+// ===============================
 
-            // السحب
-            image.addEventListener("dragstart", function () {
+image.draggable = true;
 
-    if (
-        piece &&
-        getColor(piece) === playerColor
-    ) {
-        draggedSquare = i;
-    } else {
+image.addEventListener("dragstart", function (event) {
+
+    // لا تسمح بسحب قطعة الخصم
+    if (getColor(piece) !== playerColor) {
+        event.preventDefault();
         draggedSquare = null;
+        return;
     }
 
+    // لا تسمح بالسحب أثناء Game Over
+    if (gameOver) {
+        event.preventDefault();
+        draggedSquare = null;
+        return;
+    }
+
+    draggedSquare = i;
+    selectedSquare = i;
+
+    if (event.dataTransfer) {
+        event.dataTransfer.effectAllowed = "move";
+        event.dataTransfer.setData(
+            "text/plain",
+            String(i)
+        );
+    }
+
+    createBoard();
 });
 
-            image.addEventListener("dragend", function () {
-                draggedSquare = null;
-            });
+image.addEventListener("dragend", function () {
+
+    draggedSquare = null;
+});
 
             square.appendChild(image);
         }
 
-        // الضغط على المربع
+        // النقر العادي
         square.addEventListener("click", function () {
             clickMove(i);
         });
 
-        // السماح بالسحب فوق المربع
+        // السماح بالإفلات
         square.addEventListener("dragover", function (event) {
             event.preventDefault();
         });
 
-        // إفلات القطعة
-        square.addEventListener("drop", function (event) {
+        // ===============================
+// إفلات القطعة
+// ===============================
 
-            event.preventDefault();
+square.addEventListener("drop", function (event) {
 
-           if (draggedSquare !== null) {
+    event.preventDefault();
 
-    // أثناء تفكير الكمبيوتر = Premove
-    if (currentTurn !== playerColor) {
+    let from = draggedSquare;
 
-        if (
-            pieces[draggedSquare] &&
-            getColor(pieces[draggedSquare]) === playerColor
-        ) {
+    if (event.dataTransfer) {
 
-            premove = {
-                from: draggedSquare,
-                to: i
-            };
+        const savedFrom =
+            event.dataTransfer.getData("text/plain");
 
-            console.log(
-                "Premove:",
-                draggedSquare,
-                "→",
-                i
-            );
+        if (savedFrom !== "") {
+            from = Number(savedFrom);
         }
-
-    } else {
-
-        // الحركة العادية
-        makeMove(draggedSquare, i);
     }
 
     draggedSquare = null;
 
-    createBoard();
-}
+    if (
+        from === null ||
+        from === undefined ||
+        Number.isNaN(from)
+    ) {
+        selectedSquare = null;
+        createBoard();
+        return;
+    }
 
-        });
+    // ===============================
+    // Premove
+    // ===============================
 
+    if (currentTurn !== playerColor) {
+
+        if (
+            pieces[from] &&
+            getColor(pieces[from]) === playerColor
+        ) {
+
+            premove = {
+                from: from,
+                to: i
+            };
+        }
+
+        selectedSquare = null;
+        createBoard();
+
+        return;
+    }
+
+    // ===============================
+    // الحركة العادية
+    // ===============================
+
+    const moved = makeMove(from, i);
+
+    selectedSquare = null;
+    draggedSquare = null;
+
+    if (!moved) {
+        createBoard();
+    }
+});
         board.appendChild(square);
     }
 
-    // تحديث شريط التقييم
     updateEvaluationBar();
-
-    // إعادة الألوان التي اختارها المستخدم
     updateBoardColors();
 }
 
