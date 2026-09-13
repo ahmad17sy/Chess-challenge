@@ -803,11 +803,11 @@ function makeMove(from, to) {
     const piece = pieces[from];
     const color = getColor(piece);
     const type = getType(piece);
-const fromSquare =
+
     String.fromCharCode(97 + (from % 8)) +
     (8 - Math.floor(from / 8));
 
-const toSquare =
+
     String.fromCharCode(97 + (to % 8)) +
     (8 - Math.floor(to / 8));
 
