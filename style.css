@@ -69,10 +69,13 @@ nav a:hover {
 }
 
 .square {
+    width: 80px;
+    height: 80px;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 50px;
+    box-sizing: border-box;
     transition: filter 0.12s ease;
 }
 

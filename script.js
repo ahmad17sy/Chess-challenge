@@ -1695,7 +1695,7 @@ function clickMove(index) {
 // ===============================
 
 function createBoard() {
-
+console.log("CREATE BOARD WORKING");
     board.innerHTML = "";
     if (playerColor === "b") {
     board.classList.add("flipped");
