@@ -281,12 +281,22 @@ nav a:hover {
 ========================= */
 
 #chessControls {
+    position: relative;
+    z-index: 1000;
     width: 640px;
     margin: 15px auto 20px auto;
     display: flex;
     justify-content: center;
     gap: 8px;
     flex-wrap: wrap;
+    pointer-events: auto;
+}
+
+#chessControls button,
+#chessControls select {
+    position: relative;
+    z-index: 1001;
+    pointer-events: auto;
 }
 
 #chessControls button {

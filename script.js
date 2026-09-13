@@ -2202,6 +2202,10 @@ document
             }
         );
         console.log("CONTROLS WORKING");
+
+document.getElementById("newGameButton").onclick = function () {
+    alert("BUTTON CLICK WORKS");
+};
 }
 
 // ===============================
