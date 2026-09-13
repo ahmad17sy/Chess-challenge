@@ -1748,137 +1748,187 @@ if (piece) {
     image.classList.add("chess-piece");
 
     // السماح بسحب قطعة اللاعب فقط
-    if (getColor(piece) === playerColor) {
+    // السماح بسحب قطعة اللاعب فقط
+if (getColor(piece) === playerColor) {
 
-        let startX = 0;
-let startY = 0;
-let hasDragged = false;
+    let startX = 0;
+    let startY = 0;
+    let hasDragged = false;
+    let dragPiece = null;
 
-square.addEventListener("mousedown", function (event) {
+    square.addEventListener("mousedown", function (event) {
 
-    if (gameOver) return;
+        if (gameOver) return;
+        if (event.button !== 0) return;
+        if (!pieces[i]) return;
+        if (getColor(pieces[i]) !== playerColor) return;
 
-    if (event.button !== 0) return;
+        startX = event.clientX;
+        startY = event.clientY;
+        hasDragged = false;
+        dragPiece = null;
 
-    if (!pieces[i]) return;
+        draggedSquare = i;
 
-    if (getColor(pieces[i]) !== playerColor) return;
+        function movePiece(e) {
 
-    startX = event.clientX;
-    startY = event.clientY;
-    hasDragged = false;
+            const distance = Math.sqrt(
+                Math.pow(e.clientX - startX, 2) +
+                Math.pow(e.clientY - startY, 2)
+            );
 
+            // ما زالت نقرة عادية
+            if (!hasDragged) {
 
-            draggedSquare = i;
+                if (distance <= 5) {
+                    return;
+                }
 
-// إخفاء القطعة فقط أثناء السحب
-image.style.visibility = "hidden";
+                // بدأ السحب فعلياً
+                hasDragged = true;
 
-const dragPiece = document.createElement("img");
+                image.style.visibility = "hidden";
 
-            dragPiece.src = piece + ".svg";
-            dragPiece.classList.add("dragging-piece");
+                dragPiece = document.createElement("img");
 
-            document.body.appendChild(dragPiece);
+                dragPiece.src = piece + ".svg";
+                dragPiece.classList.add("dragging-piece");
 
-            dragPiece.style.left = event.clientX + "px";
-            dragPiece.style.top = event.clientY + "px";
+                document.body.appendChild(dragPiece);
+            }
 
-            function movePiece(e) {
+            if (dragPiece) {
 
-    const distance = Math.sqrt(
-        Math.pow(e.clientX - startX, 2) +
-        Math.pow(e.clientY - startY, 2)
-    );
+                dragPiece.style.left =
+                    e.clientX + "px";
 
-    if (distance > 5) {
-        hasDragged = true;
-    }
+                dragPiece.style.top =
+                    e.clientY + "px";
+            }
+        }
 
-    if (!hasDragged) return;
+        function releasePiece(e) {
 
-    dragPiece.style.left = e.clientX + "px";
-    dragPiece.style.top = e.clientY + "px";
-}
+            document.removeEventListener(
+                "mousemove",
+                movePiece
+            );
 
-            function releasePiece(e) {
+            document.removeEventListener(
+                "mouseup",
+                releasePiece
+            );
 
-    document.removeEventListener("mousemove", movePiece);
-    document.removeEventListener("mouseup", releasePiece);
+            // =================================
+            // نقرة عادية
+            // =================================
 
-    if (!hasDragged) {
-    dragPiece.remove();
-    image.style.visibility = "visible";
-    draggedSquare = null;
-    return;
-}
+            if (!hasDragged) {
+
+                draggedSquare = null;
+
+                // لا نحرك القطعة هنا.
+                // click event سيتولى الأمر.
+                return;
+            }
+
+            // =================================
+            // سحب فعلي
+            // =================================
+
+            if (dragPiece) {
 
                 dragPiece.remove();
+                dragPiece = null;
+            }
 
-const element = document.elementFromPoint(
-    e.clientX,
-    e.clientY
-);
+            image.style.visibility = "visible";
 
-                const targetSquare = element
+            const element =
+                document.elementFromPoint(
+                    e.clientX,
+                    e.clientY
+                );
+
+            const targetSquare =
+                element
                     ? element.closest(".square")
                     : null;
 
-                if (!targetSquare) {
-                    draggedSquare = null;
-                    selectedSquare = null;
-                    createBoard();
-                    return;
-                }
-
-                const allSquares =
-                    Array.from(document.querySelectorAll(".square"));
-
-                const to = allSquares.indexOf(targetSquare);
-
-                if (to < 0) {
-                    draggedSquare = null;
-                    selectedSquare = null;
-                    createBoard();
-                    return;
-                }
-
-                if (currentTurn !== playerColor) {
-
-                    premove = {
-                        from: i,
-                        to: to
-                    };
-
-                    draggedSquare = null;
-                    selectedSquare = null;
-                    createBoard();
-                    return;
-                }
-
-                if (makeMove(i, to)) {
-                    selectedSquare = null;
-                } else {
-                    selectedSquare = null;
-                }
+            if (!targetSquare) {
 
                 draggedSquare = null;
+                selectedSquare = null;
+
                 createBoard();
+
+                return;
             }
 
-                        document.addEventListener("mousemove", movePiece);
-            document.addEventListener("mouseup", releasePiece);
-        });
-    }
+            const allSquares =
+                Array.from(
+                    document.querySelectorAll(".square")
+                );
 
-    // ===============================
-    // النقر على المربع
-    // ===============================
-    square.addEventListener("click", function () {
-        clickMove(i);
+            const to =
+                allSquares.indexOf(targetSquare);
+
+            if (to < 0) {
+
+                draggedSquare = null;
+                selectedSquare = null;
+
+                createBoard();
+
+                return;
+            }
+
+            // =================================
+            // Premove
+            // =================================
+
+            if (currentTurn !== playerColor) {
+
+                premove = {
+                    from: i,
+                    to: to
+                };
+
+                draggedSquare = null;
+                selectedSquare = null;
+
+                createBoard();
+
+                return;
+            }
+
+            // =================================
+            // تنفيذ الحركة
+            // =================================
+
+            makeMove(i, to);
+
+            draggedSquare = null;
+
+            createBoard();
+        }
+
+        document.addEventListener(
+            "mousemove",
+            movePiece
+        );
+
+        document.addEventListener(
+            "mouseup",
+            releasePiece
+        );
     });
+}
 
     square.appendChild(image);
+    square.addEventListener("click", function () {
+    clickMove(i);
+});
 }
 
     board.appendChild(square);
