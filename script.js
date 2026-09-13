@@ -96,6 +96,7 @@ stockfish.postMessage("uci");
 
 let history = [];
 let moveHistory = [];
+let redoHistory = [];
 function updateMoveHistory() {
 
     const movesList = document.getElementById("movesList");
@@ -1009,12 +1010,20 @@ function updateGameStatus() {
 // ===============================
 // التراجع Undo
 // ===============================
-
 function undoMove() {
 
     if (history.length === 0) {
         return;
     }
+
+    // حفظ الحالة الحالية لكي يستطيع Redo إعادتها
+    redoHistory.push({
+        pieces: [...pieces],
+        currentTurn: currentTurn,
+        castlingRights: { ...castlingRights },
+        enPassantSquare: enPassantSquare,
+        moveHistory: [...moveHistory]
+    });
 
     if (history.length >= 2) {
 
@@ -1058,7 +1067,38 @@ function undoMove() {
         }
     }
 
-        selectedSquare = null;
+    selectedSquare = null;
+    draggedSquare = null;
+
+    createBoard();
+
+    updateMoveHistory();
+
+    updateGameStatus();
+}
+
+function redoMove() {
+
+    if (redoHistory.length === 0) {
+        return;
+    }
+
+    const next = redoHistory.pop();
+
+    pieces = [...next.pieces];
+
+    currentTurn = next.currentTurn;
+
+    castlingRights = {
+        ...next.castlingRights
+    };
+
+    enPassantSquare =
+        next.enPassantSquare;
+
+    moveHistory = [...next.moveHistory];
+
+    selectedSquare = null;
     draggedSquare = null;
 
     createBoard();
@@ -1389,8 +1429,12 @@ function createControls() {
         </button>
 
         <button id="undoButton">
-            ↩ Undo
-        </button>
+    ↩ Undo
+</button>
+
+<button id="redoButton">
+    ↪ Redo
+</button>
 
         <button id="resignButton">
             🏳 Resign
@@ -1434,7 +1478,13 @@ gameArea.parentNode.insertBefore(
             "click",
             undoMove
         );
-
+document
+    .getElementById("redoButton")
+    .addEventListener(
+        "click",
+        redoMove
+    );
+    
     document
         .getElementById("resignButton")
         .addEventListener(
