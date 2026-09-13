@@ -2199,6 +2199,7 @@ document
 
             }
         );
+        console.log("CONTROLS WORKING");
 }
 
 // ===============================
