@@ -3604,3 +3604,178 @@ document.addEventListener(
 
     }
 );
+/* =========================================
+   STOCKFISH PGN ANALYSIS
+========================================= */
+
+let analysisEngine = null;
+let analysisBestMove = "-";
+let analysisScore = 0;
+let analysisDepth = 0;
+
+
+/* Start analysis engine */
+
+function startAnalysisEngine() {
+
+    if (analysisEngine) {
+        return;
+    }
+
+    analysisEngine =
+        new Worker("stockfish-18-lite-single.js");
+
+    analysisEngine.onmessage = function (event) {
+
+        const message = event.data;
+
+        if (
+            message.startsWith("info") &&
+            message.includes("score")
+        ) {
+
+            const scoreMatch =
+                message.match(/score (cp|mate) (-?\d+)/);
+
+            if (scoreMatch) {
+
+                const type = scoreMatch[1];
+                const value = parseInt(scoreMatch[2]);
+
+                if (type === "cp") {
+                    analysisScore = value / 100;
+                } else {
+                    analysisScore =
+                        value > 0 ? 99 : -99;
+                }
+
+                const depthMatch =
+                    message.match(/depth (\d+)/);
+
+                if (depthMatch) {
+                    analysisDepth =
+                        parseInt(depthMatch[1]);
+                }
+
+                updateAnalysisDisplay();
+            }
+        }
+
+        if (message.startsWith("bestmove")) {
+
+            const parts =
+                message.split(" ");
+
+            if (parts[1]) {
+                analysisBestMove = parts[1];
+            }
+
+            updateAnalysisDisplay();
+        }
+    };
+
+    analysisEngine.postMessage("uci");
+
+    analysisEngine.postMessage("isready");
+}
+
+
+/* Analyze imported position */
+
+function analyzeCurrentPosition() {
+
+    if (!importedPositions.length) {
+
+        alert("Please import a PGN game first.");
+
+        return;
+    }
+
+    startAnalysisEngine();
+
+    analysisBestMove = "-";
+    analysisScore = 0;
+    analysisDepth = 0;
+
+    updateAnalysisDisplay();
+
+    const fen =
+        importedPositions[importedMoveIndex];
+
+    analysisEngine.postMessage("stop");
+
+    analysisEngine.postMessage(
+        "position fen " + fen
+    );
+
+    analysisEngine.postMessage(
+        "go depth 18"
+    );
+}
+
+
+/* Update analysis display */
+
+function updateAnalysisDisplay() {
+
+    const evaluation =
+        document.getElementById("analysisEvaluation");
+
+    const bestMove =
+        document.getElementById("analysisBestMove");
+
+    const depth =
+        document.getElementById("analysisDepth");
+
+
+    if (evaluation) {
+
+        const sign =
+            analysisScore >= 0 ? "+" : "";
+
+        evaluation.textContent =
+            "Evaluation: " +
+            sign +
+            analysisScore.toFixed(2);
+    }
+
+
+    if (bestMove) {
+
+        bestMove.textContent =
+            "Best move: " +
+            analysisBestMove;
+    }
+
+
+    if (depth) {
+
+        depth.textContent =
+            "Depth: " +
+            analysisDepth;
+    }
+}
+
+
+/* Analyze button */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const button =
+            document.getElementById(
+                "analyzePosition"
+            );
+
+        if (!button) {
+            return;
+        }
+
+        button.addEventListener(
+            "click",
+            analyzeCurrentPosition
+        );
+
+    }
+);
