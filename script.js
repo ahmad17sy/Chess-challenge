@@ -790,6 +790,8 @@ function makeMove(from, to) {
     if (!isLegalMove(from, to)) {
         return false;
     }
+    
+    redoHistory = [];
 
     // حفظ الحالة للـ Undo
     history.push({
@@ -1147,6 +1149,7 @@ gameOver = false;
 
     history = [];
 moveHistory = [];
+redoHistory = [];
     castlingRights = {
         wK: true,
         wQ: true,
@@ -1484,7 +1487,7 @@ document
         "click",
         redoMove
     );
-    
+
     document
         .getElementById("resignButton")
         .addEventListener(
