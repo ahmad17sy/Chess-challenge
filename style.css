@@ -528,11 +528,14 @@ nav a:hover {
 }
 .dragging-piece {
     position: fixed;
-    width: 70px;
-    height: 70px;
+    width: 74px;
+    height: 74px;
     object-fit: contain;
     pointer-events: none;
     z-index: 99999;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(1.08);
     cursor: grabbing;
+    filter: drop-shadow(0 6px 5px rgba(0, 0, 0, 0.35));
+    transition: transform 0.05s ease;
 }
+

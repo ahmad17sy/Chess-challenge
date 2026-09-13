@@ -1750,21 +1750,29 @@ if (piece) {
     // السماح بسحب قطعة اللاعب فقط
     if (getColor(piece) === playerColor) {
 
-        square.addEventListener("mousedown", function (event) {
+        let startX = 0;
+let startY = 0;
+let hasDragged = false;
 
-            if (gameOver) return;
+square.addEventListener("mousedown", function (event) {
 
-            if (event.button !== 0) return;
+    if (gameOver) return;
 
-            if (!pieces[i]) return;
+    if (event.button !== 0) return;
 
-            if (getColor(pieces[i]) !== playerColor) return;
+    if (!pieces[i]) return;
+
+    if (getColor(pieces[i]) !== playerColor) return;
+
+    startX = event.clientX;
+    startY = event.clientY;
+    hasDragged = false;
+
 
             draggedSquare = i;
-selectedSquare = i;
 
-// أخفِ القطعة الأصلية أثناء السحب
-square.style.visibility = "hidden";
+// إخفاء القطعة فقط أثناء السحب
+image.style.visibility = "hidden";
 
 const dragPiece = document.createElement("img");
 
@@ -1778,14 +1786,32 @@ const dragPiece = document.createElement("img");
 
             function movePiece(e) {
 
-                dragPiece.style.left = e.clientX + "px";
-                dragPiece.style.top = e.clientY + "px";
-            }
+    const distance = Math.sqrt(
+        Math.pow(e.clientX - startX, 2) +
+        Math.pow(e.clientY - startY, 2)
+    );
+
+    if (distance > 5) {
+        hasDragged = true;
+    }
+
+    if (!hasDragged) return;
+
+    dragPiece.style.left = e.clientX + "px";
+    dragPiece.style.top = e.clientY + "px";
+}
 
             function releasePiece(e) {
 
-                document.removeEventListener("mousemove", movePiece);
-                document.removeEventListener("mouseup", releasePiece);
+    document.removeEventListener("mousemove", movePiece);
+    document.removeEventListener("mouseup", releasePiece);
+
+    if (!hasDragged) {
+    dragPiece.remove();
+    image.style.visibility = "visible";
+    draggedSquare = null;
+    return;
+}
 
                 dragPiece.remove();
 
@@ -1840,10 +1866,17 @@ const element = document.elementFromPoint(
                 createBoard();
             }
 
-            document.addEventListener("mousemove", movePiece);
+                        document.addEventListener("mousemove", movePiece);
             document.addEventListener("mouseup", releasePiece);
         });
     }
+
+    // ===============================
+    // النقر على المربع
+    // ===============================
+    square.addEventListener("click", function () {
+        clickMove(i);
+    });
 
     square.appendChild(image);
 }
