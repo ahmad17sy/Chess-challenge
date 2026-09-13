@@ -195,3 +195,40 @@ nav a:hover {
 #chessboard.flipped .chess-piece {
     transform: rotate(180deg);
 }
+#moveHistory {
+    width: 320px;
+    margin: 20px auto;
+    padding: 15px;
+    background: #222;
+    color: white;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+#moveHistory h3 {
+    margin: 0 0 12px 0;
+    text-align: center;
+}
+
+#movesList {
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.move-row {
+    display: grid;
+    grid-template-columns: 40px 1fr 1fr;
+    gap: 10px;
+    padding: 6px 8px;
+    border-bottom: 1px solid #444;
+    font-family: Arial, sans-serif;
+}
+
+.move-row span:first-child {
+    font-weight: bold;
+}
+
+.move-row span:nth-child(2),
+.move-row span:nth-child(3) {
+    text-align: center;
+}
