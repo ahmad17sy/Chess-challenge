@@ -1090,19 +1090,43 @@ function makeMove(from, to) {
 
     // حفظ الحالة للـ Undo
     history.push({
-        pieces: [...pieces],
-        currentTurn: currentTurn,
-        castlingRights: { ...castlingRights },
-        enPassantSquare: enPassantSquare,
-        whiteTime: whiteTime,
-        blackTime: blackTime
-    });
+    pieces: [...pieces],
+    currentTurn: currentTurn,
+    castlingRights: { ...castlingRights },
+    enPassantSquare: enPassantSquare,
+    whiteTime: whiteTime,
+    blackTime: blackTime,
+    capturedWhite: [...capturedWhite],
+    capturedBlack: [...capturedBlack]
+});
 
     const piece = pieces[from];
-    const color = getColor(piece);
-    const type = getType(piece);
+const color = getColor(piece);
+const type = getType(piece);
 
-  const moveNotation = getMoveNotation(from, to, piece);
+// القطعة التي سيتم أخذها
+let capturedPiece = pieces[to];
+
+// En Passant
+if (
+    type === "P" &&
+    to === enPassantSquare &&
+    !pieces[to]
+) {
+    const direction = color === "w" ? 1 : -1;
+    capturedPiece = pieces[to + direction * 8];
+}
+
+// تسجيل القطعة المأخوذة
+if (capturedPiece) {
+    if (getColor(capturedPiece) === "w") {
+        capturedWhite.push(capturedPiece);
+    } else {
+        capturedBlack.push(capturedPiece);
+    }
+}
+
+const moveNotation = getMoveNotation(from, to, piece);
 
 moveHistory.push(moveNotation);
 
@@ -1185,7 +1209,9 @@ lastMove = {
     from: from,
     to: to
 };
+
 updateMoveHistory();
+updateCapturedPieces();
 
     selectedSquare = null;
 
@@ -1400,7 +1426,9 @@ premove = null;
     enPassantSquare: enPassantSquare,
     moveHistory: [...moveHistory],
     whiteTime: whiteTime,
-    blackTime: blackTime
+    blackTime: blackTime,
+    capturedWhite: [...capturedWhite],
+    capturedBlack: [...capturedBlack]
 });
 
     if (history.length >= 2) {
@@ -1419,6 +1447,8 @@ premove = null;
 
         enPassantSquare =
             previous.enPassantSquare;
+            capturedWhite = [...previous.capturedWhite];
+capturedBlack = [...previous.capturedBlack];
             whiteTime = previous.whiteTime;
             blackTime = previous.blackTime;
             updateClocks();
@@ -1442,6 +1472,8 @@ premove = null;
 
         enPassantSquare =
     previous.enPassantSquare;
+    capturedWhite = [...previous.capturedWhite];
+capturedBlack = [...previous.capturedBlack];
 
 whiteTime = previous.whiteTime;
 blackTime = previous.blackTime;
@@ -1458,8 +1490,9 @@ if (moveHistory.length > 0) {
     createBoard();
 
     updateMoveHistory();
+updateCapturedPieces();
 
-    updateGameStatus();
+updateGameStatus();
 }
 function redoMove() {
     gameSessionId++;
@@ -1483,6 +1516,8 @@ premove = null;
     };
 
     enPassantSquare = next.enPassantSquare;
+    capturedWhite = [...next.capturedWhite];
+capturedBlack = [...next.capturedBlack];
     whiteTime = next.whiteTime;
     blackTime = next.blackTime;
     updateClocks();
@@ -1495,7 +1530,7 @@ premove = null;
     createBoard();
 
     updateMoveHistory();
-
+updateCapturedPieces();
     updateGameStatus();
 }
 
@@ -1560,6 +1595,8 @@ premove = null;
 moveHistory = [];
 redoHistory = [];
 lastMove = null;
+capturedWhite = [];
+capturedBlack = [];
 moveAnalysis = [];
 analysisEvaluation = 0;
 pendingMoveAnalysis = null;
@@ -1579,6 +1616,7 @@ startClock();
 
     createBoard();
 updateMoveHistory();
+updateCapturedPieces();
     updateGameStatus();
 
     if (currentTurn !== playerColor) {
@@ -1981,6 +2019,7 @@ if (getColor(piece) === playerColor) {
 
     updateEvaluationBar();
     updateBoardColors();
+    updateGameStatus();
 }
 
 // ===============================
@@ -2202,6 +2241,7 @@ createControls();
 createEvaluationBar();
 
 createBoard();
+updateCapturedPieces();
 
 resetClocks();
 startClock();
@@ -2603,4 +2643,151 @@ document
 function flipBoard() {
     playerColor = playerColor === "w" ? "b" : "w";
     createBoard();
+}
+function updateGameStatus() {
+
+    const status = document.getElementById("gameStatus");
+
+    if (!status) return;
+
+    if (gameOver) {
+        status.textContent = "Game Over";
+        return;
+    }
+status.classList.remove("check");
+    if (isInCheck(currentTurn)) {
+        status.classList.add("check");
+        status.textContent =
+            currentTurn === "w"
+                ? "♔ White is in Check!"
+                : "♚ Black is in Check!";
+    } else {
+        status.textContent =
+            currentTurn === "w"
+                ? "White to move"
+                : "Black to move";
+    }
+}
+function updateCapturedPieces() {
+
+    const whiteContainer =
+        document.getElementById("capturedWhite");
+
+    const blackContainer =
+        document.getElementById("capturedBlack");
+
+    if (!whiteContainer || !blackContainer) {
+        return;
+    }
+
+    whiteContainer.innerHTML = "";
+    blackContainer.innerHTML = "";
+
+    // قيمة القطع
+    const pieceValues = {
+        P: 1,
+        N: 3,
+        B: 3,
+        R: 5,
+        Q: 9
+    };
+
+    // ترتيب العرض: بيدق → حصان/فيل → رخ → وزير
+    const pieceOrder = ["P", "N", "B", "R", "Q"];
+
+    function sortCaptured(list) {
+
+        return [...list].sort(function(a, b) {
+
+            const valueA = pieceOrder.indexOf(getType(a));
+            const valueB = pieceOrder.indexOf(getType(b));
+
+            return valueA - valueB;
+        });
+    }
+
+    function calculateCapturedValue(list) {
+
+        let total = 0;
+
+        list.forEach(function(piece) {
+
+            const type = getType(piece);
+
+            if (pieceValues[type]) {
+                total += pieceValues[type];
+            }
+        });
+
+        return total;
+    }
+
+    // ترتيب القطع
+    const sortedWhite =
+        sortCaptured(capturedWhite);
+
+    const sortedBlack =
+        sortCaptured(capturedBlack);
+
+    // عرض القطع البيضاء المأخوذة
+    sortedWhite.forEach(function(piece) {
+
+        const image =
+            document.createElement("img");
+
+        image.src = piece + ".svg";
+        image.alt = piece;
+
+        whiteContainer.appendChild(image);
+    });
+
+    // عرض القطع السوداء المأخوذة
+    sortedBlack.forEach(function(piece) {
+
+        const image =
+            document.createElement("img");
+
+        image.src = piece + ".svg";
+        image.alt = piece;
+
+        blackContainer.appendChild(image);
+    });
+
+    // حساب فرق المادة
+    const whiteValue =
+        calculateCapturedValue(capturedWhite);
+
+    const blackValue =
+        calculateCapturedValue(capturedBlack);
+
+    const difference =
+        blackValue - whiteValue;
+
+    // حذف نتيجة قديمة
+    const oldScore =
+        document.getElementById("materialScore");
+
+    if (oldScore) {
+        oldScore.remove();
+    }
+
+    // لا نعرض شيئاً إذا كانت المادة متساوية
+    if (difference === 0) {
+        return;
+    }
+
+    const score =
+        document.createElement("span");
+
+    score.id = "materialScore";
+
+    score.textContent =
+        "+" + Math.abs(difference);
+
+    // الطرف الذي يملك المادة الإضافية
+    if (difference > 0) {
+        blackContainer.appendChild(score);
+    } else {
+        whiteContainer.appendChild(score);
+    }
 }

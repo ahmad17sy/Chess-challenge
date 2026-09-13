@@ -238,10 +238,11 @@ nav a:hover {
     width: 640px;
     margin: 12px auto 6px auto;
     text-align: center;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: bold;
-    min-height: 25px;
+    min-height: 28px;
     color: #262522;
+    transition: 0.2s;
 }
 
 
@@ -468,7 +469,20 @@ nav a:hover {
 .check {
     box-shadow: inset 0 0 0 5px #e53935;
 }
+#gameStatus.check {
+    color: #d32f2f;
+    animation: statusPulse 0.8s infinite alternate;
+}
 
+@keyframes statusPulse {
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(1.05);
+    }
+}
 
 /* =========================
    Board Rotation
@@ -639,3 +653,32 @@ nav a:hover {
     height: 90%;
     object-fit: contain;
 }
+#capturedPieces {
+    min-height: 40px;
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+#capturedWhite,
+#capturedBlack {
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+#capturedPieces img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    margin-right: -3px;
+}
+#materialScore {
+    font-size: 16px;
+    font-weight: bold;
+    margin-left: 8px;
+    opacity: 0.85;
+}
+
