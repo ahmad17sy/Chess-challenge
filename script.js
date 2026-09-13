@@ -214,7 +214,7 @@ analysisStockfish.onmessage = function(event) {
         analysisReady = true;
 
         // تحليل الوضع الابتدائي
-        analyzeCurrentPosition();
+       analyzeLivePosition();
 
         return;
     }
@@ -3474,7 +3474,7 @@ function startAnalysisEngine() {
 
 /* Analyze current PGN position */
 
-function analyzeCurrentPosition() {
+function analyzeLivePosition() {
 
     if (!importedPositions.length) {
 
