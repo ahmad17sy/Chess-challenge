@@ -1100,9 +1100,11 @@ function makeMove(from, to) {
     const color = getColor(piece);
     const type = getType(piece);
 
-   const moveNotation = getMoveNotation(from, to, piece);
+  const moveNotation = getMoveNotation(from, to, piece);
 
-    const oldEnPassant = enPassantSquare;
+moveHistory.push(moveNotation);
+
+const oldEnPassant = enPassantSquare;
 
     // En Passant
     if (
