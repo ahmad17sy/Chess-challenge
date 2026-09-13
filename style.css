@@ -100,12 +100,16 @@ nav a:hover {
    Chess Game Area
 ========================= */
 #chessGameArea {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: stretch;
-    gap: 4px;
+    position: relative;
+    width: 640px;
+    height: 640px;
     margin: 30px auto;
+}
+
+#chessboard {
+    width: 640px;
+    height: 640px;
+    margin: 0;
 }
 
 /* =========================
@@ -113,10 +117,12 @@ nav a:hover {
 ========================= */
 
 #evaluationWrapper {
+    position: absolute;
+    right: 648px;
+    top: 0;
+
     width: 32px;
     height: 640px;
-    display: flex;
-    align-items: stretch;
 }
 
 #evaluationBar {
@@ -198,13 +204,20 @@ nav a:hover {
     transform: rotate(180deg);
 }
 #moveHistory {
+    position: absolute;
+    right: 324px;
+    top: 0;
+
     width: 320px;
     height: 640px;
+
     margin: 0;
     padding: 15px;
+
     background: #222;
     color: white;
     border-radius: 10px;
+
     box-sizing: border-box;
 }
 
