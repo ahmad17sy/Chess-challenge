@@ -45,6 +45,12 @@ let pieces = [...startingPosition];
 let currentTurn = "w";
 let gameOver = false;
 let selectedSquare = null;
+let castlingRights = {
+    wK: true,
+    wQ: true,
+    bK: true,
+    bQ: true
+};
 
 // ===============================
 // ساعة الشطرنج
@@ -57,60 +63,243 @@ let selectedTime = 600;
 let clockInterval = null;
 let draggedSquare = null;
 let playerColor = "w";
+let premove = null;
 let computerRating = 2000;
+function getEngineSkill(rating) {
+    if (rating <= 1500) return 2;
+    if (rating <= 1600) return 4;
+    if (rating <= 1700) return 6;
+    if (rating <= 1800) return 8;
+    if (rating <= 1900) return 10;
+    if (rating <= 2000) return 12;
+    if (rating <= 2100) return 14;
+    if (rating <= 2200) return 16;
+    if (rating <= 2300) return 18;
+    return 20;
+}
 let stockfish = new Worker("stockfish-18-lite-single.js");
+
+let stockfishReady = false;
+let stockfishThinking = false;
+let engineRequestId = 0;
+let currentEngineRequest = 0;
+let gameSessionId = 0;
+let engineRequestSession = 0;
 let stockfishEvaluation = 0;
+let analysisStockfish = new Worker("stockfish-18-lite-single.js");
+
+let analysisReady = false;
+let analysisEvaluation = 0;
+let analysisThinking = false;
+
+let pendingMoveAnalysis = null;
+let evaluationBeforeMove = 0;
+let lastMoveEvaluation = 0;
+let moveAnalysis = [];
+
 stockfish.onmessage = function(event) {
 
     const message = event.data;
 
     console.log("Stockfish:", message);
-    if (message.startsWith("info") && message.includes("score cp")) {
 
-    const match = message.match(/score cp (-?\d+)/);
-
-if (match) {
-    stockfishEvaluation =
-        parseInt(match[1], 10) / 100;
-
-    console.log(
-        "Evaluation:",
-        stockfishEvaluation
-    );
-
-    updateEvaluationBar();
-}
-
-
-}
-if (message.startsWith("bestmove")) {
-
-    const parts = message.split(" ");
-    const move = parts[1];
-
-    if (!move || move === "(none)") {
+    // Stockfish أصبح جاهزًا
+    if (message === "uciok") {
+        stockfish.postMessage("isready");
         return;
     }
 
-    const from = algebraicToIndex(move.substring(0, 2));
-    const to = algebraicToIndex(move.substring(2, 4));
+    if (message === "readyok") {
+        stockfishReady = true;
+        return;
+    }
 
-    setTimeout(function() {
-        makeMove(from, to);
-    }, 300);
+    // تقييم الوضع الحالي
+   if (message.startsWith("info") && message.includes("score")) {
+
+    // تقييم بالنقاط
+    const cpMatch = message.match(/score cp (-?\d+)/);
+
+    if (cpMatch) {
+
+        let score =
+            parseInt(cpMatch[1], 10) / 100;
+
+        if (currentTurn === "b") {
+            score = -score;
+        }
+
+        stockfishEvaluation = score;
+        updateEvaluationBar();
+
+        return;
+    }
+
+    // كش مات
+    const mateMatch =
+        message.match(/score mate (-?\d+)/);
+
+    if (mateMatch) {
+
+        let mate =
+            parseInt(mateMatch[1], 10);
+
+        // قيمة كبيرة لتمثيل المات
+        let score =
+            mate > 0 ? 10 : -10;
+
+        if (currentTurn === "b") {
+            score = -score;
+        }
+
+        stockfishEvaluation = score;
+
+        updateEvaluationBar();
+
+        return;
+    }
+}
+
+    // أفضل نقلة
+    if (message.startsWith("bestmove")) {
+
+        const requestId = currentEngineRequest;
+
+const parts = message.split(" ");
+const move = parts[1];
+
+stockfishThinking = false;
+
+if (
+    requestId !== engineRequestId ||
+    engineRequestSession !== gameSessionId
+) {
+    console.log("Old Stockfish move ignored.");
+    return;
+}
+
+        // لا توجد نقلة
+        if (!move || move === "(none)") {
+            updateGameStatus();
+            return;
+        }
+
+        const from = algebraicToIndex(move.substring(0, 2));
+        const to = algebraicToIndex(move.substring(2, 4));
+
+        if (gameOver) return;
+
+if (currentTurn === playerColor) return;
+
+if (requestId !== engineRequestId) return;
+
+makeMove(from, to);
     }
 };
 
-
 stockfish.postMessage("uci");
+analysisStockfish.onmessage = function(event) {
 
+    const message = event.data;
+
+    if (message === "uciok") {
+        analysisStockfish.postMessage("isready");
+        return;
+    }
+
+    if (message === "readyok") {
+        analysisReady = true;
+
+        // تحليل الوضع الابتدائي
+        analyzeCurrentPosition();
+
+        return;
+    }
+
+    if (
+        message.startsWith("info") &&
+        message.includes("score cp")
+    ) {
+
+        const match =
+            message.match(/score cp (-?\d+)/);
+
+        if (!match) return;
+
+        let score =
+            parseInt(match[1], 10) / 100;
+
+        // Stockfish يعطي التقييم بالنسبة للاعب صاحب الدور
+        const fen = getFEN();
+        const sideToMove = fen.split(" ")[1];
+
+        // نحول التقييم دائماً إلى منظور الأبيض
+        if (sideToMove === "b") {
+            score = -score;
+        }
+
+        analysisEvaluation = score;
+
+        return;
+    }
+
+    if (message.startsWith("bestmove")) {
+
+        analysisThinking = false;
+
+        if (!pendingMoveAnalysis) {
+            return;
+        }
+
+        const result = pendingMoveAnalysis;
+
+        pendingMoveAnalysis = null;
+
+        const after = analysisEvaluation;
+
+        let loss;
+
+        // اللاعب الذي قام بالنقلة
+        if (result.mover === "w") {
+            loss = result.before - after;
+        } else {
+            loss = after - result.before;
+        }
+
+        loss = Math.max(0, loss);
+
+        const classification =
+            classifyMoveLoss(loss);
+
+        moveAnalysis.push({
+            move: result.move,
+            classification: classification,
+            loss: loss,
+            evaluation: after
+        });
+
+        console.log(
+            "Move:",
+            result.move,
+            "|",
+            classification,
+            "| Loss:",
+            loss.toFixed(2)
+        );
+
+        updateMoveHistoryAnalysis();
+    }
+};
+
+analysisStockfish.postMessage("uci");
 let history = [];
 let moveHistory = [];
 let redoHistory = [];
 let lastMove = null;
 function updateMoveHistory() {
 
-    const movesList = document.getElementById("movesList");
+    const movesList =
+        document.getElementById("movesList");
 
     if (!movesList) {
         return;
@@ -120,17 +309,34 @@ function updateMoveHistory() {
 
     for (let i = 0; i < moveHistory.length; i += 2) {
 
-        const row = document.createElement("div");
+        const row =
+            document.createElement("div");
+
         row.className = "move-row";
 
-        const black = document.createElement("span");
-        black.textContent = moveHistory[i + 1] || "";
+        // النقلة السوداء
+        const black =
+            document.createElement("span");
 
-        const number = document.createElement("span");
-        number.textContent = (Math.floor(i / 2) + 1) + ".";
+        black.className = "black-move";
+        black.textContent =
+            moveHistory[i + 1] || "";
 
-        const white = document.createElement("span");
-        white.textContent = moveHistory[i] || "";
+        // رقم النقلة
+        const number =
+            document.createElement("span");
+
+        number.className = "move-number";
+        number.textContent =
+            (Math.floor(i / 2) + 1) + ".";
+
+        // النقلة البيضاء
+        const white =
+            document.createElement("span");
+
+        white.className = "white-move";
+        white.textContent =
+            moveHistory[i] || "";
 
         row.appendChild(black);
         row.appendChild(number);
@@ -139,7 +345,10 @@ function updateMoveHistory() {
         movesList.appendChild(row);
     }
 
-    movesList.scrollTop = movesList.scrollHeight;
+    movesList.scrollTop =
+        movesList.scrollHeight;
+
+    updateMoveHistoryAnalysis();
 }
 
 let enPassantSquare = null;
@@ -791,6 +1000,73 @@ function getMoveNotation(from, to, piece) {
 // ===============================
 // تنفيذ الحركة
 // ===============================
+function classifyMoveLoss(loss) {
+
+    if (loss < 0.10) {
+        return "Excellent";
+    }
+
+    if (loss < 0.30) {
+        return "Good";
+    }
+
+    if (loss < 0.70) {
+        return "Inaccuracy";
+    }
+
+    if (loss < 1.50) {
+        return "Mistake";
+    }
+
+    return "Blunder";
+}
+function analyzeCurrentPosition() {
+
+    if (!analysisReady) {
+        return;
+    }
+
+    if (analysisThinking) {
+        return;
+    }
+
+    analysisThinking = true;
+
+    const fen = getFEN();
+
+    analysisStockfish.postMessage(
+        "position fen " + fen
+    );
+
+    analysisStockfish.postMessage(
+        "go movetime 100"
+    );
+}
+function analyzePlayedMove(moveNotation, moverColor, before) {
+
+    if (!analysisReady) {
+        return;
+    }
+
+    pendingMoveAnalysis = {
+        move: moveNotation,
+        mover: moverColor,
+        before: before
+    };
+
+    analysisThinking = true;
+
+    const fen = getFEN();
+
+    analysisStockfish.postMessage(
+        "position fen " + fen
+    );
+
+    analysisStockfish.postMessage(
+        "go movetime 100"
+    );
+}
+
 
 function makeMove(from, to) {
 
@@ -804,15 +1080,21 @@ function makeMove(from, to) {
 
     redoHistory = [];
 
+        // اللاعب الذي قام بالنقلة
+    const moverColor = currentTurn;
+
+    // تقييم الوضع قبل النقلة
+    const evaluationBefore = analysisEvaluation;
+
     // حفظ الحالة للـ Undo
     history.push({
-    pieces: [...pieces],
-    currentTurn: currentTurn,
-    castlingRights: {...castlingRights},
-    enPassantSquare: enPassantSquare,
-    whiteTime: whiteTime,
-    blackTime: blackTime
-});
+        pieces: [...pieces],
+        currentTurn: currentTurn,
+        castlingRights: { ...castlingRights },
+        enPassantSquare: enPassantSquare,
+        whiteTime: whiteTime,
+        blackTime: blackTime
+    });
 
     const piece = pieces[from];
     const color = getColor(piece);
@@ -888,20 +1170,52 @@ currentTurn =
     currentTurn === "w" ? "b" : "w";
 
 updateClocks();
-moveHistory.push(moveNotation);
+
+analyzePlayedMove(
+    moveNotation,
+    moverColor,
+    evaluationBefore
+);
+
 lastMove = {
     from: from,
     to: to
 };
 updateMoveHistory();
+
     selectedSquare = null;
 
     createBoard();
 
 updateGameStatus();
-// تشغيل الكمبيوتر
+
+// ===============================
+// الكمبيوتر أو Premove
+// ===============================
+
 if (currentTurn !== playerColor) {
+
     computerMove();
+
+} else if (premove) {
+
+    const pendingPremove = premove;
+
+    premove = null;
+
+    if (
+        isLegalMove(
+            pendingPremove.from,
+            pendingPremove.to
+        )
+    ) {
+
+        makeMove(
+            pendingPremove.from,
+            pendingPremove.to
+        );
+
+    }
 }
 
 return true;
@@ -1047,7 +1361,12 @@ function updateGameStatus() {
 // التراجع Undo
 // ===============================
 function undoMove() {
-
+    gameSessionId++;
+    engineRequestId++;
+currentEngineRequest = engineRequestId;
+stockfishThinking = false;
+stockfish.postMessage("stop");
+premove = null;
     if (history.length === 0) {
         return;
     }
@@ -1122,7 +1441,12 @@ if (moveHistory.length > 0) {
     updateGameStatus();
 }
 function redoMove() {
-
+    gameSessionId++;
+engineRequestId++;
+currentEngineRequest = engineRequestId;
+stockfishThinking = false;
+stockfish.postMessage("stop");
+premove = null;
     if (redoHistory.length === 0) {
         return;
     }
@@ -1188,7 +1512,11 @@ currentTurn = null;
 }
 
 function newGame() {
-
+    gameSessionId++;
+engineRequestId++;
+currentEngineRequest = engineRequestId;
+stockfishThinking = false;
+stockfish.postMessage("stop");
     const timeSelect = document.getElementById("timeSelect");
 
     if (timeSelect) {
@@ -1206,11 +1534,17 @@ function newGame() {
     selectedSquare = null;
 
     draggedSquare = null;
-
+premove = null;
     history = [];
 moveHistory = [];
 redoHistory = [];
 lastMove = null;
+moveAnalysis = [];
+analysisEvaluation = 0;
+pendingMoveAnalysis = null;
+analysisThinking = false;
+evaluationBeforeMove = 0;
+lastMoveEvaluation = 0;
     castlingRights = {
         wK: true,
         wQ: true,
@@ -1234,12 +1568,78 @@ updateMoveHistory();
 // ===============================
 // الحركة بالنقر
 // ===============================
-
 function clickMove(index) {
-if (gameOver) {
-    return;
-}
-    // لا يوجد مربع مختار
+
+    if (gameOver) {
+        return;
+    }
+
+    // ===============================
+    // Premove أثناء تفكير الكمبيوتر
+    // ===============================
+
+    if (currentTurn !== playerColor) {
+
+        // اختيار قطعة اللاعب
+        if (selectedSquare === null) {
+
+            if (
+                pieces[index] &&
+                getColor(pieces[index]) === playerColor
+            ) {
+
+                selectedSquare = index;
+
+                createBoard();
+
+                document
+                    .querySelectorAll(".square")[index]
+                    .classList.add("selected");
+            }
+
+            return;
+        }
+
+        // إلغاء الاختيار بالضغط على نفس المربع
+        if (selectedSquare === index) {
+
+            selectedSquare = null;
+
+            createBoard();
+
+            return;
+        }
+
+        // حفظ الـ Premove
+        if (
+            pieces[selectedSquare] &&
+            getColor(pieces[selectedSquare]) === playerColor
+        ) {
+
+            premove = {
+                from: selectedSquare,
+                to: index
+            };
+
+            console.log(
+                "Premove:",
+                selectedSquare,
+                "→",
+                index
+            );
+        }
+
+        selectedSquare = null;
+
+        createBoard();
+
+        return;
+    }
+
+    // ===============================
+    // الحركة العادية
+    // ===============================
+
     if (selectedSquare === null) {
 
         if (
@@ -1274,7 +1674,7 @@ if (gameOver) {
         return;
     }
 
-    // إذا ضغط على قطعة أخرى من نفس اللون
+    // اختيار قطعة أخرى من نفس اللون
     if (
         pieces[index] &&
         getColor(pieces[index]) === currentTurn
@@ -1287,8 +1687,6 @@ if (gameOver) {
         document
             .querySelectorAll(".square")[index]
             .classList.add("selected");
-
-        return;
     }
 }
 
@@ -1354,13 +1752,16 @@ if (
             // السحب
             image.addEventListener("dragstart", function () {
 
-                if (getColor(piece) === currentTurn) {
-                    draggedSquare = i;
-                } else {
-                    draggedSquare = null;
-                }
+    if (
+        piece &&
+        getColor(piece) === playerColor
+    ) {
+        draggedSquare = i;
+    } else {
+        draggedSquare = null;
+    }
 
-            });
+});
 
             image.addEventListener("dragend", function () {
                 draggedSquare = null;
@@ -1384,12 +1785,39 @@ if (
 
             event.preventDefault();
 
-            if (draggedSquare !== null) {
+           if (draggedSquare !== null) {
 
-                makeMove(draggedSquare, i);
+    // أثناء تفكير الكمبيوتر = Premove
+    if (currentTurn !== playerColor) {
 
-                draggedSquare = null;
-            }
+        if (
+            pieces[draggedSquare] &&
+            getColor(pieces[draggedSquare]) === playerColor
+        ) {
+
+            premove = {
+                from: draggedSquare,
+                to: i
+            };
+
+            console.log(
+                "Premove:",
+                draggedSquare,
+                "→",
+                i
+            );
+        }
+
+    } else {
+
+        // الحركة العادية
+        makeMove(draggedSquare, i);
+    }
+
+    draggedSquare = null;
+
+    createBoard();
+}
 
         });
 
@@ -1447,13 +1875,8 @@ function updateEvaluationBar() {
         return;
     }
 
+    // التقييم بالفعل من منظور الأبيض
     let score = stockfishEvaluation;
-
-    // Stockfish يعطي التقييم من منظور الطرف الذي عليه الدور.
-    // نجعله دائمًا من منظور الأبيض.
-    if (currentTurn === "b") {
-        score = -score;
-    }
 
     // تحديد التقييم بين -10 و +10
     const limited =
@@ -1651,10 +2074,7 @@ document
         playerColor = Math.random() < 0.5 ? "w" : "b";
         newGame();
     });
-    .addEventListener("click", function () {
-        playerColor = "b";
-        newGame();
-    });
+
 
 // ===============================
 // تحديث اللعبة عند التشغيل
@@ -1757,37 +2177,48 @@ function getFEN() {
 // ===============================
 function computerMove() {
 
+    if (gameOver) return;
 
-    if (gameOver) {
+    if (currentTurn === playerColor) return;
+
+    if (stockfishThinking) return;
+
+    if (!stockfishReady) {
+        console.log("Stockfish is not ready yet.");
         return;
     }
 
-    if (currentTurn === playerColor) {
-        return;
-    }
+    stockfishThinking = true;
 
-    const moves = getLegalMoves(currentTurn);
+    // رقم جديد لهذا الطلب
+    engineRequestId++;
+currentEngineRequest = engineRequestId;
 
-    if (moves.length === 0) {
-        updateGameStatus();
-        return;
-    }
+const requestId = currentEngineRequest;
+engineRequestSession = gameSessionId;
 
-    stockfish.postMessage("setoption name UCI_LimitStrength true");
-    stockfish.postMessage("setoption name UCI_Elo " + computerRating);
+    const fen = getFEN();
 
-    stockfish.postMessage("ucinewgame");
-    stockfish.postMessage("isready");
+    console.log("Stockfish thinking...");
+    console.log("Request:", requestId);
+    console.log("FEN:", fen);
+
+    // إعداد القوة الأساسية
+    stockfish.postMessage("setoption name UCI_LimitStrength value true");
+
+stockfish.postMessage(
+    "setoption name UCI_Elo value " + computerRating
+);
+
+    stockfish.postMessage("position fen " + fen);
+
+    // وقت التفكير حسب مستوى الكمبيوتر
+    let thinkTime = 100;
 
     stockfish.postMessage(
-        "position fen " + getFEN()
-    );
-
-    stockfish.postMessage(
-        "go movetime 1000"
+        "go movetime " + thinkTime
     );
 }
-
 
 // ===============================
 // ساعة الشطرنج
@@ -1934,8 +2365,8 @@ timeCategoryButtons.forEach(function(button) {
         }
 
         if (category === "rapid") {
-            timeSelect.value = "600,5";
-        }
+    timeSelect.value = "600,0";
+}
 
         if (category === "classical") {
             timeSelect.value = "1800,0";
@@ -1957,4 +2388,63 @@ timeCategoryButtons.forEach(function(button) {
 document
     .querySelector('[data-category="rapid"]')
     .classList.add("active");
-    
+ function updateMoveHistoryAnalysis() {
+
+    const rows =
+        document.querySelectorAll(".move-row");
+
+    for (let i = 0; i < rows.length; i++) {
+
+        const whiteAnalysis =
+            moveAnalysis[i * 2];
+
+        const blackAnalysis =
+            moveAnalysis[i * 2 + 1];
+
+        const whiteMove =
+            rows[i].querySelector(".white-move");
+
+        const blackMove =
+            rows[i].querySelector(".black-move");
+
+        if (whiteMove && whiteAnalysis) {
+
+            let label =
+                whiteMove.querySelector(".move-analysis");
+
+            if (!label) {
+
+                label =
+                    document.createElement("span");
+
+                label.className =
+                    "move-analysis";
+
+                whiteMove.appendChild(label);
+            }
+
+            label.textContent =
+                whiteAnalysis.classification;
+        }
+
+        if (blackMove && blackAnalysis) {
+
+            let label =
+                blackMove.querySelector(".move-analysis");
+
+            if (!label) {
+
+                label =
+                    document.createElement("span");
+
+                label.className =
+                    "move-analysis";
+
+                blackMove.appendChild(label);
+            }
+
+            label.textContent =
+                blackAnalysis.classification;
+        }
+    }
+}
