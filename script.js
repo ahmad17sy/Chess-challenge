@@ -1821,8 +1821,9 @@ if (piece) {
 
     const image = document.createElement("img");
 
-    image.src = "pieces/" + piece + ".svg";
-    image.classList.add("chess-piece");
+    image.src = "pieces/" + piece + ".svg";image.src = "./pieces/" + piece + ".svg";
+image.classList.add("chess-piece");
+image.alt = "";
 
     // السماح بسحب قطعة اللاعب فقط
     // السماح بسحب قطعة اللاعب فقط
@@ -1868,7 +1869,7 @@ if (getColor(piece) === playerColor) {
 
                 dragPiece = document.createElement("img");
 
-                dragPiece.src = piece + ".svg";
+                dragPiece.src = "./pieces/" + piece + ".svg";
                 dragPiece.classList.add("dragging-piece");
 
                 document.body.appendChild(dragPiece);
