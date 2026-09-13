@@ -804,13 +804,6 @@ function makeMove(from, to) {
     const color = getColor(piece);
     const type = getType(piece);
 
-    String.fromCharCode(97 + (from % 8)) +
-    (8 - Math.floor(from / 8));
-
-
-    String.fromCharCode(97 + (to % 8)) +
-    (8 - Math.floor(to / 8));
-
    const moveNotation = getMoveNotation(from, to, piece);
 
     const oldEnPassant = enPassantSquare;
