@@ -97,6 +97,7 @@ stockfish.postMessage("uci");
 let history = [];
 let moveHistory = [];
 let redoHistory = [];
+let lastMove = null;
 function updateMoveHistory() {
 
     const movesList = document.getElementById("movesList");
@@ -790,7 +791,7 @@ function makeMove(from, to) {
     if (!isLegalMove(from, to)) {
         return false;
     }
-    
+
     redoHistory = [];
 
     // حفظ الحالة للـ Undo
@@ -868,6 +869,10 @@ function makeMove(from, to) {
     currentTurn =
         currentTurn === "w" ? "b" : "w";
 moveHistory.push(moveNotation);
+lastMove = {
+    from: from,
+    to: to
+};
 updateMoveHistory();
     selectedSquare = null;
 
@@ -957,55 +962,60 @@ function isLegalMoveForColor(from, to, color) {
 // ===============================
 // حالة اللعبة
 // ===============================
-
 function updateGameStatus() {
 
-    const status =
-        document.getElementById("gameStatus");
+    const status = document.getElementById("gameStatus");
 
     if (!status) {
         return;
     }
 
-    const legalMoves =
-        getLegalMoves(currentTurn);
+    if (gameOver) {
+        status.textContent = "Game Over";
+        return;
+    }
+
+    const legalMoves = getLegalMoves(currentTurn);
+    const inCheck = isInCheck(currentTurn);
 
     if (legalMoves.length === 0) {
 
-        if (isInCheck(currentTurn)) {
+        gameOver = true;
 
+        if (inCheck) {
             const winner =
                 currentTurn === "w"
-                    ? "الأسود"
-                    : "الأبيض";
+                    ? "Black"
+                    : "White";
 
             status.textContent =
-                "♚ كش مات! الفائز: " + winner;
-
+                "Checkmate — " + winner + " wins!";
         } else {
-
             status.textContent =
-                "🤝 تعادل — Stalemate";
+                "Draw — Stalemate";
         }
 
         return;
     }
 
-    if (isInCheck(currentTurn)) {
+    if (inCheck) {
+        status.textContent =
+            currentTurn === playerColor
+                ? "Check! Your turn"
+                : "Check! Computer's turn";
+
+        return;
+    }
+
+    if (currentTurn === playerColor) {
 
         status.textContent =
-            "⚠️ كش على " +
-            (currentTurn === "w"
-                ? "الأبيض"
-                : "الأسود");
+            "Your turn";
 
     } else {
 
         status.textContent =
-            "دور " +
-            (currentTurn === "w"
-                ? "الأبيض"
-                : "الأسود");
+            "Computer thinking...";
     }
 }
 
@@ -1078,7 +1088,6 @@ function undoMove() {
 
     updateGameStatus();
 }
-
 function redoMove() {
 
     if (redoHistory.length === 0) {
@@ -1095,8 +1104,7 @@ function redoMove() {
         ...next.castlingRights
     };
 
-    enPassantSquare =
-        next.enPassantSquare;
+    enPassantSquare = next.enPassantSquare;
 
     moveHistory = [...next.moveHistory];
 
@@ -1150,6 +1158,7 @@ gameOver = false;
     history = [];
 moveHistory = [];
 redoHistory = [];
+lastMove = null;
     castlingRights = {
         wK: true,
         wQ: true,
@@ -1260,7 +1269,21 @@ function createBoard() {
         if (selectedSquare === i) {
             square.classList.add("selected");
         }
+        // تمييز الملك عندما يكون في Check
+if (
+    pieces[i] &&
+    getType(pieces[i]) === "K" &&
+    isInCheck(getColor(pieces[i]))
+) {
+    square.classList.add("check");
+}
 
+if (
+    lastMove &&
+    (lastMove.from === i || lastMove.to === i)
+) {
+    square.classList.add("last-move");
+}
         // القطعة الموجودة في هذا المربع
         const piece = pieces[i];
 
