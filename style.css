@@ -1,4 +1,4 @@
-    body {
+body {
     margin: 0;
     background: #d9d9d9;
     color: #222;
@@ -6,27 +6,25 @@
     font-family: Arial, Helvetica, sans-serif;
 }
 
-    h1 {
+h1 {
     color: #262522;
     font-size: 46px;
     margin: 20px 0 12px 0;
 }
 
-    h2 {
-    
-        font-size: 50px;
-    }
+h2 {
+    font-size: 50px;
+}
 
-    h3 {
-    
-        font-size: 40px;
-    }
+h3 {
+    font-size: 40px;
+}
 
-    p {
-        font-size: 20px;
-    }
+p {
+    font-size: 20px;
+}
 
-    button {
+button {
     background-color: darkblue;
     color: white;
     font-size: 18px;
@@ -52,14 +50,22 @@ nav a {
 nav a:hover {
     color: blue;
 }
+
+
+/* =========================
+   Chess Board
+========================= */
+
 #chessboard {
     width: 640px;
     height: 640px;
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     grid-template-rows: repeat(8, 1fr);
-
     margin: 30px auto;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.35);
 }
 
 .square {
@@ -67,8 +73,12 @@ nav a:hover {
     justify-content: center;
     align-items: center;
     font-size: 50px;
+    transition: filter 0.12s ease;
 }
 
+.square:hover {
+    filter: brightness(1.08);
+}
 
 .light {
     background-color: #ffffff;
@@ -77,6 +87,12 @@ nav a:hover {
 .dark {
     background-color: #000000;
 }
+
+
+/* =========================
+   Chess Pieces
+========================= */
+
 .chess-piece {
     width: 88%;
     height: 88%;
@@ -90,9 +106,11 @@ nav a:hover {
     cursor: grabbing;
 }
 
+
 /* =========================
    Chess Game Area
 ========================= */
+
 #chessGameArea {
     position: relative;
     width: 640px;
@@ -101,11 +119,12 @@ nav a:hover {
     transform: translateX(0);
 }
 
-#chessboard {
+#chessGameArea #chessboard {
     width: 640px;
     height: 640px;
     margin: 0;
 }
+
 
 /* =========================
    Evaluation Bar
@@ -126,7 +145,7 @@ nav a:hover {
     background: #222;
     border-radius: 5px;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 #evaluationBar::before {
@@ -149,66 +168,16 @@ nav a:hover {
     font-size: 13px;
     font-weight: bold;
     color: #333;
-    background: rgba(255,255,255,0.8);
+    background: rgba(255, 255, 255, 0.8);
     padding: 3px 5px;
     border-radius: 3px;
 }
 
-/* =========================
-   Chess Controls
-========================= */
-
-#chessControls {
-    width: 640px;
-    margin: 15px auto 20px auto;
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-#chessControls button {
-    background: #262522;
-    color: white;
-    border: none;
-    border-radius: 7px;
-    padding: 10px 17px;
-    margin: 0;
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: 600;
-    transition: 0.15s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.25);
-}
-
-#chessControls button:hover {
-    background: #44423f;
-    transform: translateY(-1px);
-}
-
-#chessControls button:active {
-    transform: translateY(1px);
-}
-
-#resignButton {
-    background: #8b1e1e !important;
-}
-
-#resignButton:hover {
-    background: #b52a2a !important;
-}
 
 /* =========================
-   Rotated Chess Board
+   Move History
 ========================= */
 
-#chessboard.flipped {
-    transform: rotate(180deg);
-}
-
-#chessboard.flipped .chess-piece {
-    transform: rotate(180deg);
-}
 #moveHistory {
     position: absolute;
     width: 320px;
@@ -221,7 +190,7 @@ nav a:hover {
     color: white;
     border-radius: 10px;
     box-sizing: border-box;
-    box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
 }
 
 #moveHistory h3 {
@@ -262,19 +231,11 @@ nav a:hover {
 .move-row span:nth-child(3) {
     text-align: right;
 }
-#computerRatingLabel {
-    display: block;
-    margin-top: 8px;
-    font-size: 16px;
-}
 
-#computerRating {
-    font-size: 16px;
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid #aaa;
-    cursor: pointer;
-}
+
+/* =========================
+   Game Status
+========================= */
 
 #gameStatus {
     width: 640px;
@@ -286,102 +247,10 @@ nav a:hover {
     color: #262522;
 }
 
-@keyframes checkPulse {
-    from {
-        filter: brightness(1);
-    }
-    to {
-        filter: brightness(1.4);
-    }
-}
 
-#chessClock {
-    width: 640px;
-    margin: 10px auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.clock {
-    background: #262522;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-size: 26px;
-    font-weight: bold;
-    min-width: 105px;
-    box-sizing: border-box;
-    transition: all 0.2s ease;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.25);
-}
-
-.white-clock {
-    order: 1;
-}
-
-.black-clock {
-    order: 2;
-}
-
-/* الساعة التي عليها الدور */
-.clock.active {
-    background: #ffffff;
-    color: #222;
-    transform: scale(1.05);
-    box-shadow: 0 0 0 3px #666;
-}
-
-/* تحذير الوقت */
-.clock.low-time {
-    background: #8b1e1e;
-    color: white;
-}
-
-/* آخر 10 ثوانٍ */
-.clock.critical-time {
-    background: #d32f2f;
-    color: white;
-    animation: clockPulse 0.6s infinite alternate;
-}
-
-@keyframes clockPulse {
-    from {
-        transform: scale(1);
-    }
-
-    to {
-        transform: scale(1.08);
-    }
-}
-
-.time-title {
-    color: #ffffff;
-    font-size: 17px;
-    font-weight: bold;
-    margin-bottom: 12px;
-}
-
-#timeSelect {
-    width: 100%;
-    padding: 11px 12px;
-    border: 1px solid #555;
-    border-radius: 8px;
-    background: #3c3b39;
-    color: white;
-    font-size: 17px;
-    font-weight: 600;
-    cursor: pointer;
-    outline: none;
-}
-
-#timeSelect:hover {
-    background: #4a4947;
-}
-
-#timeSelect:focus {
-    border-color: #888;
-}
+/* =========================
+   Color Controls
+========================= */
 
 #colorControls {
     width: 640px;
@@ -407,19 +276,187 @@ nav a:hover {
     background: #44423f;
     transform: translateY(-1px);
 }
-#chessboard {
-    border-radius: 4px;
-    overflow: hidden;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.35);
+
+
+/* =========================
+   Chess Controls
+========================= */
+
+#chessControls {
+    width: 640px;
+    margin: 15px auto 20px auto;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
-.square {
-    transition: filter 0.12s ease;
+#chessControls button {
+    background: #262522;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    padding: 10px 17px;
+    margin: 0;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    transition: 0.15s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
 }
 
-.square:hover {
-    filter: brightness(1.08);
+#chessControls button:hover {
+    background: #44423f;
+    transform: translateY(-1px);
 }
+
+#chessControls button:active {
+    transform: translateY(1px);
+}
+
+#resignButton {
+    background: #8b1e1e !important;
+}
+
+#resignButton:hover {
+    background: #b52a2a !important;
+}
+
+
+/* =========================
+   Computer Rating
+========================= */
+
+#computerRatingLabel {
+    display: block;
+    margin-top: 8px;
+    font-size: 16px;
+}
+
+#computerRating {
+    font-size: 16px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #aaa;
+    cursor: pointer;
+}
+
+
+/* =========================
+   Chess Clock
+========================= */
+
+#chessClock {
+    width: 640px;
+    margin: 10px auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.clock {
+    background: #262522;
+    color: #ffffff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 28px;
+    font-weight: 700;
+    min-width: 120px;
+    box-sizing: border-box;
+    text-align: center;
+    letter-spacing: 1px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+    transition: all 0.15s ease;
+}
+
+.white-clock {
+    order: 1;
+}
+
+.black-clock {
+    order: 2;
+}
+
+.clock.active {
+    background: #ffffff;
+    color: #222222;
+    transform: scale(1.06);
+    box-shadow:
+        0 0 0 3px #555555,
+        0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.clock.low-time {
+    background: #8b1e1e;
+    color: #ffffff;
+}
+
+.clock.critical-time {
+    background: #d32f2f;
+    color: #ffffff;
+    animation: clockPulse 0.6s infinite alternate;
+}
+
+@keyframes clockPulse {
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(1.08);
+    }
+}
+
+
+/* =========================
+   Time Control
+========================= */
+
+#timeControl {
+    position: absolute;
+    left: 680px;
+    top: 0;
+    width: 220px;
+    background: #262522;
+    padding: 18px;
+    border-radius: 12px;
+    box-sizing: border-box;
+    text-align: center;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+.time-title {
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 14px;
+}
+
+#timeSelect {
+    width: 100%;
+    padding: 12px 10px;
+    border: 1px solid #555;
+    border-radius: 8px;
+    background: #3c3b39;
+    color: white;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+}
+
+#timeSelect:hover {
+    background: #4a4947;
+}
+
+#timeSelect:focus {
+    border-color: #aaa;
+}
+
+
+/* =========================
+   Board Highlights
+========================= */
 
 .selected {
     outline: 4px solid #f5c542;
@@ -434,19 +471,61 @@ nav a:hover {
 .check {
     box-shadow: inset 0 0 0 5px #e53935;
 }
-#timeControl {
-    position: absolute;
-    left: 680px;
-    top: 0;
-    width: 220px;
-    background: #262522;
-    padding: 16px;
-    border-radius: 12px;
-    box-sizing: border-box;
-    text-align: center;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+
+
+/* =========================
+   Board Rotation
+========================= */
+
+#chessboard.flipped {
+    transform: rotate(180deg);
 }
 
-#timeSelect:hover {
+#chessboard.flipped .chess-piece {
+    transform: rotate(180deg);
+}
+
+
+/* =========================
+   Check Animation
+========================= */
+
+@keyframes checkPulse {
+    from {
+        filter: brightness(1);
+    }
+
+    to {
+        filter: brightness(1.4);
+    }
+}
+.time-category {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+    margin-bottom: 12px;
+}
+
+.time-category button {
+    margin: 0;
+    padding: 8px 5px;
+    background: #3c3b39;
+    color: #ddd;
+    border: 1px solid #555;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.15s ease;
+}
+
+.time-category button:hover {
     background: #4a4947;
+    color: white;
+}
+
+.time-category button.active {
+    background: #ffffff;
+    color: #222;
+    border-color: #ffffff;
 }

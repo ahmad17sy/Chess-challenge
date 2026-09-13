@@ -1911,4 +1911,50 @@ if (timeSelect) {
         newGame();
     });
 }
+const timeCategoryButtons = document.querySelectorAll(".time-category button");
 
+timeCategoryButtons.forEach(function(button) {
+
+    button.addEventListener("click", function() {
+
+        const category = this.dataset.category;
+
+        timeCategoryButtons.forEach(function(btn) {
+            btn.classList.remove("active");
+        });
+
+        this.classList.add("active");
+
+        if (category === "bullet") {
+            timeSelect.value = "60,0";
+        }
+
+        if (category === "blitz") {
+            timeSelect.value = "180,2";
+        }
+
+        if (category === "rapid") {
+            timeSelect.value = "600,5";
+        }
+
+        if (category === "classical") {
+            timeSelect.value = "1800,0";
+        }
+
+        const values = timeSelect.value.split(",");
+
+        selectedTime = Number(values[0]);
+        incrementTime = Number(values[1]);
+
+        newGame();
+    });
+
+});
+timeCategoryButtons.forEach(function(button) {
+    button.classList.remove("active");
+});
+
+document
+    .querySelector('[data-category="rapid"]')
+    .classList.add("active");
+    
