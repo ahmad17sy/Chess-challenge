@@ -2788,3 +2788,60 @@ function updateCapturedPieces() {
         whiteContainer.appendChild(score);
     }
 }
+function generatePGN() {
+
+    let pgn = "";
+
+    for (let i = 0; i < moveHistory.length; i++) {
+
+        if (i % 2 === 0) {
+            pgn += (Math.floor(i / 2) + 1) + ". ";
+        }
+
+        pgn += moveHistory[i] + " ";
+    }
+
+    return pgn.trim();
+}
+
+
+document.getElementById("copyPGN").addEventListener("click", function () {
+
+    const pgn = generatePGN();
+
+    navigator.clipboard.writeText(pgn);
+
+    this.textContent = "✅ Copied!";
+
+    const button = this;
+
+    setTimeout(function () {
+        button.textContent = "📋 Copy PGN";
+    }, 1500);
+});
+
+
+document.getElementById("downloadPGN").addEventListener("click", function () {
+
+    const pgn = generatePGN();
+
+    const blob = new Blob(
+        [pgn],
+        { type: "application/x-chess-pgn" }
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "my-chess-game.pgn";
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
+});
