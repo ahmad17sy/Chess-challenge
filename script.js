@@ -2959,37 +2959,400 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 });
+/* =========================================
+   PGN IMPORT + GAME NAVIGATION
+========================================= */
+
+let importedGame = null;
+let importedMoves = [];
+let importedPositions = [];
+let importedMoveIndex = 0;
+
+
+/* Convert FEN to our pieces array */
+
+function fenToPieces(fen) {
+
+    const boardPart = fen.split(" ")[0];
+
+    const result = [];
+
+    for (let rank = 0; rank < 8; rank++) {
+
+        const row = boardPart.split("/")[rank];
+
+        for (let file = 0; file < 8; file++) {
+
+            const char = row[file];
+
+            if (!char) {
+                continue;
+            }
+
+            if (!isNaN(char)) {
+
+                const empty = parseInt(char);
+
+                for (let i = 0; i < empty; i++) {
+                    result.push(null);
+                }
+
+            } else {
+
+                result.push(charToPiece(char));
+            }
+        }
+    }
+
+    return result;
+}
+
+
+/* Convert FEN piece letter to our piece names */
+
+function charToPiece(char) {
+
+    const map = {
+
+        "P": "wP",
+        "N": "wN",
+        "B": "wB",
+        "R": "wR",
+        "Q": "wQ",
+        "K": "wK",
+
+        "p": "bP",
+        "n": "bN",
+        "b": "bB",
+        "r": "bR",
+        "q": "bQ",
+        "k": "bK"
+
+    };
+
+    return map[char] || null;
+}
+
+
+/* Import PGN */
+
 document.addEventListener("DOMContentLoaded", function () {
 
-    const pgnFile = document.getElementById("pgnFile");
-    const importPGN = document.getElementById("importPGN");
+    const pgnFile =
+        document.getElementById("pgnFile");
+
+    const importPGN =
+        document.getElementById("importPGN");
 
     if (!pgnFile || !importPGN) {
         return;
     }
 
+
     importPGN.addEventListener("click", function () {
 
         if (!pgnFile.files.length) {
+
             alert("Please choose a PGN file first.");
+
             return;
         }
 
+
         const file = pgnFile.files[0];
+
         const reader = new FileReader();
+
 
         reader.onload = function (event) {
 
-            const pgnText = event.target.result;
+            const pgnText =
+                event.target.result;
 
-            console.log("PGN IMPORTED:");
-            console.log(pgnText);
 
-            alert("PGN imported successfully!");
+            importedGame = new Chess();
+
+
+            const loaded =
+                importedGame.load_pgn(pgnText);
+
+
+            if (!loaded) {
+
+                alert("Could not read this PGN file.");
+
+                return;
+            }
+
+
+            importedMoves =
+                importedGame.history();
+
+
+            /*
+                Create a new Chess object
+                and save every position.
+            */
+
+            const replay =
+                new Chess();
+
+
+            importedPositions = [];
+
+            importedPositions.push(
+                replay.fen()
+            );
+
+
+            for (
+                let i = 0;
+                i < importedMoves.length;
+                i++
+            ) {
+
+                replay.move(
+                    importedMoves[i]
+                );
+
+                importedPositions.push(
+                    replay.fen()
+                );
+            }
+
+
+            importedMoveIndex = 0;
+
+
+            showImportedPosition();
+
+
+            alert(
+                "PGN imported successfully!\n\n" +
+                importedMoves.length +
+                " moves loaded."
+            );
 
         };
 
+
         reader.readAsText(file);
+
+    });
+
+});
+
+
+/* Show selected position */
+
+function showImportedPosition() {
+
+    if (!importedPositions.length) {
+        return;
+    }
+
+
+    const fen =
+        importedPositions[
+            importedMoveIndex
+        ];
+
+
+    pieces =
+        fenToPieces(fen);
+
+
+    createBoard();
+
+
+    updateImportedMoveCounter();
+
+    updateImportedHistory();
+
+}
+
+
+/* Move counter */
+
+function updateImportedMoveCounter() {
+
+    const counter =
+        document.getElementById("pgnMoveNumber");
+
+    if (!counter) {
+        return;
+    }
+
+
+    counter.textContent =
+        importedMoveIndex +
+        " / " +
+        importedMoves.length;
+}
+
+
+/* Display imported moves */
+
+function updateImportedHistory() {
+
+    const movesList =
+        document.getElementById("movesList");
+
+    if (!movesList) {
+        return;
+    }
+
+
+    movesList.innerHTML = "";
+
+
+    for (
+        let i = 0;
+        i < importedMoveIndex;
+        i++
+    ) {
+
+        const moveNumber =
+            Math.floor(i / 2) + 1;
+
+
+        const span =
+            document.createElement("span");
+
+
+        if (i % 2 === 0) {
+
+            span.textContent =
+                moveNumber +
+                ". " +
+                importedMoves[i] +
+                " ";
+
+        } else {
+
+            span.textContent =
+                importedMoves[i] +
+                " ";
+
+        }
+
+
+        movesList.appendChild(span);
+    }
+}
+
+
+/* First move */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const button =
+        document.getElementById("pgnFirst");
+
+    if (!button) {
+        return;
+    }
+
+
+    button.addEventListener("click", function () {
+
+        if (!importedPositions.length) {
+            return;
+        }
+
+        importedMoveIndex = 0;
+
+        showImportedPosition();
+
+    });
+
+});
+
+
+/* Previous move */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const button =
+        document.getElementById("pgnPrevious");
+
+    if (!button) {
+        return;
+    }
+
+
+    button.addEventListener("click", function () {
+
+        if (importedMoveIndex <= 0) {
+            return;
+        }
+
+
+        importedMoveIndex--;
+
+        showImportedPosition();
+
+    });
+
+});
+
+
+/* Next move */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const button =
+        document.getElementById("pgnNext");
+
+    if (!button) {
+        return;
+    }
+
+
+    button.addEventListener("click", function () {
+
+        if (
+            importedMoveIndex >=
+            importedMoves.length
+        ) {
+            return;
+        }
+
+
+        importedMoveIndex++;
+
+        showImportedPosition();
+
+    });
+
+});
+
+
+/* Last move */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const button =
+        document.getElementById("pgnLast");
+
+    if (!button) {
+        return;
+    }
+
+
+    button.addEventListener("click", function () {
+
+        if (!importedPositions.length) {
+            return;
+        }
+
+
+        importedMoveIndex =
+            importedMoves.length;
+
+
+        showImportedPosition();
+
     });
 
 });

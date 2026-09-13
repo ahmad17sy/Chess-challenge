@@ -94,16 +94,29 @@
     <button id="startOpening">Start Training</button>
 </div>
 <div id="pgnControls">
+
     <button id="copyPGN">📋 Copy PGN</button>
     <button id="downloadPGN">💾 Download PGN</button>
     <button id="shareGame">🔗 Share Game</button>
 
+    <br>
+
     <input type="file" id="pgnFile" accept=".pgn">
     <button id="importPGN">📂 Import PGN</button>
+
+    <div id="pgnNavigation">
+        <button id="pgnFirst">⏮ First</button>
+        <button id="pgnPrevious">◀ Previous</button>
+        <span id="pgnMoveNumber">0 / 0</span>
+        <button id="pgnNext">Next ▶</button>
+        <button id="pgnLast">Last ⏭</button>
+    </div>
+
 </div>
     </div>
 
-    <script src="./script.js?v=2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+<script src="./script.js?v=3"></script>
 
 </body>
 
