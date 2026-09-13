@@ -1738,7 +1738,7 @@ function createBoard() {
             square.classList.add("last-move");
         }
 
-    const piece = pieces[i];
+const piece = pieces[i];
 
 if (piece) {
 
@@ -1747,131 +1747,106 @@ if (piece) {
     image.src = piece + ".svg";
     image.classList.add("chess-piece");
 
-    // ===============================
-    // Drag & Drop
-    // ===============================
-
+    // السماح بسحب قطعة اللاعب فقط
     if (getColor(piece) === playerColor) {
-        square.draggable = true;
+
+        square.addEventListener("mousedown", function (event) {
+
+            if (gameOver) return;
+
+            if (event.button !== 0) return;
+
+            if (!pieces[i]) return;
+
+            if (getColor(pieces[i]) !== playerColor) return;
+
+            draggedSquare = i;
+selectedSquare = i;
+
+// أخفِ القطعة الأصلية أثناء السحب
+square.style.visibility = "hidden";
+
+const dragPiece = document.createElement("img");
+
+            dragPiece.src = piece + ".svg";
+            dragPiece.classList.add("dragging-piece");
+
+            document.body.appendChild(dragPiece);
+
+            dragPiece.style.left = event.clientX + "px";
+            dragPiece.style.top = event.clientY + "px";
+
+            function movePiece(e) {
+
+                dragPiece.style.left = e.clientX + "px";
+                dragPiece.style.top = e.clientY + "px";
+            }
+
+            function releasePiece(e) {
+
+                document.removeEventListener("mousemove", movePiece);
+                document.removeEventListener("mouseup", releasePiece);
+
+                dragPiece.remove();
+
+const element = document.elementFromPoint(
+    e.clientX,
+    e.clientY
+);
+
+                const targetSquare = element
+                    ? element.closest(".square")
+                    : null;
+
+                if (!targetSquare) {
+                    draggedSquare = null;
+                    selectedSquare = null;
+                    createBoard();
+                    return;
+                }
+
+                const allSquares =
+                    Array.from(document.querySelectorAll(".square"));
+
+                const to = allSquares.indexOf(targetSquare);
+
+                if (to < 0) {
+                    draggedSquare = null;
+                    selectedSquare = null;
+                    createBoard();
+                    return;
+                }
+
+                if (currentTurn !== playerColor) {
+
+                    premove = {
+                        from: i,
+                        to: to
+                    };
+
+                    draggedSquare = null;
+                    selectedSquare = null;
+                    createBoard();
+                    return;
+                }
+
+                if (makeMove(i, to)) {
+                    selectedSquare = null;
+                } else {
+                    selectedSquare = null;
+                }
+
+                draggedSquare = null;
+                createBoard();
+            }
+
+            document.addEventListener("mousemove", movePiece);
+            document.addEventListener("mouseup", releasePiece);
+        });
     }
-
-    square.addEventListener("dragstart", function (event) {
-
-        if (gameOver) {
-            event.preventDefault();
-            return;
-        }
-
-        if (!pieces[i]) {
-            event.preventDefault();
-            return;
-        }
-
-        if (getColor(pieces[i]) !== playerColor) {
-            event.preventDefault();
-            return;
-        }
-
-        draggedSquare = i;
-        selectedSquare = i;
-
-        event.dataTransfer.effectAllowed = "move";
-        event.dataTransfer.setData(
-            "text/plain",
-            String(i)
-        );
-    });
-
-    square.addEventListener("dragend", function () {
-        draggedSquare = null;
-    });
 
     square.appendChild(image);
 }
-
-// ===============================
-// النقر العادي
-// ===============================
-
-square.addEventListener("click", function () {
-    clickMove(i);
-});
-
-// ===============================
-// Drag over
-// ===============================
-
-square.addEventListener("dragover", function (event) {
-    event.preventDefault();
-
-    if (event.dataTransfer) {
-        event.dataTransfer.dropEffect = "move";
-    }
-});
-
-// ===============================
-// Drop
-// ===============================
-
-square.addEventListener("drop", function (event) {
-
-    event.preventDefault();
-    event.stopPropagation();
-
-    let from = draggedSquare;
-
-    const savedFrom =
-        event.dataTransfer.getData("text/plain");
-
-    if (savedFrom !== "") {
-        from = Number(savedFrom);
-    }
-
-    draggedSquare = null;
-
-    if (
-        from === null ||
-        from === undefined ||
-        Number.isNaN(from)
-    ) {
-        selectedSquare = null;
-        createBoard();
-        return;
-    }
-
-    // ===============================
-    // Premove
-    // ===============================
-
-    if (currentTurn !== playerColor) {
-
-        if (
-            pieces[from] &&
-            getColor(pieces[from]) === playerColor
-        ) {
-
-            premove = {
-                from: from,
-                to: i
-            };
-        }
-
-        selectedSquare = null;
-        createBoard();
-        return;
-    }
-
-    // ===============================
-    // تنفيذ النقلة
-    // ===============================
-
-    if (makeMove(from, i)) {
-        selectedSquare = null;
-    }
-
-    draggedSquare = null;
-    createBoard();
-});
 
     board.appendChild(square);
     

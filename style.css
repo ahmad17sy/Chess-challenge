@@ -104,15 +104,6 @@ nav a:hover {
     pointer-events: none;
 }
 
-.square[draggable="true"] {
-    cursor: grab;
-}
-
-.square[draggable="true"]:active {
-    cursor: grabbing;
-}
-
-
 /* =========================
    Chess Game Area
 ========================= */
@@ -534,4 +525,14 @@ nav a:hover {
     background: #ffffff;
     color: #222;
     border-color: #ffffff;
+}
+.dragging-piece {
+    position: fixed;
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    pointer-events: none;
+    z-index: 99999;
+    transform: translate(-50%, -50%);
+    cursor: grabbing;
 }
