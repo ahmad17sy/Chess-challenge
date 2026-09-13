@@ -238,3 +238,8 @@ nav a:hover {
 .move-row span:nth-child(3) {
     text-align: right;
 }
+#colorControls {
+    width: 640px;
+    margin: 0 auto 10px auto;
+    text-align: center;
+}
