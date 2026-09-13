@@ -43,6 +43,7 @@ let pieces = [...startingPosition];
 
 
 let currentTurn = "w";
+let gameOver = false;
 let selectedSquare = null;
 let draggedSquare = null;
 let playerColor = "w";
@@ -95,7 +96,6 @@ stockfish.postMessage("uci");
 
 let history = [];
 let moveHistory = [];
-
 function updateMoveHistory() {
 
     const movesList = document.getElementById("movesList");
@@ -111,18 +111,18 @@ function updateMoveHistory() {
         const row = document.createElement("div");
         row.className = "move-row";
 
+        const black = document.createElement("span");
+        black.textContent = moveHistory[i + 1] || "";
+
         const number = document.createElement("span");
         number.textContent = (Math.floor(i / 2) + 1) + ".";
 
         const white = document.createElement("span");
         white.textContent = moveHistory[i] || "";
 
-        const black = document.createElement("span");
-        black.textContent = moveHistory[i + 1] || "";
-
+        row.appendChild(black);
         row.appendChild(number);
         row.appendChild(white);
-        row.appendChild(black);
 
         movesList.appendChild(row);
     }
@@ -782,6 +782,10 @@ function getMoveNotation(from, to, piece) {
 
 function makeMove(from, to) {
 
+    if (gameOver) {
+        return false;
+    }
+
     if (!isLegalMove(from, to)) {
         return false;
     }
@@ -1070,24 +1074,29 @@ function undoMove() {
 // ===============================
 // حركة الكمبيوتر
 // ===============================
-
 function resignGame() {
+
+    if (gameOver) {
+        return;
+    }
 
     const winner =
         playerColor === "w"
             ? "Black"
             : "White";
 
+    gameOver = true;
+    currentTurn = null;
+
     alert(
         "Game over!\n" +
-        winner + " wins by resignation."
+        winner +
+        " wins by resignation."
     );
-
-    currentTurn = null;
 }
 
 function newGame() {
-
+gameOver = false;
     pieces = [...startingPosition];
 
     currentTurn = "w";
@@ -1121,7 +1130,9 @@ updateMoveHistory();
 // ===============================
 
 function clickMove(index) {
-
+if (gameOver) {
+    return;
+}
     // لا يوجد مربع مختار
     if (selectedSquare === null) {
 
@@ -1402,10 +1413,13 @@ function createControls() {
         </label>
     `;
 
-    board.parentNode.insertBefore(
-        controls,
-        board.nextSibling
-    );
+    const gameArea =
+    document.getElementById("chessGameArea");
+
+gameArea.parentNode.insertBefore(
+    controls,
+    gameArea.nextSibling
+);
 
     document
         .getElementById("newGameButton")
@@ -1447,11 +1461,10 @@ function createControls() {
 
 function createEvaluationBar() {
 
-    if (
-        document.getElementById(
-            "evaluationBar"
-        )
-    ) {
+    const gameArea =
+        document.getElementById("chessGameArea");
+
+    if (!gameArea) {
         return;
     }
 
@@ -1469,25 +1482,10 @@ function createEvaluationBar() {
         </div>
     `;
 
-    board.parentNode.insertBefore(
+    gameArea.insertBefore(
         wrapper,
         board
     );
-
-    // ننقل الرقعة والشريط إلى حاوية واحدة
-    const gameArea =
-        document.createElement("div");
-
-    gameArea.id =
-        "chessGameArea";
-
-    board.parentNode.insertBefore(
-        gameArea,
-        board
-    );
-
-    gameArea.appendChild(wrapper);
-    gameArea.appendChild(board);
 }
 
 // ===============================
@@ -1614,6 +1612,11 @@ function getFEN() {
 // الكمبيوتر
 // ===============================
 function computerMove() {
+
+
+    if (gameOver) {
+        return;
+    }
 
     if (currentTurn === playerColor) {
         return;
