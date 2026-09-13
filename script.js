@@ -1720,7 +1720,12 @@ function createBoard() {
         if (selectedSquare === i) {
             square.classList.add("selected");
         }
-
+if (
+    selectedSquare !== null &&
+    isLegalMove(selectedSquare, i)
+) {
+    square.classList.add("legal-move");
+}
         // تمييز الملك عند Check
         if (
             pieces[i] &&
@@ -1924,6 +1929,7 @@ if (getColor(piece) === playerColor) {
         );
     });
 }
+
 
     square.appendChild(image);
     square.addEventListener("click", function () {
