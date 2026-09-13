@@ -99,9 +99,9 @@ nav a:hover {
 /* =========================
    Chess Game Area
 ========================= */
-
 #chessGameArea {
     display: flex;
+    flex-direction: row-reverse;
     justify-content: center;
     align-items: stretch;
     gap: 12px;
@@ -197,7 +197,8 @@ nav a:hover {
 }
 #moveHistory {
     width: 320px;
-    margin: 20px auto;
+    height: 640px;
+    margin: 0;
     padding: 15px;
     background: #222;
     color: white;
@@ -208,27 +209,32 @@ nav a:hover {
 #moveHistory h3 {
     margin: 0 0 12px 0;
     text-align: center;
+    font-size: 28px;
 }
 
 #movesList {
-    max-height: 250px;
+    max-height: 570px;
     overflow-y: auto;
 }
 
 .move-row {
     display: grid;
-    grid-template-columns: 40px 1fr 1fr;
-    gap: 10px;
-    padding: 6px 8px;
+    grid-template-columns: 1fr 40px 1fr;
+    gap: 8px;
+    padding: 7px 5px;
     border-bottom: 1px solid #444;
     font-family: Arial, sans-serif;
 }
 
 .move-row span:first-child {
+    text-align: left;
+}
+
+.move-row span:nth-child(2) {
+    text-align: center;
     font-weight: bold;
 }
 
-.move-row span:nth-child(2),
 .move-row span:nth-child(3) {
-    text-align: center;
+    text-align: right;
 }
