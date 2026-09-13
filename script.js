@@ -58,10 +58,18 @@ stockfish.onmessage = function(event) {
 
     const match = message.match(/score cp (-?\d+)/);
 
-    if (match) {
-        stockfishEvaluation = parseInt(match[1], 10) / 100;
-        console.log("Evaluation:", stockfishEvaluation);
-    }
+if (match) {
+    stockfishEvaluation =
+        parseInt(match[1], 10) / 100;
+
+    console.log(
+        "Evaluation:",
+        stockfishEvaluation
+    );
+
+    updateEvaluationBar();
+}
+
 
 }
 if (message.startsWith("bestmove")) {
@@ -708,6 +716,73 @@ function updateCastlingRights(from, to, piece) {
 }
 
 // ===============================
+// تدوين النقلات SAN
+// ===============================
+
+function getMoveNotation(from, to, piece) {
+
+    const type = getType(piece);
+    const color = getColor(piece);
+
+    // التبييت
+    if (type === "K" && Math.abs(to - from) === 2) {
+
+        if (to > from) {
+            return "O-O";
+        } else {
+            return "O-O-O";
+        }
+    }
+
+    const toSquare =
+        String.fromCharCode(97 + (to % 8)) +
+        (8 - Math.floor(to / 8));
+
+    const pieceLetters = {
+        K: "K",
+        Q: "Q",
+        R: "R",
+        B: "B",
+        N: "N",
+        P: ""
+    };
+
+    let notation = pieceLetters[type];
+
+    // هل الحركة أخذ قطعة؟
+    let isCapture = false;
+
+    if (pieces[to]) {
+        isCapture = true;
+    }
+
+    // En Passant
+    if (
+        type === "P" &&
+        to === enPassantSquare &&
+        !pieces[to]
+    ) {
+        isCapture = true;
+    }
+
+    // البيدق عند الأخذ يحتاج اسم العمود
+    if (type === "P" && isCapture) {
+        notation +=
+            String.fromCharCode(
+                97 + (from % 8)
+            );
+    }
+
+    if (isCapture) {
+        notation += "x";
+    }
+
+    notation += toSquare;
+
+    return notation;
+}
+
+// ===============================
 // تنفيذ الحركة
 // ===============================
 
@@ -736,20 +811,7 @@ const toSquare =
     String.fromCharCode(97 + (to % 8)) +
     (8 - Math.floor(to / 8));
 
-    const pieceType = getType(piece);
-
-const pieceLetters = {
-    K: "K",
-    Q: "Q",
-    R: "R",
-    B: "B",
-    N: "N",
-    P: ""
-};
-
-let moveNotation =
-    pieceLetters[pieceType] +
-    toSquare;
+   const moveNotation = getMoveNotation(from, to, piece);
 
     const oldEnPassant = enPassantSquare;
 
@@ -959,14 +1021,9 @@ function updateGameStatus() {
 
 function undoMove() {
 
-    // لا توجد نقلات
     if (history.length === 0) {
         return;
     }
-
-    // إذا كانت اللعبة ضد الكمبيوتر،
-    // نحاول التراجع عن آخر نقلتين:
-    // نقلة الكمبيوتر + نقلة اللاعب
 
     if (history.length >= 2) {
 
@@ -978,8 +1035,9 @@ function undoMove() {
 
         currentTurn = previous.currentTurn;
 
-        castlingRights =
-            {...previous.castlingRights};
+        castlingRights = {
+            ...previous.castlingRights
+        };
 
         enPassantSquare =
             previous.enPassantSquare;
@@ -995,11 +1053,11 @@ function undoMove() {
 
         pieces = [...previous.pieces];
 
-        currentTurn =
-            previous.currentTurn;
+        currentTurn = previous.currentTurn;
 
-        castlingRights =
-            {...previous.castlingRights};
+        castlingRights = {
+            ...previous.castlingRights
+        };
 
         enPassantSquare =
             previous.enPassantSquare;
@@ -1009,18 +1067,10 @@ function undoMove() {
         }
     }
 
-    selectedSquare = null;
-draggedSquare = null;
+        selectedSquare = null;
+    draggedSquare = null;
 
-createBoard();
-
-updateMoveHistory();
-
-updateGameStatus();
-}
-
-createBoard();
-updateMoveHistory();
+    createBoard();
 
     updateMoveHistory();
 
