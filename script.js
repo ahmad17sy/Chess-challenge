@@ -45,6 +45,14 @@ let pieces = [...startingPosition];
 let currentTurn = "w";
 let gameOver = false;
 let selectedSquare = null;
+
+// ===============================
+// ساعة الشطرنج
+// ===============================
+
+let whiteTime = 600;
+let blackTime = 600;
+let clockInterval = null;
 let draggedSquare = null;
 let playerColor = "w";
 let computerRating = 2000;
@@ -868,6 +876,7 @@ function makeMove(from, to) {
 
     currentTurn =
         currentTurn === "w" ? "b" : "w";
+        updateClocks();
 moveHistory.push(moveNotation);
 lastMove = {
     from: from,
@@ -981,6 +990,10 @@ function updateGameStatus() {
     if (legalMoves.length === 0) {
 
         gameOver = true;
+        if (clockInterval) {
+    clearInterval(clockInterval);
+    clockInterval = null;
+}
 
         if (inCheck) {
             const winner =
@@ -1167,6 +1180,8 @@ lastMove = null;
     };
 
     enPassantSquare = null;
+resetClocks();
+startClock();
 
     createBoard();
 updateMoveHistory();
@@ -1718,4 +1733,101 @@ function computerMove() {
     stockfish.postMessage(
         "go movetime 1000"
     );
+}
+
+
+// ===============================
+// ساعة الشطرنج
+// ===============================
+
+function formatTime(seconds) {
+
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+
+    return (
+        String(minutes).padStart(2, "0") +
+        ":" +
+        String(remainingSeconds).padStart(2, "0")
+    );
+}
+
+function updateClocks() {
+
+    const whiteClock =
+        document.getElementById("whiteClock");
+
+    const blackClock =
+        document.getElementById("blackClock");
+
+    if (!whiteClock || !blackClock) {
+        return;
+    }
+
+    whiteClock.textContent =
+        formatTime(whiteTime);
+
+    blackClock.textContent =
+        formatTime(blackTime);
+}
+
+function startClock() {
+
+    if (clockInterval) {
+        clearInterval(clockInterval);
+    }
+
+    clockInterval = setInterval(function () {
+
+        if (gameOver || currentTurn === null) {
+            clearInterval(clockInterval);
+            clockInterval = null;
+            return;
+        }
+
+        if (currentTurn === "w") {
+
+            whiteTime--;
+
+            if (whiteTime <= 0) {
+
+                whiteTime = 0;
+                gameOver = true;
+
+                clearInterval(clockInterval);
+                clockInterval = null;
+
+                document.getElementById("gameStatus").textContent =
+                    "Time out — Black wins!";
+
+            }
+
+        } else {
+
+            blackTime--;
+
+            if (blackTime <= 0) {
+
+                blackTime = 0;
+                gameOver = true;
+
+                clearInterval(clockInterval);
+                clockInterval = null;
+
+                document.getElementById("gameStatus").textContent =
+                    "Time out — White wins!";
+            }
+        }
+
+        updateClocks();
+
+    }, 1000);
+}
+
+function resetClocks() {
+
+    whiteTime = 600;
+    blackTime = 600;
+
+    updateClocks();
 }
