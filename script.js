@@ -3356,18 +3356,36 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 });
+
 /* =========================================
    STOCKFISH PGN ANALYSIS
 ========================================= */
 
 let analysisEngine = null;
+
 let analysisBestMove = "-";
 let analysisScore = 0;
 let analysisDepth = 0;
 let analysisRunning = false;
 
 
-/* Create separate Stockfish engine */
+/* =========================================
+   FULL GAME ANALYSIS VARIABLES
+========================================= */
+
+let fullGameAnalysis = [];
+let fullGameRunning = false;
+let fullGameIndex = 0;
+
+let fullGamePhase = "idle";
+let fullGameBeforeEvaluation = 0;
+let fullGameBestMove = "-";
+let fullGameMover = "w";
+
+
+/* =========================================
+   CREATE SEPARATE STOCKFISH ENGINE
+========================================= */
 
 function startAnalysisEngine() {
 
@@ -3379,15 +3397,19 @@ function startAnalysisEngine() {
         new Worker("stockfish-18-lite-single.js");
 
 
-    analysisEngine.onmessage = function (event) {
+    analysisEngine.onmessage = function(event) {
 
         const message = event.data;
 
 
-        /* Evaluation */
+        /* =================================
+           NORMAL POSITION ANALYSIS
+        ================================= */
 
-        if (message.startsWith("info") &&
-            message.includes("score")) {
+        if (
+            message.startsWith("info") &&
+            message.includes("score")
+        ) {
 
             const scoreMatch =
                 message.match(
@@ -3401,7 +3423,10 @@ function startAnalysisEngine() {
                     scoreMatch[1];
 
                 const value =
-                    parseInt(scoreMatch[2]);
+                    parseInt(
+                        scoreMatch[2],
+                        10
+                    );
 
 
                 if (type === "cp") {
@@ -3411,54 +3436,96 @@ function startAnalysisEngine() {
 
                 } else {
 
-                    if (value > 0) {
-                        analysisScore = 99;
-                    } else {
-                        analysisScore = -99;
-                    }
+                    analysisScore =
+                        value > 0
+                            ? 99
+                            : -99;
                 }
 
 
                 const depthMatch =
-                    message.match(/depth (\d+)/);
+                    message.match(
+                        /depth (\d+)/
+                    );
 
 
                 if (depthMatch) {
 
                     analysisDepth =
-                        parseInt(depthMatch[1]);
+                        parseInt(
+                            depthMatch[1],
+                            10
+                        );
                 }
 
 
-                updateAnalysisDisplay();
+                /*
+                   If full game analysis is running,
+                   handle the evaluation separately.
+                */
+
+                if (fullGameRunning) {
+
+                    handleFullGameInfo(
+                        message
+                    );
+
+                } else {
+
+                    updateAnalysisDisplay();
+                }
             }
         }
 
 
-        /* Best move */
+        /* =================================
+           BEST MOVE
+        ================================= */
 
-        if (message.startsWith("bestmove")) {
+        if (
+            message.startsWith("bestmove")
+        ) {
 
             const parts =
                 message.split(" ");
 
-            if (parts[1]) {
 
-                analysisBestMove =
-                    parts[1];
+            const bestMove =
+                parts[1] || "-";
 
+
+            /*
+               Full game analysis
+            */
+
+            if (fullGameRunning) {
+
+                handleFullGameBestMove(
+                    bestMove
+                );
+
+                return;
             }
 
 
-            analysisRunning = false;
+            /*
+               Normal position analysis
+            */
+
+            analysisBestMove =
+                bestMove;
+
+            analysisRunning =
+                false;
 
             updateAnalysisDisplay();
         }
-
     };
 
 
-    analysisEngine.postMessage("uci");
+    analysisEngine.postMessage(
+        "uci"
+    );
 
     analysisEngine.postMessage(
         "setoption name Threads value 1"
@@ -3468,15 +3535,21 @@ function startAnalysisEngine() {
         "setoption name Hash value 32"
     );
 
-    analysisEngine.postMessage("isready");
+    analysisEngine.postMessage(
+        "isready"
+    );
 }
 
 
-/* Analyze current PGN position */
+/* =========================================
+   ANALYZE CURRENT PGN POSITION
+========================================= */
 
 function analyzeLivePosition() {
 
-    if (!importedPositions.length) {
+    if (
+        !importedPositions.length
+    ) {
 
         alert(
             "Please import a PGN game first."
@@ -3523,7 +3596,9 @@ function analyzeLivePosition() {
 }
 
 
-/* Update analysis panel */
+/* =========================================
+   UPDATE POSITION ANALYSIS DISPLAY
+========================================= */
 
 function updateAnalysisDisplay() {
 
@@ -3576,31 +3651,691 @@ function updateAnalysisDisplay() {
 }
 
 
-/* Analyze button */
+/* =========================================
+   CLASSIFY MOVE
+========================================= */
+
+function classifyFullGameMove(loss) {
+
+    if (loss < 0.10) {
+        return "Excellent";
+    }
+
+    if (loss < 0.30) {
+        return "Good";
+    }
+
+    if (loss < 0.70) {
+        return "Inaccuracy";
+    }
+
+    if (loss < 1.50) {
+        return "Mistake";
+    }
+
+    return "Blunder";
+}
+
+
+/* =========================================
+   START FULL GAME ANALYSIS
+========================================= */
+
+function analyzeFullGame() {
+
+    if (
+        !importedPositions.length ||
+        !importedMoves.length
+    ) {
+
+        alert(
+            "Please import a PGN game first."
+        );
+
+        return;
+    }
+
+
+    if (fullGameRunning) {
+
+        return;
+    }
+
+
+    startAnalysisEngine();
+
+
+    fullGameAnalysis = [];
+
+    fullGameRunning = true;
+
+    fullGameIndex = 0;
+
+    fullGamePhase = "before";
+
+    fullGameBeforeEvaluation = 0;
+
+    fullGameBestMove = "-";
+
+    fullGameMover = "w";
+
+
+    showFullGameAnalysis();
+
+
+    analyzeFullGamePosition();
+}
+
+
+/* =========================================
+   ANALYZE POSITION BEFORE MOVE
+========================================= */
+
+function analyzeFullGamePosition() {
+
+    if (!fullGameRunning) {
+        return;
+    }
+
+
+    if (
+        fullGameIndex >=
+        importedMoves.length
+    ) {
+
+        finishFullGameAnalysis();
+
+        return;
+    }
+
+
+    /*
+       Position before the move
+    */
+
+    const beforeFen =
+        importedPositions[
+            fullGameIndex
+        ];
+
+
+    /*
+       Determine whose move it is
+    */
+
+    fullGameMover =
+        beforeFen.split(" ")[1] || "w";
+
+
+    fullGamePhase =
+        "before";
+
+
+    fullGameBeforeEvaluation = 0;
+
+    fullGameBestMove = "-";
+
+
+    analysisEngine.postMessage(
+        "stop"
+    );
+
+
+    analysisEngine.postMessage(
+        "position fen " +
+        beforeFen
+    );
+
+
+    analysisEngine.postMessage(
+        "go depth 18"
+    );
+}
+
+
+/* =========================================
+   HANDLE STOCKFISH INFO
+========================================= */
+
+function handleFullGameInfo(message) {
+
+    if (!fullGameRunning) {
+        return;
+    }
+
+
+    const scoreMatch =
+        message.match(
+            /score (cp|mate) (-?\d+)/
+        );
+
+
+    if (!scoreMatch) {
+        return;
+    }
+
+
+    const type =
+        scoreMatch[1];
+
+    const value =
+        parseInt(
+            scoreMatch[2],
+            10
+        );
+
+
+    let score;
+
+
+    if (type === "cp") {
+
+        score =
+            value / 100;
+
+    } else {
+
+        score =
+            value > 0
+                ? 99
+                : -99;
+    }
+
+
+    /*
+       Stockfish score is from the
+       side-to-move perspective.
+
+       Convert to White perspective.
+    */
+
+    const fen =
+        fullGamePhase === "before"
+            ? importedPositions[fullGameIndex]
+            : importedPositions[fullGameIndex + 1];
+
+
+    const sideToMove =
+        fen.split(" ")[1];
+
+
+    if (sideToMove === "b") {
+
+        score = -score;
+    }
+
+
+    if (
+        fullGamePhase === "before"
+    ) {
+
+        fullGameBeforeEvaluation =
+            score;
+    }
+
+
+    analysisScore =
+        score;
+
+
+    const depthMatch =
+        message.match(
+            /depth (\d+)/
+        );
+
+
+    if (depthMatch) {
+
+        analysisDepth =
+            parseInt(
+                depthMatch[1],
+                10
+            );
+    }
+}
+
+
+/* =========================================
+   HANDLE BEST MOVE
+========================================= */
+
+function handleFullGameBestMove(bestMove) {
+
+    if (!fullGameRunning) {
+        return;
+    }
+
+
+    /*
+       First Stockfish search:
+       position BEFORE the move
+    */
+
+    if (
+        fullGamePhase === "before"
+    ) {
+
+        fullGameBestMove =
+            bestMove;
+
+
+        /*
+           Now analyze the position
+           AFTER the played move.
+        */
+
+        fullGamePhase =
+            "after";
+
+
+        const afterFen =
+            importedPositions[
+                fullGameIndex + 1
+            ];
+
+
+        analysisEngine.postMessage(
+            "position fen " +
+            afterFen
+        );
+
+
+        analysisEngine.postMessage(
+            "go depth 18"
+        );
+
+
+        return;
+    }
+
+
+    /*
+       Second Stockfish search:
+       position AFTER the move
+    */
+
+    if (
+        fullGamePhase === "after"
+    ) {
+
+        const afterEvaluation =
+            analysisScore;
+
+
+        /*
+           Calculate loss from the
+           perspective of the player
+           who made the move.
+        */
+
+        let loss;
+
+
+        if (
+            fullGameMover === "w"
+        ) {
+
+            loss =
+                fullGameBeforeEvaluation -
+                afterEvaluation;
+
+        } else {
+
+            loss =
+                afterEvaluation -
+                fullGameBeforeEvaluation;
+        }
+
+
+        loss =
+            Math.max(
+                0,
+                loss
+            );
+
+
+        const classification =
+            classifyFullGameMove(
+                loss
+            );
+
+
+        const move =
+            importedMoves[
+                fullGameIndex
+            ];
+
+
+        fullGameAnalysis.push({
+
+            moveNumber:
+                Math.floor(
+                    fullGameIndex / 2
+                ) + 1,
+
+            side:
+                fullGameMover,
+
+            move:
+                move,
+
+            bestMove:
+                fullGameBestMove,
+
+            before:
+                fullGameBeforeEvaluation,
+
+            after:
+                afterEvaluation,
+
+            loss:
+                loss,
+
+            classification:
+                classification
+        });
+
+
+        showFullGameAnalysis();
+
+
+        /*
+           Next move
+        */
+
+        fullGameIndex++;
+
+
+        setTimeout(
+            function() {
+
+                analyzeFullGamePosition();
+
+            },
+            50
+        );
+    }
+}
+
+
+/* =========================================
+   DISPLAY FULL GAME ANALYSIS
+========================================= */
+
+function showFullGameAnalysis() {
+
+    let container =
+        document.getElementById(
+            "fullGameAnalysis"
+        );
+
+
+    if (!container) {
+
+        container =
+            document.createElement(
+                "div"
+            );
+
+
+        container.id =
+            "fullGameAnalysis";
+
+
+        const panel =
+            document.getElementById(
+                "pgnAnalysis"
+            );
+
+
+        if (!panel) {
+            return;
+        }
+
+
+        panel.appendChild(
+            container
+        );
+    }
+
+
+    let html =
+        "<h3>📊 Full Game Analysis</h3>";
+
+
+    if (
+        !fullGameAnalysis.length
+    ) {
+
+        html +=
+            "<p>🤖 Analyzing game...</p>";
+
+        container.innerHTML =
+            html;
+
+        return;
+    }
+
+
+    html +=
+        "<div style='overflow-x:auto;'>";
+
+
+    html +=
+        "<table style='width:100%; border-collapse:collapse;'>";
+
+
+    html +=
+        "<tr>" +
+        "<th>Move</th>" +
+        "<th>Played</th>" +
+        "<th>Best</th>" +
+        "<th>Before</th>" +
+        "<th>After</th>" +
+        "<th>Loss</th>" +
+        "<th>Result</th>" +
+        "</tr>";
+
+
+    fullGameAnalysis.forEach(
+        function(item) {
+
+            const before =
+                item.before >= 0
+                    ? "+" +
+                      item.before.toFixed(2)
+                    : item.before.toFixed(2);
+
+
+            const after =
+                item.after >= 0
+                    ? "+" +
+                      item.after.toFixed(2)
+                    : item.after.toFixed(2);
+
+
+            html +=
+                "<tr>" +
+
+                "<td>" +
+                item.moveNumber +
+                (item.side === "w"
+                    ? "."
+                    : "...") +
+                "</td>" +
+
+                "<td>" +
+                item.move +
+                "</td>" +
+
+                "<td>" +
+                item.bestMove +
+                "</td>" +
+
+                "<td>" +
+                before +
+                "</td>" +
+
+                "<td>" +
+                after +
+                "</td>" +
+
+                "<td>" +
+                item.loss.toFixed(2) +
+                "</td>" +
+
+                "<td>" +
+                item.classification +
+                "</td>" +
+
+                "</tr>";
+        }
+    );
+
+
+    html +=
+        "</table>";
+
+    html +=
+        "</div>";
+
+
+    if (fullGameRunning) {
+
+        html +=
+            "<p>🤖 Analyzing move " +
+            (fullGameIndex + 1) +
+            " / " +
+            importedMoves.length +
+            "...</p>";
+
+    } else {
+
+        html +=
+            "<p>✅ Full game analysis completed.</p>";
+    }
+
+
+    container.innerHTML =
+        html;
+}
+
+
+/* =========================================
+   FINISH FULL GAME ANALYSIS
+========================================= */
+
+function finishFullGameAnalysis() {
+
+    fullGameRunning = false;
+
+    fullGamePhase =
+        "idle";
+
+
+    showFullGameAnalysis();
+
+
+    console.log(
+        "FULL GAME ANALYSIS COMPLETE"
+    );
+}
+
+
+/* =========================================
+   CREATE FULL GAME BUTTON
+========================================= */
+
+function createFullGameAnalysisButton() {
+
+    const panel =
+        document.getElementById(
+            "pgnAnalysis"
+        );
+
+
+    if (!panel) {
+        return;
+    }
+
+
+    if (
+        document.getElementById(
+            "analyzeFullGame"
+        )
+    ) {
+        return;
+    }
+
+
+    const button =
+        document.createElement(
+            "button"
+        );
+
+
+    button.id =
+        "analyzeFullGame";
+
+
+    button.textContent =
+        "📊 Analyze Full Game";
+
+
+    panel.appendChild(
+        button
+    );
+
+
+    button.addEventListener(
+        "click",
+        analyzeFullGame
+    );
+}
+
+
+/* =========================================
+   BUTTONS
+========================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
-    function () {
+    function() {
 
-        const button =
+        /*
+           Analyze current position
+        */
+
+        const positionButton =
             document.getElementById(
                 "analyzePosition"
             );
 
 
-        if (!button) {
-            return;
+        if (positionButton) {
+
+            positionButton.addEventListener(
+                "click",
+                function() {
+
+                    /*
+                       IMPORTANT:
+                       This is analyzeLivePosition,
+                       not analyzeCurrentPosition.
+                    */
+
+                    analyzeLivePosition();
+
+                }
+            );
         }
 
 
-        button.addEventListener(
-            "click",
-            function () {
+        /*
+           Full game analysis
+        */
 
-                analyzeCurrentPosition();
-
-            }
-        );
-
+        createFullGameAnalysisButton();
     }
 );
+
