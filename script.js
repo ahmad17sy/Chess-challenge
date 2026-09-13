@@ -2877,3 +2877,50 @@ document.getElementById("copyPGN").addEventListener("click", async function () {
         button.textContent = "📋 Copy PGN";
     }, 1500);
 });
+document.getElementById("shareGame").addEventListener("click", async function () {
+
+    const pgn = generatePGN();
+
+    if (!pgn) {
+        this.textContent = "No moves!";
+
+        setTimeout(() => {
+            this.textContent = "🔗 Share Game";
+        }, 1500);
+
+        return;
+    }
+
+    const shareText = "My Chess Game\n\n" + pgn;
+
+    try {
+
+        await navigator.clipboard.writeText(shareText);
+
+        this.textContent = "✅ Copied!";
+
+    } catch (error) {
+
+        const textarea = document.createElement("textarea");
+
+        textarea.value = shareText;
+
+        textarea.style.position = "fixed";
+        textarea.style.left = "-9999px";
+
+        document.body.appendChild(textarea);
+
+        textarea.focus();
+        textarea.select();
+
+        document.execCommand("copy");
+
+        document.body.removeChild(textarea);
+
+        this.textContent = "✅ Copied!";
+    }
+
+    setTimeout(() => {
+        this.textContent = "🔗 Share Game";
+    }, 1500);
+});
