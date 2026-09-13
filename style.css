@@ -101,7 +101,7 @@ nav a:hover {
 ========================= */
 #chessGameArea {
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: row;
     justify-content: center;
     align-items: stretch;
     gap: 12px;
