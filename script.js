@@ -84,6 +84,7 @@ let stockfish = new Worker("stockfish-18-lite-single.js");
 
 let stockfishReady = false;
 let stockfishThinking = false;
+let hintMoves = [];
 let engineRequestId = 0;
 let currentEngineRequest = 0;
 let gameSessionId = 0;
@@ -162,7 +163,57 @@ stockfish.onmessage = function(event) {
         return;
     }
 }
+// نتائج Hint
+if (
+    message.startsWith("info") &&
+    message.includes("multipv")
+) {
 
+    const pvMatch =
+        message.match(/multipv (\d+)/);
+
+    const pv =
+        pvMatch ? parseInt(pvMatch[1], 10) : 0;
+
+    const scoreMatch =
+        message.match(/score cp (-?\d+)/);
+
+    const mateMatch =
+        message.match(/score mate (-?\d+)/);
+
+    const depthMatch =
+        message.match(/depth (\d+)/);
+
+    const pvMoves =
+        message.match(/ pv (.+)$/);
+
+    if (pv >= 1 && pv <= 2 && pvMoves) {
+
+        const move =
+            pvMoves[1].split(" ")[0];
+
+        hintMoves[pv - 1] = {
+            move: move,
+            depth: depthMatch
+                ? parseInt(depthMatch[1], 10)
+                : 0,
+            score: scoreMatch
+                ? parseInt(scoreMatch[1], 10) / 100
+                : null,
+            mate: mateMatch
+                ? parseInt(mateMatch[1], 10)
+                : null
+        };
+
+        console.log(
+            "HINT",
+            pv,
+            move
+        );
+    }
+
+    return;
+}
     // أفضل نقلة
     if (message.startsWith("bestmove")) {
 
@@ -2123,7 +2174,9 @@ function createControls() {
         <button id="resignButton">
             🏳 Resign
         </button>
-
+<button id="hintButton">
+    💡 Hint
+</button>
         <label id="computerRatingLabel">
             Computer:
             <select id="computerRating">
@@ -2180,6 +2233,12 @@ document
             "click",
             resignGame
         );
+document
+    .getElementById("hintButton")
+    .addEventListener(
+        "click",
+        showHint
+    );
 
     document
         .getElementById("computerRating")
@@ -2406,6 +2465,80 @@ stockfish.postMessage(
     stockfish.postMessage(
         "go movetime " + thinkTime
     );
+}
+
+function showHint() {
+
+    if (gameOver) return;
+
+    if (currentTurn !== playerColor) return;
+
+    if (!stockfishReady) return;
+
+    hintMoves = [];
+
+    const fen = getFEN();
+
+    stockfish.postMessage("stop");
+
+    stockfish.postMessage(
+        "setoption name MultiPV value 2"
+    );
+
+    stockfish.postMessage(
+        "position fen " + fen
+    );
+
+    stockfish.postMessage(
+        "go depth 14"
+    );
+
+    setTimeout(function () {
+
+        if (!hintMoves.length) {
+            console.log("No hint available yet.");
+            return;
+        }
+
+        let text = "💡 Best moves:\n\n";
+
+        hintMoves.forEach(function (item, index) {
+
+            if (!item) return;
+
+            let move =
+                item.move.substring(0, 2) +
+                " → " +
+                item.move.substring(2, 4);
+
+            text +=
+                (index + 1) +
+                ". " +
+                move;
+
+            if (item.mate !== null) {
+
+                text +=
+                    " (Mate in " +
+                    Math.abs(item.mate) +
+                    ")";
+
+            } else if (item.score !== null) {
+
+                text +=
+                    " (" +
+                    (item.score >= 0 ? "+" : "") +
+                    item.score.toFixed(2) +
+                    ")";
+
+            }
+
+            text += "\n";
+        });
+
+        alert(text);
+
+    }, 1200);
 }
 
 // ===============================
