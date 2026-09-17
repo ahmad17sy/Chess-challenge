@@ -210,7 +210,14 @@ analysisStockfish.onmessage = function(event) {
         return;
     }
 
-    
+    if (message === "readyok") {
+        analysisReady = true;
+
+        // تحليل الوضع الابتدائي
+       analyzeLivePosition();
+
+        return;
+    }
 
     if (
         message.startsWith("info") &&
@@ -4234,20 +4241,101 @@ function finishFullGameAnalysis() {
         "FULL GAME ANALYSIS COMPLETE"
     );
 }
+
+
+/* =========================================
+   CREATE FULL GAME BUTTON
+========================================= */
+
+function createFullGameAnalysisButton() {
+
+    const panel =
+        document.getElementById(
+            "pgnAnalysis"
+        );
+
+
+    if (!panel) {
+        return;
+    }
+
+
+    if (
+        document.getElementById(
+            "analyzeFullGame"
+        )
+    ) {
+        return;
+    }
+
+
+    const button =
+        document.createElement(
+            "button"
+        );
+
+
+    button.id =
+        "analyzeFullGame";
+
+
+    button.textContent =
+        "📊 Analyze Full Game";
+
+
+    panel.appendChild(
+        button
+    );
+
+
+    button.addEventListener(
+        "click",
+        analyzeFullGame
+    );
+}
+
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        /*
+           Analyze current position
+        */
+
+        const positionButton =
+            document.getElementById(
+                "analyzePosition"
+            );
+
+
+        if (positionButton) {
+
+            positionButton.addEventListener(
+                "click",
+                function() {
+
+                    /*
+                       IMPORTANT:
+                       This is analyzeLivePosition,
+                       not analyzeCurrentPosition.
+                    */
+
+                    analyzeLivePosition();
+
+                }
+            );
+        }
+
+
         /*
            Full game analysis
         */
 
-        const fullGameButton =
-            document.getElementById(
-                "analyzeFullGame"
-            );
-
-        if (fullGameButton) {
-
-            fullGameButton.addEventListener(
-                "click",
-                analyzeFullGame
-            );
-        }
+        createFullGameAnalysisButton();
+    }
 );
