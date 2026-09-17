@@ -4201,9 +4201,7 @@ document.addEventListener(
                        This is analyzeLivePosition,
                        not analyzeCurrentPosition.
                     */
-
                     analyzeLivePosition();
-
                 }
             );
         }
