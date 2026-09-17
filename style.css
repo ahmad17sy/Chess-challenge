@@ -726,3 +726,15 @@ nav a:hover {
 #chessboard.flipped .coordinates {
     transform: rotate(180deg);
 }
+#hintResult {
+    min-width: 220px;
+    margin: 8px auto;
+    padding: 12px 16px;
+    background: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    line-height: 1.7;
+    text-align: left;
+    color: #222;
+}

@@ -2179,6 +2179,7 @@ function createControls() {
 <button id="hintButton">
     💡 Hint
 </button>
+<div id="hintResult"></div>
         <label id="computerRatingLabel">
             Computer:
             <select id="computerRating">
@@ -2502,43 +2503,47 @@ function showHint() {
             return;
         }
 
-        let text = "💡 Best moves:\n\n";
+        const hintResult =
+    document.getElementById("hintResult");
 
-        hintMoves.forEach(function (item, index) {
+if (!hintResult) return;
 
-            if (!item) return;
+let html = "<strong>💡 Best moves</strong><br><br>";
 
-            let move =
-                item.move.substring(0, 2) +
-                " → " +
-                item.move.substring(2, 4);
+hintMoves.forEach(function (item, index) {
 
-            text +=
-                (index + 1) +
-                ". " +
-                move;
+    if (!item) return;
 
-            if (item.mate !== null) {
+    const move =
+        item.move.substring(0, 2) +
+        " → " +
+        item.move.substring(2, 4);
 
-                text +=
-                    " (Mate in " +
-                    Math.abs(item.mate) +
-                    ")";
+    html +=
+        "<div>" +
+        (index + 1) +
+        ". <strong>" +
+        move +
+        "</strong>";
 
-            } else if (item.score !== null) {
+    if (item.mate !== null) {
 
-                text +=
-                    " (" +
-                    (item.score >= 0 ? "+" : "") +
-                    item.score.toFixed(2) +
-                    ")";
+        html +=
+            " — Mate in " +
+            Math.abs(item.mate);
 
-            }
+    } else if (item.score !== null) {
 
-            text += "\n";
-        });
+        html +=
+            " — " +
+            (item.score >= 0 ? "+" : "") +
+            item.score.toFixed(2);
+    }
 
-        alert(text);
+    html += "</div>";
+});
+
+hintResult.innerHTML = html;
 
     }, 1200);
 }
