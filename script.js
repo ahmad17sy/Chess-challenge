@@ -4336,6 +4336,17 @@ document.addEventListener(
            Full game analysis
         */
 
-        createFullGameAnalysisButton();
+        const fullGameButton =
+    document.getElementById(
+        "analyzeFullGame"
+    );
+
+if (fullGameButton) {
+
+    fullGameButton.addEventListener(
+        "click",
+        analyzeFullGame
+    );
+}
     }
 );
