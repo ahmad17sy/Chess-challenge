@@ -211,13 +211,9 @@ analysisStockfish.onmessage = function(event) {
     }
 
     if (message === "readyok") {
-        analysisReady = true;
-
-        // تحليل الوضع الابتدائي
-       analyzeLivePosition();
-
-        return;
-    }
+    analysisReady = true;
+    return;
+}
 
     if (
         message.startsWith("info") &&
