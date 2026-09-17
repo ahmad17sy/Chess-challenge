@@ -1823,7 +1823,7 @@ if (piece) {
 
     const image = document.createElement("img");
 
-    image.src = "pieces/" + piece + ".svg";
+    image.src = "./" + piece + ".svg";
     console.log("PIECE:", piece, "PATH:", image.src);
 image.classList.add("chess-piece");
 image.alt = "";
@@ -1872,7 +1872,7 @@ if (getColor(piece) === playerColor) {
 
                 dragPiece = document.createElement("img");
 
-                dragPiece.src = "./pieces/" + piece + ".svg";
+                dragPiece.src = "./" + piece + ".svg";
                 dragPiece.classList.add("dragging-piece");
 
                 document.body.appendChild(dragPiece);
@@ -2745,7 +2745,7 @@ function updateCapturedPieces() {
         const image =
             document.createElement("img");
 
-        image.src = "pieces/" + piece + ".svg";
+        image.src = "./" + piece + ".svg";
         image.alt = piece;
 
         whiteContainer.appendChild(image);
@@ -2757,7 +2757,7 @@ function updateCapturedPieces() {
         const image =
             document.createElement("img");
 
-        image.src = "pieces/" + piece + ".svg";
+        image.src = "./" + piece + ".svg";
         image.alt = piece;
 
         blackContainer.appendChild(image);
