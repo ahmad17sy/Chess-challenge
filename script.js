@@ -118,51 +118,6 @@ stockfish.onmessage = function(event) {
         return;
     }
 
-    // تقييم الوضع الحالي
-   if (message.startsWith("info") && message.includes("score")) {
-
-    // تقييم بالنقاط
-    const cpMatch = message.match(/score cp (-?\d+)/);
-
-    if (cpMatch) {
-
-        let score =
-            parseInt(cpMatch[1], 10) / 100;
-
-        if (currentTurn === "b") {
-            score = -score;
-        }
-
-        stockfishEvaluation = score;
-        updateEvaluationBar();
-
-        return;
-    }
-
-    // كش مات
-    const mateMatch =
-        message.match(/score mate (-?\d+)/);
-
-    if (mateMatch) {
-
-        let mate =
-            parseInt(mateMatch[1], 10);
-
-        // قيمة كبيرة لتمثيل المات
-        let score =
-            mate > 0 ? 10 : -10;
-
-        if (currentTurn === "b") {
-            score = -score;
-        }
-
-        stockfishEvaluation = score;
-
-        updateEvaluationBar();
-
-        return;
-    }
-}
 // نتائج Hint
 if (
     message.startsWith("info") &&
@@ -214,6 +169,53 @@ if (
 
     return;
 }
+
+    // تقييم الوضع الحالي
+   if (message.startsWith("info") && message.includes("score")) {
+
+    // تقييم بالنقاط
+    const cpMatch = message.match(/score cp (-?\d+)/);
+
+    if (cpMatch) {
+
+        let score =
+            parseInt(cpMatch[1], 10) / 100;
+
+        if (currentTurn === "b") {
+            score = -score;
+        }
+
+        stockfishEvaluation = score;
+        updateEvaluationBar();
+
+        return;
+    }
+
+    // كش مات
+    const mateMatch =
+        message.match(/score mate (-?\d+)/);
+
+    if (mateMatch) {
+
+        let mate =
+            parseInt(mateMatch[1], 10);
+
+        // قيمة كبيرة لتمثيل المات
+        let score =
+            mate > 0 ? 10 : -10;
+
+        if (currentTurn === "b") {
+            score = -score;
+        }
+
+        stockfishEvaluation = score;
+
+        updateEvaluationBar();
+
+        return;
+    }
+}
+
     // أفضل نقلة
     if (message.startsWith("bestmove")) {
 
