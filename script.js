@@ -1556,12 +1556,6 @@ if (clockInterval) {
 }
 
 currentTurn = null;
-
-    alert(
-        "Game over!\n" +
-        winner +
-        " wins by resignation."
-    );
 }
 
 function newGame() {
@@ -2944,11 +2938,9 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("openingSelect").value;
 
         if (!opening) {
-            alert("Please choose an opening first.");
             return;
         }
 
-        alert("Training started: " + opening);
     });
 
 });
@@ -3045,9 +3037,6 @@ document.addEventListener("DOMContentLoaded", function () {
     importPGN.addEventListener("click", function () {
 
         if (!pgnFile.files.length) {
-
-            alert("Please choose a PGN file first.");
-
             return;
         }
 
@@ -3071,8 +3060,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
             if (!loaded) {
-
-                alert("Could not read this PGN file.");
 
                 return;
             }
@@ -3112,29 +3099,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     replay.fen()
                 );
             }
-
-
             importedMoveIndex = 0;
-
-
             showImportedPosition();
 
-
-            alert(
-                "PGN imported successfully!\n\n" +
-                importedMoves.length +
-                " moves loaded."
-            );
-
         };
-
-
         reader.readAsText(file);
 
     });
 
 });
-
 
 /* Show selected position */
 
@@ -3143,18 +3116,12 @@ function showImportedPosition() {
     if (!importedPositions.length) {
         return;
     }
-
-
     const fen =
         importedPositions[
             importedMoveIndex
         ];
-
-
     pieces =
         fenToPieces(fen);
-
-
     createBoard();
 
 
@@ -3544,10 +3511,6 @@ function analyzeLivePosition() {
         !importedPositions.length
     ) {
 
-        alert(
-            "Please import a PGN game first."
-        );
-
         return;
     }
 
@@ -3680,11 +3643,6 @@ function analyzeFullGame() {
         !importedPositions.length ||
         !importedMoves.length
     ) {
-
-        alert(
-            "Please import a PGN game first."
-        );
-
         return;
     }
 
