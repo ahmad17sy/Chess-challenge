@@ -4234,7 +4234,6 @@ function finishFullGameAnalysis() {
         "FULL GAME ANALYSIS COMPLETE"
     );
 }
-
         /*
            Full game analysis
         */
@@ -4251,6 +4250,4 @@ function finishFullGameAnalysis() {
                 analyzeFullGame
             );
         }
-    }
 );
-
