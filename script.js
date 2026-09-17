@@ -1,4 +1,4 @@
-اصبح هكذاconsole.log("SCRIPT JS LOADED"); 
+console.log("SCRIPT JS LOADED"); 
 const board = document.getElementById("chessboard"); 
 const lightColor = document.getElementById("lightColor"); 
 const darkColor = document.getElementById("darkColor"); 
