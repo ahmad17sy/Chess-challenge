@@ -1824,6 +1824,7 @@ if (piece) {
     const image = document.createElement("img");
 
     image.src = "pieces/" + piece + ".svg";
+    console.log("PIECE:", piece, "PATH:", image.src);
 image.classList.add("chess-piece");
 image.alt = "";
 
