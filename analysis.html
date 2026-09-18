@@ -955,8 +955,7 @@ analysisStockfish.onmessage = function(event) {
 
         return;
     }
-};
-function drawManualArrow(from, to) {
+};function drawManualArrow(from, to) {
 
     const arrowLayer =
         document.getElementById(
@@ -967,26 +966,49 @@ function drawManualArrow(from, to) {
         return;
     }
 
+    /* =========================
+       إذا كان السهم موجودًا
+       نحذفه
+    ========================= */
+
+    const existingArrow =
+        arrowLayer.querySelector(
+            '[data-from="' + from + '"][data-to="' + to + '"]'
+        );
+
+    if (existingArrow) {
+
+        existingArrow.remove();
+
+        return;
+    }
+
+    /* =========================
+       حساب مكان السهم
+    ========================= */
+
     let fromCol =
-    from.charCodeAt(0) - 97;
+        from.charCodeAt(0) - 97;
 
-let fromRow =
-    8 - parseInt(from[1]);
+    let fromRow =
+        8 - parseInt(from[1]);
 
-let toCol =
-    to.charCodeAt(0) - 97;
+    let toCol =
+        to.charCodeAt(0) - 97;
 
-let toRow =
-    8 - parseInt(to[1]);
-        if (analysisBoardFlipped) {
-    fromCol = 7 - fromCol;
-    fromRow = 7 - fromRow;
-    toCol = 7 - toCol;
-    toRow = 7 - toRow;
-}
+    let toRow =
+        8 - parseInt(to[1]);
 
-    const squareSize =
-        640 / 8;
+    if (analysisBoardFlipped) {
+
+        fromCol = 7 - fromCol;
+        fromRow = 7 - fromRow;
+
+        toCol = 7 - toCol;
+        toRow = 7 - toRow;
+    }
+
+    const squareSize = 640 / 8;
 
     const x1 =
         fromCol * squareSize +
