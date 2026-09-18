@@ -1005,3 +1005,48 @@ nav a:hover {
 #analysisNavigation button:hover {
     background: #ccc;
 }
+/* =========================
+   Analysis Navigation - FIX
+========================= */
+
+#analysisNavigation {
+    position: relative;
+    z-index: 1000;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 640px !important;
+    height: 50px !important;
+    margin-top: 12px !important;
+    gap: 12px !important;
+}
+
+#analysisNavigation button {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    position: relative !important;
+    z-index: 1001 !important;
+
+    width: 50px !important;
+    height: 38px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    background-color: #dddddd !important;
+    color: #222222 !important;
+
+    border: none !important;
+    border-radius: 6px !important;
+
+    font-size: 18px !important;
+    line-height: 38px !important;
+
+    cursor: pointer !important;
+}
+
+#analysisNavigation button:hover {
+    background-color: #cccccc !important;
+}
