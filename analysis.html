@@ -178,23 +178,40 @@ function refreshAnalysisBoard() {
                 image.alt = "";
 
                 image.draggable = true;
+image.style.pointerEvents = "auto";
 
-                image.addEventListener(
-                    "dragstart",
-                    function(event) {
+image.addEventListener(
+    "dragstart",
+    function(event) {
 
-                        if (
-                            piece.color !==
-                            analysisGame.turn()
-                        ) {
-                            event.preventDefault();
-                            return;
-                        }
+        if (
+            piece.color !==
+            analysisGame.turn()
+        ) {
+            event.preventDefault();
+            return;
+        }
 
-                        selectedAnalysisSquare =
-                            squareName;
-                    }
-                );
+        selectedAnalysisSquare =
+            squareName;
+
+        event.dataTransfer.setData(
+            "text/plain",
+            squareName
+        );
+
+        event.dataTransfer.effectAllowed =
+            "move";
+    }
+);
+
+image.addEventListener(
+    "dragend",
+    function() {
+
+        selectedAnalysisSquare = null;
+    }
+);
 
                 square.appendChild(image);
             }
@@ -255,33 +272,39 @@ function refreshAnalysisBoard() {
                ========================= */
 
             square.addEventListener(
-                "dragover",
-                function(event) {
+    "dragover",
+    function(event) {
 
-                    event.preventDefault();
-                }
-            );
+        event.preventDefault();
+
+        event.dataTransfer.dropEffect =
+            "move";
+    }
+);
 
             square.addEventListener(
-                "drop",
-                function(event) {
+    "drop",
+    function(event) {
 
-                    event.preventDefault();
+        event.preventDefault();
 
-                    if (
-                        selectedAnalysisSquare === null
-                    ) {
-                        return;
-                    }
+        const fromSquare =
+            event.dataTransfer.getData(
+                "text/plain"
+            ) || selectedAnalysisSquare;
 
-                    makeAnalysisMove(
-                        selectedAnalysisSquare,
-                        squareName
-                    );
+        if (!fromSquare) {
+            return;
+        }
 
-                    selectedAnalysisSquare = null;
-                }
-            );
+        makeAnalysisMove(
+            fromSquare,
+            squareName
+        );
+
+        selectedAnalysisSquare = null;
+    }
+);
 
             analysisBoard.appendChild(square);
         }
