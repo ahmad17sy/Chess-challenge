@@ -738,3 +738,10 @@ nav a:hover {
     text-align: left;
     color: #222;
 }
+.hint-from {
+    box-shadow: inset 0 0 0 5px gold;
+}
+
+.hint-to {
+    box-shadow: inset 0 0 0 5px limegreen;
+}

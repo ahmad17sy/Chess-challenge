@@ -85,6 +85,8 @@ let stockfish = new Worker("stockfish-18-lite-single.js");
 let stockfishReady = false;
 let stockfishThinking = false;
 let hintMoves = [];
+let hintFrom = null;
+let hintTo = null;
 let engineRequestId = 0;
 let currentEngineRequest = 0;
 let gameSessionId = 0;
@@ -1859,7 +1861,14 @@ if (
         ) {
             square.classList.add("last-move");
         }
+// تلميح أفضل نقلة
+if (hintFrom === i) {
+    square.classList.add("hint-from");
+}
 
+if (hintTo === i) {
+    square.classList.add("hint-to");
+}
 const piece = pieces[i];
 
 if (piece) {
@@ -2544,7 +2553,20 @@ hintMoves.forEach(function (item, index) {
 });
 
 hintResult.innerHTML = html;
+if (hintMoves[0]) {
 
+    hintFrom =
+        algebraicToIndex(
+            hintMoves[0].move.substring(0, 2)
+        );
+
+    hintTo =
+        algebraicToIndex(
+            hintMoves[0].move.substring(2, 4)
+        );
+
+    createBoard();
+}
     }, 1200);
 }
 
