@@ -1004,49 +1004,73 @@ nav a:hover {
 
 #analysisNavigation button:hover {
     background: #ccc;
-}
-/* =========================
-   Analysis Navigation - FIX
+}/* =========================
+   Analysis Navigation - NEW STYLE
 ========================= */
 
 #analysisNavigation {
     position: relative;
     z-index: 1000;
+
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
+
     width: 640px !important;
-    height: 50px !important;
-    margin-top: 12px !important;
-    gap: 12px !important;
+    height: 65px !important;
+
+    margin-top: 14px !important;
+    gap: 10px !important;
 }
 
+/* أزرار التنقل */
+
 #analysisNavigation button {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 
-    position: relative !important;
-    z-index: 1001 !important;
-
-    width: 50px !important;
-    height: 38px !important;
+    width: 58px !important;
+    height: 48px !important;
 
     margin: 0 !important;
     padding: 0 !important;
 
-    background-color: #dddddd !important;
-    color: #222222 !important;
+    background: #3a3a3a !important;
+    color: white !important;
 
-    border: none !important;
-    border-radius: 6px !important;
+    border: 2px solid #555 !important;
+    border-radius: 8px !important;
 
-    font-size: 18px !important;
-    line-height: 38px !important;
+    font-size: 25px !important;
+    font-weight: bold !important;
+
+    line-height: 1 !important;
 
     cursor: pointer !important;
+
+    box-shadow: 0 3px 6px rgba(0,0,0,0.25);
+
+    transition:
+        background 0.15s ease,
+        transform 0.1s ease,
+        box-shadow 0.15s ease;
 }
 
+/* عند تمرير الماوس */
+
 #analysisNavigation button:hover {
-    background-color: #cccccc !important;
+    background: #555 !important;
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+}
+
+/* عند الضغط */
+
+#analysisNavigation button:active {
+    transform: translateY(1px);
+
+    box-shadow: 0 2px 4px rgba(0,0,0,0.25);
 }
