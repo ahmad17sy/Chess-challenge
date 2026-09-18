@@ -53,6 +53,17 @@
         <div id="analysisMoves">
             <h3>Moves</h3>
             <div id="analysisMoveList"></div>
+            <div id="analysisNavigation">
+
+    <button id="analysisFirst">⏮</button>
+
+    <button id="analysisPrevious">◀</button>
+
+    <button id="analysisNext">▶</button>
+
+    <button id="analysisLast">⏭</button>
+
+</div>
         </div>
 
     </div>
@@ -336,7 +347,6 @@ function makeAnalysisMove(from, to) {
     analyzeCurrentPosition();
 }
 
-
 function updateAnalysisMoveList() {
 
     const moveList =
@@ -346,63 +356,137 @@ function updateAnalysisMoveList() {
 
     moveList.innerHTML = "";
 
-    for (let i = 0; i < analysisMoves.length; i += 2) {
+    const history =
+        analysisGame.history();
+
+    for (let i = 0; i < analysisMoves.length; i++) {
 
         const moveNumber =
             Math.floor(i / 2) + 1;
 
-        const row =
-            document.createElement("div");
-
-        row.classList.add(
-            "analysis-move-row"
-        );
-
-        const number =
+        const moveButton =
             document.createElement("span");
 
-        number.classList.add(
-            "analysis-move-number"
-        );
-
-        number.textContent =
-            moveNumber + ".";
-
-        row.appendChild(number);
-
-        const whiteMove =
-            document.createElement("span");
-
-        whiteMove.classList.add(
+        moveButton.classList.add(
             "analysis-move"
         );
 
-        whiteMove.textContent =
+        moveButton.textContent =
             analysisMoves[i];
 
-        row.appendChild(whiteMove);
+        moveButton.style.cursor =
+            "pointer";
 
-        if (analysisMoves[i + 1]) {
+        moveButton.addEventListener(
+            "click",
+            function() {
 
-            const blackMove =
-                document.createElement("span");
+                showAnalysisPosition(i + 1);
 
-            blackMove.classList.add(
-                "analysis-move"
+            }
+        );
+
+        if (i % 2 === 0) {
+
+            const row =
+                document.createElement("div");
+
+            row.classList.add(
+                "analysis-move-row"
             );
 
-            blackMove.textContent =
-                analysisMoves[i + 1];
+            const number =
+                document.createElement("span");
 
-            row.appendChild(blackMove);
+            number.classList.add(
+                "analysis-move-number"
+            );
+
+            number.textContent =
+                moveNumber + ".";
+
+            row.appendChild(number);
+
+const whiteCell =
+    document.createElement("span");
+
+whiteCell.classList.add(
+    "analysis-move-cell"
+);
+
+whiteCell.appendChild(moveButton);
+
+row.appendChild(whiteCell);
+
+            if (analysisMoves[i + 1]) {
+
+                const blackMove =
+                    document.createElement("span");
+
+                blackMove.classList.add(
+                    "analysis-move"
+                );
+
+                blackMove.textContent =
+                    analysisMoves[i + 1];
+
+                blackMove.style.cursor =
+                    "pointer";
+
+                blackMove.addEventListener(
+                    "click",
+                    function() {
+
+                        showAnalysisPosition(i + 2);
+
+                    }
+                );
+
+                const blackCell =
+    document.createElement("span");
+
+blackCell.classList.add(
+    "analysis-move-cell"
+);
+
+blackCell.appendChild(blackMove);
+
+row.appendChild(
+    blackCell
+);
+            }
+
+            moveList.appendChild(row);
         }
-
-        moveList.appendChild(row);
     }
 }
+function showAnalysisPosition(moveNumber) {
 
+    const tempGame =
+        new Chess();
 
-refreshAnalysisBoard();
+    for (
+        let i = 0;
+        i < moveNumber;
+        i++
+    ) {
+
+        tempGame.move(
+            analysisMoves[i]
+        );
+    }
+
+    analysisGame.load(
+        tempGame.fen()
+    );
+
+    analysisCurrentMove =
+        moveNumber;
+
+    refreshAnalysisBoard();
+
+    analyzeCurrentPosition();
+}
 </script>
 <script>
 
@@ -669,7 +753,67 @@ function updateAnalysisEvalBar(score) {
     evalFill.style.height =
         percentage + "%";
 }
+let analysisCurrentMove = 0;
 
+function showAnalysisMove(moveNumber) {
+
+    const tempGame = new Chess();
+
+    for (let i = 0; i < moveNumber; i++) {
+        tempGame.move(analysisMoves[i]);
+    }
+
+    analysisGame.load(tempGame.fen());
+
+    analysisCurrentMove = moveNumber;
+
+    refreshAnalysisBoard();
+    analyzeCurrentPosition();
+}
+document.getElementById("analysisFirst").addEventListener(
+    "click",
+    function() {
+        showAnalysisMove(0);
+    }
+);
+
+document.getElementById("analysisPrevious").addEventListener(
+    "click",
+    function() {
+
+        if (analysisCurrentMove > 0) {
+            showAnalysisMove(
+                analysisCurrentMove - 1
+            );
+        }
+
+    }
+);
+
+document.getElementById("analysisNext").addEventListener(
+    "click",
+    function() {
+
+        if (
+            analysisCurrentMove <
+            analysisMoves.length
+        ) {
+            showAnalysisMove(
+                analysisCurrentMove + 1
+            );
+        }
+
+    }
+);
+
+document.getElementById("analysisLast").addEventListener(
+    "click",
+    function() {
+        showAnalysisMove(
+            analysisMoves.length
+        );
+    }
+);
 </script>
 </body>
 </html>
