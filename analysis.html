@@ -326,20 +326,44 @@ updateAnalysisEvalBar(score);
 
         return;
     }
+if (message.startsWith("bestmove")) {
 
-    if (message.startsWith("bestmove")) {
+    const parts = message.split(" ");
+    const bestMove = parts[1];
 
-    const parts =
-        message.split(" ");
+    if (bestMove && bestMove !== "(none)") {
 
-    if (parts[1]) {
+        const from = bestMove.substring(0, 2);
+        const to = bestMove.substring(2, 4);
+        const promotion = bestMove.substring(4, 5);
 
-        document.getElementById(
-            "analysisBestMove"
-        ).textContent =
-            "Best move: " + parts[1];
+        const tempGame = new Chess(
+            analysisGame.fen()
+        );
 
-        drawAnalysisArrow(parts[1]);
+        const move = tempGame.move({
+            from: from,
+            to: to,
+            promotion: promotion || "q"
+        });
+
+        if (move) {
+
+            document.getElementById(
+                "analysisBestMove"
+            ).textContent =
+                "Best move: " + move.san;
+
+        } else {
+
+            document.getElementById(
+                "analysisBestMove"
+            ).textContent =
+                "Best move: " + bestMove;
+        }
+
+        // السهم يبقى باستخدام صيغة Stockfish
+        drawAnalysisArrow(bestMove);
     }
 
     return;
