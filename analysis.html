@@ -278,9 +278,23 @@ function makeAnalysisMove(from, to) {
         return;
     }
 
-    analysisMoves.push(
-        move.san
-    );
+    /*
+       إذا كنا قد رجعنا إلى نقلة سابقة،
+       نحذف النقلات التي كانت بعدها.
+    */
+    if (analysisCurrentMove < analysisMoves.length) {
+
+        analysisMoves =
+            analysisMoves.slice(
+                0,
+                analysisCurrentMove
+            );
+    }
+
+    analysisMoves.push(move.san);
+
+    analysisCurrentMove =
+        analysisMoves.length;
 
     updateAnalysisMoveList();
 
