@@ -34,7 +34,9 @@
     <div id="analysisArrowLayer"></div>
     <div id="analysisManualArrowLayer"></div>
 </div>
-
+<div id="analysisBoardControls">
+    <button id="analysisFlipBoard">↔ Flip Board</button>
+</div>
         <div id="analysisNavigation">
             <button id="analysisFirst">⏮</button>
             <button id="analysisPrevious">◀</button>
@@ -91,16 +93,35 @@ const analysisBoard =
 const analysisGame = new Chess();
 let selectedAnalysisSquare = null;
 let analysisMoves = [];
+
+let analysisBoardFlipped = false;
+
+let rightMouseDown = false;
+let rightMouseStart = null;
+let rightMouseMoved = false;
 function refreshAnalysisBoard() {
 
     analysisBoard.innerHTML = "";
 
     const boardPosition =
         analysisGame.board();
+        let displayRows = [0,1,2,3,4,5,6,7];
+let displayCols = [0,1,2,3,4,5,6,7];
+
+if (analysisBoardFlipped) {
+    displayRows.reverse();
+    displayCols.reverse();
+}
 
     for (let row = 0; row < 8; row++) {
 
-        for (let col = 0; col < 8; col++) {
+    for (let col = 0; col < 8; col++) {
+
+        const boardRow =
+            displayRows[row];
+
+        const boardCol =
+            displayCols[col];
 
             const square =
                 document.createElement("div");
@@ -114,11 +135,11 @@ function refreshAnalysisBoard() {
             }
 
             const squareName =
-                String.fromCharCode(97 + col) +
-                (8 - row);
+    String.fromCharCode(97 + boardCol) +
+    (8 - boardRow);
 
             const piece =
-                boardPosition[row][col];
+    boardPosition[boardRow][boardCol];
 
             if (piece) {
 
@@ -407,9 +428,9 @@ function makeAnalysisMove(from, to) {
         });
 
     if (!move) {
-        refreshAnalysisBoard();
-        return;
-    }
+    refreshAnalysisBoard();
+    return;
+}
 
     /*
        إذا كنا قد رجعنا إلى نقلة سابقة،
@@ -830,17 +851,23 @@ function drawManualArrow(from, to) {
         return;
     }
 
-    const fromCol =
-        from.charCodeAt(0) - 97;
+    let fromCol =
+    from.charCodeAt(0) - 97;
 
-    const fromRow =
-        8 - parseInt(from[1]);
+let fromRow =
+    8 - parseInt(from[1]);
 
-    const toCol =
-        to.charCodeAt(0) - 97;
+let toCol =
+    to.charCodeAt(0) - 97;
 
-    const toRow =
-        8 - parseInt(to[1]);
+let toRow =
+    8 - parseInt(to[1]);
+        if (analysisBoardFlipped) {
+    fromCol = 7 - fromCol;
+    fromRow = 7 - fromRow;
+    toCol = 7 - toCol;
+    toRow = 7 - toRow;
+}
 
     const squareSize =
         640 / 8;
@@ -917,18 +944,23 @@ function drawAnalysisArrow(move) {
 
     const to =
         move.substring(2, 4);
+let fromCol =
+    from.charCodeAt(0) - 97;
 
-    const fromCol =
-        from.charCodeAt(0) - 97;
+let fromRow =
+    8 - parseInt(from[1]);
 
-    const fromRow =
-        8 - parseInt(from[1]);
+let toCol =
+    to.charCodeAt(0) - 97;
 
-    const toCol =
-        to.charCodeAt(0) - 97;
-
-    const toRow =
-        8 - parseInt(to[1]);
+let toRow =
+    8 - parseInt(to[1]);
+    if (analysisBoardFlipped) {
+    fromCol = 7 - fromCol;
+    fromRow = 7 - fromRow;
+    toCol = 7 - toCol;
+    toRow = 7 - toRow;
+}
 
     const squareSize =
         640 / 8;
@@ -1092,6 +1124,18 @@ document.getElementById("analysisLast").addEventListener(
         showAnalysisMove(
             analysisMoves.length
         );
+    }
+);
+document.getElementById(
+    "analysisFlipBoard"
+).addEventListener(
+    "click",
+    function() {
+
+        analysisBoardFlipped =
+            !analysisBoardFlipped;
+
+        refreshAnalysisBoard();
     }
 );
 refreshAnalysisBoard();
