@@ -911,3 +911,25 @@ nav a:hover {
     border-bottom: 14px solid transparent;
     border-left: 20px solid limegreen;
 }
+.analysis-move-row {
+    display: grid;
+    grid-template-columns: 35px 1fr 1fr;
+    padding: 6px 8px;
+    border-bottom: 1px solid #ddd;
+    font-size: 16px;
+}
+
+.analysis-move-number {
+    font-weight: bold;
+    color: #777;
+}
+
+.analysis-move {
+    cursor: pointer;
+    padding: 3px 6px;
+    border-radius: 4px;
+}
+
+.analysis-move:hover {
+    background: #ddd;
+}

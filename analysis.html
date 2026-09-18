@@ -128,6 +128,7 @@ createAnalysisBoard();
 <script>
 const analysisGame = new Chess();
 let selectedAnalysisSquare = null;
+let analysisMoves = [];
 function refreshAnalysisBoard() {
 
     analysisBoard.innerHTML = "";
@@ -324,10 +325,83 @@ function makeAnalysisMove(from, to) {
         return;
     }
 
+    analysisMoves.push(
+        move.san
+    );
+
+    updateAnalysisMoveList();
+
     refreshAnalysisBoard();
 
     analyzeCurrentPosition();
 }
+
+
+function updateAnalysisMoveList() {
+
+    const moveList =
+        document.getElementById(
+            "analysisMoveList"
+        );
+
+    moveList.innerHTML = "";
+
+    for (let i = 0; i < analysisMoves.length; i += 2) {
+
+        const moveNumber =
+            Math.floor(i / 2) + 1;
+
+        const row =
+            document.createElement("div");
+
+        row.classList.add(
+            "analysis-move-row"
+        );
+
+        const number =
+            document.createElement("span");
+
+        number.classList.add(
+            "analysis-move-number"
+        );
+
+        number.textContent =
+            moveNumber + ".";
+
+        row.appendChild(number);
+
+        const whiteMove =
+            document.createElement("span");
+
+        whiteMove.classList.add(
+            "analysis-move"
+        );
+
+        whiteMove.textContent =
+            analysisMoves[i];
+
+        row.appendChild(whiteMove);
+
+        if (analysisMoves[i + 1]) {
+
+            const blackMove =
+                document.createElement("span");
+
+            blackMove.classList.add(
+                "analysis-move"
+            );
+
+            blackMove.textContent =
+                analysisMoves[i + 1];
+
+            row.appendChild(blackMove);
+        }
+
+        moveList.appendChild(row);
+    }
+}
+
+
 refreshAnalysisBoard();
 </script>
 <script>
