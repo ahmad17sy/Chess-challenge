@@ -27,8 +27,9 @@
         <div id="analysisEvalFill"></div>
     </div>
 
-    <div id="analysisBoard">
+    <div id="analysisBoardWrapper">
         <div id="analysisChessboard"></div>
+        <div id="analysisArrowLayer"></div>
     </div>
 
 </div>
@@ -328,21 +329,107 @@ updateAnalysisEvalBar(score);
 
     if (message.startsWith("bestmove")) {
 
-        const parts =
-            message.split(" ");
+    const parts =
+        message.split(" ");
 
-        if (parts[1]) {
+    if (parts[1]) {
 
-            document.getElementById(
-                "analysisBestMove"
-            ).textContent =
-                "Best move: " + parts[1];
-        }
+        document.getElementById(
+            "analysisBestMove"
+        ).textContent =
+            "Best move: " + parts[1];
 
+        drawAnalysisArrow(parts[1]);
+    }
+
+    return;
+}
+};
+function drawAnalysisArrow(move) {
+
+    const arrowLayer =
+        document.getElementById(
+            "analysisArrowLayer"
+        );
+
+    if (!arrowLayer) return;
+
+    arrowLayer.innerHTML = "";
+
+    if (!move || move.length < 4) {
         return;
     }
-};
 
+    const from =
+        move.substring(0, 2);
+
+    const to =
+        move.substring(2, 4);
+
+    const fromCol =
+        from.charCodeAt(0) - 97;
+
+    const fromRow =
+        8 - parseInt(from[1]);
+
+    const toCol =
+        to.charCodeAt(0) - 97;
+
+    const toRow =
+        8 - parseInt(to[1]);
+
+    const squareSize =
+        640 / 8;
+
+    const x1 =
+        fromCol * squareSize +
+        squareSize / 2;
+
+    const y1 =
+        fromRow * squareSize +
+        squareSize / 2;
+
+    const x2 =
+        toCol * squareSize +
+        squareSize / 2;
+
+    const y2 =
+        toRow * squareSize +
+        squareSize / 2;
+
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+
+    const length =
+        Math.sqrt(
+            dx * dx +
+            dy * dy
+        );
+
+    const angle =
+        Math.atan2(dy, dx) *
+        180 / Math.PI;
+
+    const arrow =
+        document.createElement("div");
+
+    arrow.className =
+        "analysis-arrow";
+
+    arrow.style.width =
+        length + "px";
+
+    arrow.style.left =
+        x1 + "px";
+
+    arrow.style.top =
+        y1 + "px";
+
+    arrow.style.transform =
+        "rotate(" + angle + "deg)";
+
+    arrowLayer.appendChild(arrow);
+}
 
 function analyzeCurrentPosition() {
 
@@ -364,13 +451,8 @@ function analyzeCurrentPosition() {
     );
 }
 
-
 analysisStockfish.postMessage("uci");
 
-</script>
-</body>
-
-</html>
 function updateAnalysisEvalBar(score) {
 
     const evalFill =
@@ -395,3 +477,7 @@ function updateAnalysisEvalBar(score) {
     evalFill.style.height =
         percentage + "%";
 }
+
+</script>
+</body>
+</html>

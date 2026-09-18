@@ -876,3 +876,38 @@ nav a:hover {
     background: white;
     transition: height 0.3s ease;
 }
+#analysisBoardWrapper {
+    width: 640px;
+    height: 640px;
+    position: relative;
+}
+
+#analysisArrowLayer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 20;
+}
+
+.analysis-arrow {
+    position: absolute;
+    height: 8px;
+    background: limegreen;
+    border-radius: 5px;
+    transform-origin: left center;
+}
+
+.analysis-arrow::after {
+    content: "";
+    position: absolute;
+    right: -16px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: 0;
+    height: 0;
+
+    border-top: 14px solid transparent;
+    border-bottom: 14px solid transparent;
+    border-left: 20px solid limegreen;
+}
