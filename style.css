@@ -794,6 +794,10 @@ nav a:hover {
 .hint-arrow-second::after {
     border-left: 18px solid gold;
 }
+/* =========================
+   Analysis Board
+========================= */
+
 #analysisPage {
     width: 1000px;
     max-width: 95%;
@@ -806,6 +810,58 @@ nav a:hover {
 #analysisBoard {
     width: 640px;
     height: 640px;
+}
+
+/* =========================
+   Analysis Board Area
+========================= */
+
+#analysisBoardArea {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+/* =========================
+   Analysis Evaluation Bar
+========================= */
+
+#analysisEvalBar {
+    width: 28px;
+    height: 640px;
+    background: #222;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+}
+
+#analysisEvalFill {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 50%;
+    background: white;
+    transition: height 0.3s ease;
+}
+
+/* =========================
+   Analysis Board Column
+========================= */
+
+#analysisBoardColumn {
+    width: 640px;
+}
+
+/* =========================
+   Analysis Chessboard
+========================= */
+
+#analysisBoardWrapper {
+    width: 640px;
+    height: 640px;
+    position: relative;
 }
 
 #analysisChessboard {
@@ -830,76 +886,9 @@ nav a:hover {
     background-color: #b58863;
 }
 
-#analysisPanel {
-    width: 300px;
-    min-height: 500px;
-    padding: 20px;
-    box-sizing: border-box;
-    background: #eeeeee;
-    border-radius: 8px;
-}
-
-#analysisPanel h2 {
-    margin-top: 0;
-}
-
-#analysisEvaluation,
-#analysisDepth,
-#analysisBestMove {
-    margin: 15px 0;
-    padding: 10px;
-    background: white;
-    border-radius: 5px;
-}#analysisBoardArea {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-}
-
-#analysisEvalBar {
-    width: 28px;
-    height: 640px;
-    flex-shrink: 0;
-}
-
-#analysisBoardWrapper {
-    width: 640px;
-    height: auto;
-    position: relative;
-}
-
-#analysisNavigation {
-    width: 640px;
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 652px;
-    margin-left: -640px;
-}
-
-#analysisEvalBar {
-    width: 28px;
-    height: 640px;
-    background: #222;
-    border-radius: 4px;
-    overflow: hidden;
-    position: relative;
-}
-
-#analysisEvalFill {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 50%;
-    background: white;
-    transition: height 0.3s ease;
-}
-#analysisBoardWrapper {
-    width: 640px;
-    height: 640px;
-    position: relative;
-}
+/* =========================
+   Analysis Arrows
+========================= */
 
 #analysisArrowLayer {
     position: absolute;
@@ -922,47 +911,57 @@ nav a:hover {
     right: -16px;
     top: 50%;
     transform: translateY(-50%);
-
     width: 0;
     height: 0;
-
     border-top: 14px solid transparent;
     border-bottom: 14px solid transparent;
     border-left: 20px solid limegreen;
 }
-.analysis-move-row {
-    display: grid;
-    grid-template-columns: 35px 1fr 1fr;
-    padding: 6px 8px;
-    border-bottom: 1px solid #ddd;
-    font-size: 16px;
+
+/* =========================
+   Analysis Panel
+========================= */
+
+#analysisPanel {
+    width: 300px;
+    min-height: 500px;
+    padding: 20px;
+    box-sizing: border-box;
+    background: #eeeeee;
+    border-radius: 8px;
 }
 
-.analysis-move-number {
-    font-weight: bold;
-    color: #777;
+#analysisPanel h2 {
+    margin-top: 0;
 }
 
-.analysis-move {
-    cursor: pointer;
-    padding: 3px 6px;
-    border-radius: 4px;
+#analysisEvaluation,
+#analysisDepth,
+#analysisBestMove {
+    margin: 15px 0;
+    padding: 10px;
+    background: white;
+    border-radius: 5px;
 }
 
-.analysis-move:hover {
-    background: #ddd;
-}
+/* =========================
+   Analysis Move List
+========================= */
+
 .analysis-move-row {
     display: grid;
     grid-template-columns: 40px 90px 90px;
     align-items: center;
     min-height: 32px;
+    padding: 6px 8px;
+    font-size: 16px;
 }
 
 .analysis-move-number {
     text-align: right;
     padding-right: 12px;
     color: #555;
+    font-weight: bold;
 }
 
 .analysis-move-cell {
@@ -972,7 +971,18 @@ nav a:hover {
 .analysis-move {
     display: inline-block;
     min-width: 50px;
+    cursor: pointer;
+    padding: 3px 6px;
+    border-radius: 4px;
 }
+
+.analysis-move:hover {
+    background: #ddd;
+}
+
+/* =========================
+   Analysis Navigation
+========================= */
 
 #analysisNavigation {
     width: 640px;

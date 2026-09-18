@@ -27,22 +27,21 @@
         <div id="analysisEvalFill"></div>
     </div>
 
-    <div id="analysisBoardWrapper">
-        <div id="analysisChessboard"></div>
-        <div id="analysisArrowLayer"></div>
-</div>
+    <div id="analysisBoardColumn">
 
-<div id="analysisNavigation">
+        <div id="analysisBoardWrapper">
+            <div id="analysisChessboard"></div>
+            <div id="analysisArrowLayer"></div>
+        </div>
 
-    <button id="analysisFirst">⏮</button>
+        <div id="analysisNavigation">
+            <button id="analysisFirst">⏮</button>
+            <button id="analysisPrevious">◀</button>
+            <button id="analysisNext">▶</button>
+            <button id="analysisLast">⏭</button>
+        </div>
 
-    <button id="analysisPrevious">◀</button>
-
-    <button id="analysisNext">▶</button>
-
-    <button id="analysisLast">⏭</button>
-
-</div>
+    </div>
 
 </div>
 
@@ -75,65 +74,6 @@
 const analysisBoard =
     document.getElementById("analysisChessboard");
 
-const startingPosition = [
-    "bR","bN","bB","bQ","bK","bB","bN","bR",
-    "bP","bP","bP","bP","bP","bP","bP","bP",
-    "","","","","","","","",
-    "","","","","","","","",
-    "","","","","","","","",
-    "","","","","","","","",
-    "wP","wP","wP","wP","wP","wP","wP","wP",
-    "wR","wN","wB","wQ","wK","wB","wN","wR"
-];
-
-function createAnalysisBoard() {
-
-    analysisBoard.innerHTML = "";
-
-    for (let i = 0; i < 64; i++) {
-
-        const square =
-            document.createElement("div");
-
-        square.classList.add("analysis-square");
-
-        const row =
-            Math.floor(i / 8);
-
-        const col =
-            i % 8;
-
-        if ((row + col) % 2 === 0) {
-            square.classList.add("analysis-light");
-        } else {
-            square.classList.add("analysis-dark");
-        }
-
-        const piece =
-            startingPosition[i];
-
-        if (piece) {
-
-            const image =
-                document.createElement("img");
-
-            image.src =
-                "./" + piece + ".svg";
-
-            image.classList.add(
-                "chess-piece"
-            );
-
-            image.alt = "";
-
-            square.appendChild(image);
-        }
-
-        analysisBoard.appendChild(square);
-    }
-}
-
-createAnalysisBoard();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
 
@@ -383,7 +323,7 @@ function updateAnalysisMoveList() {
             "click",
             function() {
 
-                showAnalysisPosition(i + 1);
+                showAnalysisMove(i + 1);
 
             }
         );
@@ -439,7 +379,7 @@ row.appendChild(whiteCell);
                     "click",
                     function() {
 
-                        showAnalysisPosition(i + 2);
+                        showAnalysisMove(i + 2);
 
                     }
                 );
@@ -461,33 +401,6 @@ row.appendChild(
             moveList.appendChild(row);
         }
     }
-}
-function showAnalysisPosition(moveNumber) {
-
-    const tempGame =
-        new Chess();
-
-    for (
-        let i = 0;
-        i < moveNumber;
-        i++
-    ) {
-
-        tempGame.move(
-            analysisMoves[i]
-        );
-    }
-
-    analysisGame.load(
-        tempGame.fen()
-    );
-
-    analysisCurrentMove =
-        moveNumber;
-
-    refreshAnalysisBoard();
-
-    analyzeCurrentPosition();
 }
 </script>
 <script>
