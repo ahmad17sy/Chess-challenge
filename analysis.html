@@ -127,7 +127,7 @@ if (analysisBoardFlipped) {
                 document.createElement("div");
 
             square.classList.add("analysis-square");
-
+square.dataset.square = squareName;
             if ((row + col) % 2 === 0) {
                 square.classList.add("analysis-light");
             } else {
@@ -290,15 +290,19 @@ image.addEventListener(
     }
 );
 /* =========================
-   Right Mouse Button
-   Mark Square + Draw Arrow
+   RIGHT MOUSE BUTTON
+   Manual arrows + square marks
 ========================= */
 
-let rightMouseDown = false;
-let rightMouseStart = null;
-let rightMouseMoved = false;
+let manualRightMouseDown = false;
+let manualRightMouseStart = null;
+let manualRightMouseMoved = false;
 
-square.addEventListener("mousedown", function(event) {
+analysisBoard.addEventListener("contextmenu", function(event) {
+    event.preventDefault();
+});
+
+analysisBoard.addEventListener("mousedown", function(event) {
 
     if (event.button !== 2) {
         return;
@@ -306,22 +310,87 @@ square.addEventListener("mousedown", function(event) {
 
     event.preventDefault();
 
-    rightMouseDown = true;
-    rightMouseStart = squareName;
-    rightMouseMoved = false;
-});
+    const rect = analysisBoard.getBoundingClientRect();
 
-square.addEventListener("mouseenter", function() {
+    const col = Math.floor(
+        (event.clientX - rect.left) /
+        (rect.width / 8)
+    );
+
+    const row = Math.floor(
+        (event.clientY - rect.top) /
+        (rect.height / 8)
+    );
 
     if (
-        rightMouseDown &&
-        rightMouseStart !== squareName
+        col < 0 || col > 7 ||
+        row < 0 || row > 7
     ) {
-        rightMouseMoved = true;
+        return;
+    }
+
+    let boardCol = col;
+    let boardRow = row;
+
+    if (analysisBoardFlipped) {
+        boardCol = 7 - col;
+        boardRow = 7 - row;
+    }
+
+    manualRightMouseStart =
+        String.fromCharCode(97 + boardCol) +
+        (8 - boardRow);
+
+    manualRightMouseDown = true;
+    manualRightMouseMoved = false;
+});
+
+analysisBoard.addEventListener("mousemove", function(event) {
+
+    if (!manualRightMouseDown) {
+        return;
+    }
+
+    const rect = analysisBoard.getBoundingClientRect();
+
+    const col = Math.floor(
+        (event.clientX - rect.left) /
+        (rect.width / 8)
+    );
+
+    const row = Math.floor(
+        (event.clientY - rect.top) /
+        (rect.height / 8)
+    );
+
+    if (
+        col < 0 || col > 7 ||
+        row < 0 || row > 7
+    ) {
+        return;
+    }
+
+    let boardCol = col;
+    let boardRow = row;
+
+    if (analysisBoardFlipped) {
+        boardCol = 7 - col;
+        boardRow = 7 - row;
+    }
+
+    const currentSquare =
+        String.fromCharCode(97 + boardCol) +
+        (8 - boardRow);
+
+    if (
+        currentSquare !==
+        manualRightMouseStart
+    ) {
+        manualRightMouseMoved = true;
     }
 });
 
-square.addEventListener("mouseup", function(event) {
+analysisBoard.addEventListener("mouseup", function(event) {
 
     if (event.button !== 2) {
         return;
@@ -329,23 +398,54 @@ square.addEventListener("mouseup", function(event) {
 
     event.preventDefault();
 
-    if (!rightMouseDown) {
+    if (!manualRightMouseDown) {
         return;
     }
 
     const startSquare =
-        rightMouseStart;
+        manualRightMouseStart;
 
-    const endSquare =
-        squareName;
+    const rect =
+        analysisBoard.getBoundingClientRect();
 
-    rightMouseDown = false;
-    rightMouseStart = null;
+    const col = Math.floor(
+        (event.clientX - rect.left) /
+        (rect.width / 8)
+    );
 
-    /* رسم سهم */
+    const row = Math.floor(
+        (event.clientY - rect.top) /
+        (rect.height / 8)
+    );
+
+    manualRightMouseDown = false;
+    manualRightMouseStart = null;
 
     if (
-        rightMouseMoved &&
+        col < 0 || col > 7 ||
+        row < 0 || row > 7
+    ) {
+        return;
+    }
+
+    let boardCol = col;
+    let boardRow = row;
+
+    if (analysisBoardFlipped) {
+        boardCol = 7 - col;
+        boardRow = 7 - row;
+    }
+
+    const endSquare =
+        String.fromCharCode(97 + boardCol) +
+        (8 - boardRow);
+
+    /* =========================
+       Draw Arrow
+    ========================= */
+
+    if (
+        manualRightMouseMoved &&
         startSquare !== endSquare
     ) {
 
@@ -357,7 +457,31 @@ square.addEventListener("mouseup", function(event) {
         return;
     }
 
-    /* تلوين المربع */
+    /* =========================
+       Mark Square
+    ========================= */
+
+    const squareElements =
+        document.querySelectorAll(
+            ".analysis-square"
+        );
+
+    let targetSquare = null;
+
+    squareElements.forEach(function(element) {
+
+        if (
+            element.dataset.square ===
+            endSquare
+        ) {
+            targetSquare = element;
+        }
+
+    });
+
+    if (!targetSquare) {
+        return;
+    }
 
     const marks = [
         "analysis-mark-yellow",
@@ -371,7 +495,7 @@ square.addEventListener("mouseup", function(event) {
     for (let i = 0; i < marks.length; i++) {
 
         if (
-            square.classList.contains(
+            targetSquare.classList.contains(
                 marks[i]
             )
         ) {
@@ -385,7 +509,7 @@ square.addEventListener("mouseup", function(event) {
         const currentIndex =
             marks.indexOf(currentMark);
 
-        square.classList.remove(
+        targetSquare.classList.remove(
             currentMark
         );
 
@@ -394,26 +518,18 @@ square.addEventListener("mouseup", function(event) {
             marks.length - 1
         ) {
 
-            square.classList.add(
+            targetSquare.classList.add(
                 marks[currentIndex + 1]
             );
         }
 
     } else {
 
-        square.classList.add(
+        targetSquare.classList.add(
             "analysis-mark-yellow"
         );
     }
 });
-
-square.addEventListener(
-    "contextmenu",
-    function(event) {
-
-        event.preventDefault();
-    }
-);
             analysisBoard.appendChild(square);
         }
     }
