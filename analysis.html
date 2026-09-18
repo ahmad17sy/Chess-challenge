@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Analysis Board - My Chess</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<nav>
+    <a href="index.html">Home</a>
+    <a href="chess.html">Play Against Computer</a>
+    <a href="analysis.html">Analysis Board</a>
+    <a href="openings.html">Openings</a>
+    <a href="contact.html">Contact</a>
+</nav>
+
+<h1>Analysis Board</h1>
+
+<div id="analysisPage">
+
+    <div id="analysisBoardArea">
+
+    <div id="analysisEvalBar">
+        <div id="analysisEvalFill"></div>
+    </div>
+
+    <div id="analysisBoard">
+        <div id="analysisChessboard"></div>
+    </div>
+
+</div>
+
+    <div id="analysisPanel">
+
+        <h2>Stockfish Analysis</h2>
+
+        <div id="analysisEvaluation">
+            Evaluation: 0.00
+        </div>
+
+        <div id="analysisDepth">
+            Depth: 0
+        </div>
+
+        <div id="analysisBestMove">
+            Best move: -
+        </div>
+
+        <div id="analysisMoves">
+            <h3>Moves</h3>
+            <div id="analysisMoveList"></div>
+        </div>
+
+    </div>
+
+</div>
+<script>
+const analysisBoard =
+    document.getElementById("analysisChessboard");
+
+const startingPosition = [
+    "bR","bN","bB","bQ","bK","bB","bN","bR",
+    "bP","bP","bP","bP","bP","bP","bP","bP",
+    "","","","","","","","",
+    "","","","","","","","",
+    "","","","","","","","",
+    "","","","","","","","",
+    "wP","wP","wP","wP","wP","wP","wP","wP",
+    "wR","wN","wB","wQ","wK","wB","wN","wR"
+];
+
+function createAnalysisBoard() {
+
+    analysisBoard.innerHTML = "";
+
+    for (let i = 0; i < 64; i++) {
+
+        const square =
+            document.createElement("div");
+
+        square.classList.add("analysis-square");
+
+        const row =
+            Math.floor(i / 8);
+
+        const col =
+            i % 8;
+
+        if ((row + col) % 2 === 0) {
+            square.classList.add("analysis-light");
+        } else {
+            square.classList.add("analysis-dark");
+        }
+
+        const piece =
+            startingPosition[i];
+
+        if (piece) {
+
+            const image =
+                document.createElement("img");
+
+            image.src =
+                "./" + piece + ".svg";
+
+            image.classList.add(
+                "chess-piece"
+            );
+
+            image.alt = "";
+
+            square.appendChild(image);
+        }
+
+        analysisBoard.appendChild(square);
+    }
+}
+
+createAnalysisBoard();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+
+<script src="./stockfish-18-lite-single.js"></script>
+<script>
+const analysisGame = new Chess();
+
+let analysisSelectedSquare = null;
+
+function refreshAnalysisBoard() {
+
+    analysisBoard.innerHTML = "";
+
+    const boardPosition =
+        analysisGame.board();
+
+    for (let row = 0; row < 8; row++) {
+
+        for (let col = 0; col < 8; col++) {
+
+            const square =
+                document.createElement("div");
+
+            square.classList.add("analysis-square");
+
+            if ((row + col) % 2 === 0) {
+                square.classList.add("analysis-light");
+            } else {
+                square.classList.add("analysis-dark");
+            }
+
+            const squareName =
+                String.fromCharCode(97 + col) +
+                (8 - row);
+
+            const piece =
+                boardPosition[row][col];
+
+            if (piece) {
+
+                const color =
+                    piece.color === "w" ? "w" : "b";
+
+                const type =
+                    piece.type.toUpperCase();
+
+                const image =
+                    document.createElement("img");
+
+                image.src =
+                    "./" + color + type + ".svg";
+
+                image.classList.add(
+                    "chess-piece"
+                );
+
+                image.alt = "";
+
+                square.appendChild(image);
+            }
+
+            square.addEventListener(
+                "click",
+                function () {
+
+                    if (
+                        analysisSelectedSquare === null
+                    ) {
+
+                        if (!piece) return;
+
+                        if (
+                            piece.color !==
+                            analysisGame.turn()
+                        ) {
+                            return;
+                        }
+
+                        analysisSelectedSquare =
+                            squareName;
+
+                        square.style.outline =
+                            "4px solid yellow";
+
+                        return;
+                    }
+
+                    const move =
+                        analysisGame.move({
+                            from:
+                                analysisSelectedSquare,
+                            to:
+                                squareName,
+                            promotion: "q"
+                        });
+
+                    analysisSelectedSquare = null;
+
+                    if (!move) {
+                        refreshAnalysisBoard();
+                        return;
+                    }
+
+                    refreshAnalysisBoard();
+                    analyzeCurrentPosition();
+                }
+            );
+
+            analysisBoard.appendChild(square);
+        }
+    }
+}
+
+refreshAnalysisBoard();
+</script>
+<script>
+
+const analysisStockfish = new Worker(
+    "./stockfish-18-lite-single.js"
+);
+
+let analysisStockfishReady = false;
+
+analysisStockfish.onmessage = function(event) {
+
+    const message = event.data;
+
+    if (message === "uciok") {
+
+        analysisStockfish.postMessage("isready");
+
+        return;
+    }
+
+    if (message === "readyok") {
+
+        analysisStockfishReady = true;
+
+        analyzeCurrentPosition();
+
+        return;
+    }
+
+    if (
+        message.startsWith("info") &&
+        message.includes("score") &&
+        message.includes("depth")
+    ) {
+
+        const depthMatch =
+            message.match(/depth (\d+)/);
+
+        const scoreCpMatch =
+            message.match(/score cp (-?\d+)/);
+
+        const scoreMateMatch =
+            message.match(/score mate (-?\d+)/);
+
+        if (depthMatch) {
+
+            document.getElementById(
+                "analysisDepth"
+            ).textContent =
+                "Depth: " + depthMatch[1];
+        }
+
+        if (scoreCpMatch) {
+
+            let score =
+    parseInt(
+        scoreCpMatch[1],
+        10
+    ) / 100;
+
+if (analysisGame.turn() === "b") {
+    score = -score;
+}
+
+updateAnalysisEvalBar(score);
+
+            document.getElementById(
+                "analysisEvaluation"
+            ).textContent =
+                "Evaluation: " +
+                (score >= 0 ? "+" : "") +
+                score.toFixed(2);
+        }
+
+        if (scoreMateMatch) {
+
+            const mate =
+                parseInt(
+                    scoreMateMatch[1],
+                    10
+                );
+
+            document.getElementById(
+                "analysisEvaluation"
+            ).textContent =
+                "Evaluation: Mate in " +
+                Math.abs(mate);
+        }
+
+        return;
+    }
+
+    if (message.startsWith("bestmove")) {
+
+        const parts =
+            message.split(" ");
+
+        if (parts[1]) {
+
+            document.getElementById(
+                "analysisBestMove"
+            ).textContent =
+                "Best move: " + parts[1];
+        }
+
+        return;
+    }
+};
+
+
+function analyzeCurrentPosition() {
+
+    if (!analysisStockfishReady) {
+        return;
+    }
+
+    const fen =
+        analysisGame.fen();
+
+    analysisStockfish.postMessage("stop");
+
+    analysisStockfish.postMessage(
+        "position fen " + fen
+    );
+
+    analysisStockfish.postMessage(
+        "go depth 15"
+    );
+}
+
+
+analysisStockfish.postMessage("uci");
+
+</script>
+</body>
+
+</html>
+function updateAnalysisEvalBar(score) {
+
+    const evalFill =
+        document.getElementById(
+            "analysisEvalFill"
+        );
+
+    if (!evalFill) return;
+
+    let percentage =
+        50 + (score * 10);
+
+    percentage =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                percentage
+            )
+        );
+
+    evalFill.style.height =
+        percentage + "%";
+}

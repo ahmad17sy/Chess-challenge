@@ -348,7 +348,30 @@ analysisStockfish.onmessage = function(event) {
         updateMoveHistoryAnalysis();
     }
 };
+function updateAnalysisEvalBar(score) {
 
+    const evalFill =
+        document.getElementById(
+            "analysisEvalFill"
+        );
+
+    if (!evalFill) return;
+
+    let percentage =
+        50 + (score * 10);
+
+    percentage =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                percentage
+            )
+        );
+
+    evalFill.style.height =
+        percentage + "%";
+}
 analysisStockfish.postMessage("uci");
 let history = [];
 let moveHistory = [];
@@ -1896,20 +1919,7 @@ if (
             square.classList.add("last-move");
         }
 // تلميح أفضل نقلة
-if (hintFrom === i) {
-    square.classList.add("hint-from");
-}
 
-if (hintTo === i) {
-    square.classList.add("hint-to");
-}
-if (hintFrom2 === i) {
-    square.classList.add("hint-from-2");
-}
-
-if (hintTo2 === i) {
-    square.classList.add("hint-to-2");
-}
 const piece = pieces[i];
 
 if (piece) {
