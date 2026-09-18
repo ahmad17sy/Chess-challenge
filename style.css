@@ -745,3 +745,18 @@ nav a:hover {
 .hint-to {
     box-shadow: inset 0 0 0 5px limegreen;
 }
+.hint-from {
+    box-shadow: inset 0 0 0 5px limegreen;
+}
+
+.hint-to {
+    box-shadow: inset 0 0 0 5px limegreen;
+}
+
+.hint-from-2 {
+    box-shadow: inset 0 0 0 5px gold;
+}
+
+.hint-to-2 {
+    box-shadow: inset 0 0 0 5px gold;
+}

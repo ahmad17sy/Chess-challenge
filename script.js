@@ -85,8 +85,12 @@ let stockfish = new Worker("stockfish-18-lite-single.js");
 let stockfishReady = false;
 let stockfishThinking = false;
 let hintMoves = [];
+
 let hintFrom = null;
 let hintTo = null;
+
+let hintFrom2 = null;
+let hintTo2 = null;
 let engineRequestId = 0;
 let currentEngineRequest = 0;
 let gameSessionId = 0;
@@ -1126,7 +1130,8 @@ function makeMove(from, to) {
 hintMoves = [];
 hintFrom = null;
 hintTo = null;
-
+hintFrom2 = null;
+hintTo2 = null;
 const hintResult =
     document.getElementById("hintResult");
 
@@ -1650,6 +1655,8 @@ premove = null;
 hintMoves = [];
 hintFrom = null;
 hintTo = null;
+hintFrom2 = null;
+hintTo2 = null;
     history = [];
 moveHistory = [];
 redoHistory = [];
@@ -1880,6 +1887,13 @@ if (hintFrom === i) {
 
 if (hintTo === i) {
     square.classList.add("hint-to");
+}
+if (hintFrom2 === i) {
+    square.classList.add("hint-from-2");
+}
+
+if (hintTo2 === i) {
+    square.classList.add("hint-to-2");
 }
 const piece = pieces[i];
 
@@ -2524,47 +2538,7 @@ function showHint() {
             return;
         }
 
-        const hintResult =
-    document.getElementById("hintResult");
-
-if (!hintResult) return;
-
-let html = "<strong>💡 Best moves</strong><br><br>";
-
-hintMoves.forEach(function (item, index) {
-
-    if (!item) return;
-
-    const move =
-        item.move.substring(0, 2) +
-        " → " +
-        item.move.substring(2, 4);
-
-    html +=
-        "<div>" +
-        (index + 1) +
-        ". <strong>" +
-        move +
-        "</strong>";
-
-    if (item.mate !== null) {
-
-        html +=
-            " — Mate in " +
-            Math.abs(item.mate);
-
-    } else if (item.score !== null) {
-
-        html +=
-            " — " +
-            (item.score >= 0 ? "+" : "") +
-            item.score.toFixed(2);
-    }
-
-    html += "</div>";
-});
-
-hintResult.innerHTML = html;
+ 
 if (hintMoves[0]) {
 
     hintFrom =
@@ -2576,8 +2550,22 @@ if (hintMoves[0]) {
         algebraicToIndex(
             hintMoves[0].move.substring(2, 4)
         );
+}
 
-    createBoard();
+if (hintMoves[1]) {
+
+    hintFrom2 =
+        algebraicToIndex(
+            hintMoves[1].move.substring(0, 2)
+        );
+
+    hintTo2 =
+        algebraicToIndex(
+            hintMoves[1].move.substring(2, 4)
+        );
+}
+
+createBoard();
 }
     }, 1200);
 }
