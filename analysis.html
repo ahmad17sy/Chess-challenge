@@ -1254,6 +1254,48 @@ document.getElementById(
         refreshAnalysisBoard();
     }
 );
+/* =========================
+   Mouse Wheel Navigation
+   ========================= */
+
+analysisBoard.addEventListener(
+    "wheel",
+    function(event) {
+
+        event.preventDefault();
+
+        if (event.deltaY < 0) {
+
+            // Wheel UP → previous move
+            if (analysisCurrentMove > 0) {
+
+                showAnalysisMove(
+                    analysisCurrentMove - 1
+                );
+
+            }
+
+        } else {
+
+            // Wheel DOWN → next move
+            if (
+                analysisCurrentMove <
+                analysisMoves.length
+            ) {
+
+                showAnalysisMove(
+                    analysisCurrentMove + 1
+                );
+
+            }
+
+        }
+
+    },
+    {
+        passive: false
+    }
+);
 refreshAnalysisBoard();
 </script>
 </body>
