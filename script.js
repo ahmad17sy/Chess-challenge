@@ -2656,7 +2656,7 @@ if (hintMoves[1]) {
 }
 
 createBoard();
-}
+
     }, 1200);
 }
 
