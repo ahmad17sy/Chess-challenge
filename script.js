@@ -1819,6 +1819,21 @@ function clickMove(index) {
 // إنشاء الرقعة
 // ===============================
 function createBoard() {
+    // طبقة أسهم الـ Hint
+let hintLayer = document.getElementById("hintLayer");
+
+if (!hintLayer) {
+    hintLayer = document.createElement("div");
+    hintLayer.id = "hintLayer";
+    hintLayer.style.position = "absolute";
+    hintLayer.style.inset = "0";
+    hintLayer.style.pointerEvents = "none";
+
+    board.parentElement.style.position = "relative";
+    board.parentElement.appendChild(hintLayer);
+}
+
+hintLayer.innerHTML = "";
     board.innerHTML = "";
 
     if (playerColor === "b") {
@@ -2098,8 +2113,83 @@ if (getColor(piece) === playerColor) {
     updateEvaluationBar();
     updateBoardColors();
     updateGameStatus();
+    if (hintFrom !== null && hintTo !== null) {
+    drawHintArrow(
+        hintFrom,
+        hintTo,
+        "hint-arrow-best"
+    );
 }
 
+if (hintFrom2 !== null && hintTo2 !== null) {
+    drawHintArrow(
+        hintFrom2,
+        hintTo2,
+        "hint-arrow-second"
+    );
+}
+}
+function drawHintArrow(from, to, className) {
+
+    const hintLayer =
+        document.getElementById("hintLayer");
+
+    if (!hintLayer) return;
+
+    const squareSize =
+        board.clientWidth / 8;
+
+    const fromRow = Math.floor(from / 8);
+    const fromCol = from % 8;
+
+    const toRow = Math.floor(to / 8);
+    const toCol = to % 8;
+
+    const x1 =
+        fromCol * squareSize +
+        squareSize / 2;
+
+    const y1 =
+        fromRow * squareSize +
+        squareSize / 2;
+
+    const x2 =
+        toCol * squareSize +
+        squareSize / 2;
+
+    const y2 =
+        toRow * squareSize +
+        squareSize / 2;
+
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+
+    const length =
+        Math.sqrt(dx * dx + dy * dy);
+
+    const angle =
+        Math.atan2(dy, dx) * 180 / Math.PI;
+
+    const arrow =
+        document.createElement("div");
+
+    arrow.className =
+        "hint-arrow " + className;
+
+    arrow.style.width =
+        length + "px";
+
+    arrow.style.left =
+        x1 + "px";
+
+    arrow.style.top =
+        y1 + "px";
+
+    arrow.style.transform =
+        "rotate(" + angle + "deg)";
+
+    hintLayer.appendChild(arrow);
+}
 // ===============================
 // شريط التقييم
 // ===============================

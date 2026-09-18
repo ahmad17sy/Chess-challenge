@@ -760,3 +760,38 @@ nav a:hover {
 .hint-to-2 {
     box-shadow: inset 0 0 0 5px gold;
 }
+.hint-arrow {
+    position: absolute;
+    height: 8px;
+    transform-origin: left center;
+    border-radius: 5px;
+    z-index: 50;
+}
+
+.hint-arrow::after {
+    content: "";
+    position: absolute;
+    right: -14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+}
+
+.hint-arrow-best {
+    background: limegreen;
+}
+
+.hint-arrow-best::after {
+    border-left: 18px solid limegreen;
+}
+
+.hint-arrow-second {
+    background: gold;
+}
+
+.hint-arrow-second::after {
+    border-left: 18px solid gold;
+}
