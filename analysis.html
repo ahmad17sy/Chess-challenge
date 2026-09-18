@@ -127,9 +127,7 @@ createAnalysisBoard();
 <script src="./stockfish-18-lite-single.js"></script>
 <script>
 const analysisGame = new Chess();
-
-let analysisSelectedSquare = null;
-
+let selectedAnalysisSquare = null;
 function refreshAnalysisBoard() {
 
     analysisBoard.innerHTML = "";
@@ -179,53 +177,109 @@ function refreshAnalysisBoard() {
 
                 image.alt = "";
 
-                square.appendChild(image);
-            }
+                image.draggable = true;
 
-            square.addEventListener(
-                "click",
-                function () {
-
-                    if (
-                        analysisSelectedSquare === null
-                    ) {
-
-                        if (!piece) return;
+                image.addEventListener(
+                    "dragstart",
+                    function(event) {
 
                         if (
                             piece.color !==
                             analysisGame.turn()
                         ) {
+                            event.preventDefault();
                             return;
                         }
 
-                        analysisSelectedSquare =
+                        selectedAnalysisSquare =
+                            squareName;
+                    }
+                );
+
+                square.appendChild(image);
+            }
+
+            /* =========================
+               النقر
+               ========================= */
+
+            square.addEventListener(
+                "click",
+                function() {
+
+                    const currentPiece =
+                        analysisGame.get(squareName);
+
+                    if (
+                        selectedAnalysisSquare === null
+                    ) {
+
+                        if (!currentPiece) {
+                            return;
+                        }
+
+                        if (
+                            currentPiece.color !==
+                            analysisGame.turn()
+                        ) {
+                            return;
+                        }
+
+                        selectedAnalysisSquare =
                             squareName;
 
-                        square.style.outline =
-                            "4px solid yellow";
+                        return;
+                    }
+
+                    if (
+                        selectedAnalysisSquare ===
+                        squareName
+                    ) {
+
+                        selectedAnalysisSquare = null;
 
                         return;
                     }
 
-                    const move =
-                        analysisGame.move({
-                            from:
-                                analysisSelectedSquare,
-                            to:
-                                squareName,
-                            promotion: "q"
-                        });
+                    makeAnalysisMove(
+                        selectedAnalysisSquare,
+                        squareName
+                    );
 
-                    analysisSelectedSquare = null;
+                    selectedAnalysisSquare = null;
+                }
+            );
 
-                    if (!move) {
-                        refreshAnalysisBoard();
+            /* =========================
+               السحب والإفلات
+               ========================= */
+
+            square.addEventListener(
+                "dragover",
+                function(event) {
+
+                    event.preventDefault();
+                }
+            );
+
+            square.addEventListener(
+                "drop",
+                function(event) {
+
+                    event.preventDefault();
+
+                    if (
+                        selectedAnalysisSquare === null
+                    ) {
                         return;
                     }
 
-                    refreshAnalysisBoard();
-                    analyzeCurrentPosition();
+                    makeAnalysisMove(
+                        selectedAnalysisSquare,
+                        squareName
+                    );
+
+                    selectedAnalysisSquare = null;
                 }
             );
 
@@ -233,7 +287,24 @@ function refreshAnalysisBoard() {
         }
     }
 }
+function makeAnalysisMove(from, to) {
 
+    const move =
+        analysisGame.move({
+            from: from,
+            to: to,
+            promotion: "q"
+        });
+
+    if (!move) {
+        refreshAnalysisBoard();
+        return;
+    }
+
+    refreshAnalysisBoard();
+
+    analyzeCurrentPosition();
+}
 refreshAnalysisBoard();
 </script>
 <script>
