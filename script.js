@@ -1123,7 +1123,16 @@ function analyzePlayedMove(moveNotation, moverColor, before) {
 
 
 function makeMove(from, to) {
+hintMoves = [];
+hintFrom = null;
+hintTo = null;
 
+const hintResult =
+    document.getElementById("hintResult");
+
+if (hintResult) {
+    hintResult.innerHTML = "";
+}
     if (gameOver) {
         return false;
     }
@@ -1638,6 +1647,9 @@ stockfish.postMessage("stop");
 
     draggedSquare = null;
 premove = null;
+hintMoves = [];
+hintFrom = null;
+hintTo = null;
     history = [];
 moveHistory = [];
 redoHistory = [];
