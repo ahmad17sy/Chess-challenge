@@ -1074,3 +1074,80 @@ nav a:hover {
 
     box-shadow: 0 2px 4px rgba(0,0,0,0.25);
 }
+/* =========================
+   Analysis Top 3 Moves
+========================= */
+
+#analysisTopMoves {
+    margin-top: 15px;
+    padding: 12px;
+    background: #ffffff;
+    border-radius: 8px;
+}
+
+#analysisTopMoves h3 {
+    margin: 0 0 10px 0;
+}
+
+#analysisTopMoves div {
+    padding: 9px 10px;
+    margin-top: 6px;
+    background: #eeeeee;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+}
+/* =========================
+   Analysis Square Marking
+========================= */
+
+.analysis-mark-yellow {
+    background-color: #f6d365 !important;
+}
+
+.analysis-mark-red {
+    background-color: #e57373 !important;
+}
+
+.analysis-mark-green {
+    background-color: #81c784 !important;
+}
+
+.analysis-mark-blue {
+    background-color: #64b5f6 !important;
+}
+/* =========================
+   Manual Analysis Arrows
+========================= */
+
+#analysisManualArrowLayer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 30;
+}
+
+.analysis-manual-arrow {
+    position: absolute;
+    height: 8px;
+    background: #e53935;
+    border-radius: 5px;
+    transform-origin: left center;
+}
+
+.analysis-manual-arrow::after {
+    content: "";
+    position: absolute;
+
+    right: -15px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    width: 0;
+    height: 0;
+
+    border-top: 13px solid transparent;
+    border-bottom: 13px solid transparent;
+    border-left: 20px solid #e53935;
+}

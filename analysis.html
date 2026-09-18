@@ -30,9 +30,10 @@
     <div id="analysisBoardColumn">
 
         <div id="analysisBoardWrapper">
-            <div id="analysisChessboard"></div>
-            <div id="analysisArrowLayer"></div>
-        </div>
+    <div id="analysisChessboard"></div>
+    <div id="analysisArrowLayer"></div>
+    <div id="analysisManualArrowLayer"></div>
+</div>
 
         <div id="analysisNavigation">
             <button id="analysisFirst">⏮</button>
@@ -58,8 +59,16 @@
         </div>
 
         <div id="analysisBestMove">
+            
             Best move: -
         </div>
+        <div id="analysisTopMoves">
+    <h3>Top 3 Moves</h3>
+
+    <div id="analysisMove1">1. -</div>
+    <div id="analysisMove2">2. -</div>
+    <div id="analysisMove3">3. -</div>
+</div>
 
         <div id="analysisMoves">
             <h3>Moves</h3>
@@ -259,7 +268,131 @@ image.addEventListener(
         selectedAnalysisSquare = null;
     }
 );
+/* =========================
+   Right Mouse Button
+   Mark Square + Draw Arrow
+========================= */
 
+let rightMouseDown = false;
+let rightMouseStart = null;
+let rightMouseMoved = false;
+
+square.addEventListener("mousedown", function(event) {
+
+    if (event.button !== 2) {
+        return;
+    }
+
+    event.preventDefault();
+
+    rightMouseDown = true;
+    rightMouseStart = squareName;
+    rightMouseMoved = false;
+});
+
+square.addEventListener("mouseenter", function() {
+
+    if (
+        rightMouseDown &&
+        rightMouseStart !== squareName
+    ) {
+        rightMouseMoved = true;
+    }
+});
+
+square.addEventListener("mouseup", function(event) {
+
+    if (event.button !== 2) {
+        return;
+    }
+
+    event.preventDefault();
+
+    if (!rightMouseDown) {
+        return;
+    }
+
+    const startSquare =
+        rightMouseStart;
+
+    const endSquare =
+        squareName;
+
+    rightMouseDown = false;
+    rightMouseStart = null;
+
+    /* رسم سهم */
+
+    if (
+        rightMouseMoved &&
+        startSquare !== endSquare
+    ) {
+
+        drawManualArrow(
+            startSquare,
+            endSquare
+        );
+
+        return;
+    }
+
+    /* تلوين المربع */
+
+    const marks = [
+        "analysis-mark-yellow",
+        "analysis-mark-red",
+        "analysis-mark-green",
+        "analysis-mark-blue"
+    ];
+
+    let currentMark = null;
+
+    for (let i = 0; i < marks.length; i++) {
+
+        if (
+            square.classList.contains(
+                marks[i]
+            )
+        ) {
+            currentMark = marks[i];
+            break;
+        }
+    }
+
+    if (currentMark) {
+
+        const currentIndex =
+            marks.indexOf(currentMark);
+
+        square.classList.remove(
+            currentMark
+        );
+
+        if (
+            currentIndex <
+            marks.length - 1
+        ) {
+
+            square.classList.add(
+                marks[currentIndex + 1]
+            );
+        }
+
+    } else {
+
+        square.classList.add(
+            "analysis-mark-yellow"
+        );
+    }
+});
+
+square.addEventListener(
+    "contextmenu",
+    function(event) {
+
+        event.preventDefault();
+    }
+);
             analysisBoard.appendChild(square);
         }
     }
@@ -445,11 +578,19 @@ analysisStockfish.onmessage = function(event) {
         return;
     }
 
+    /* =========================
+       Stockfish INFO
+    ========================= */
+
     if (
         message.startsWith("info") &&
+        message.includes("multipv") &&
         message.includes("score") &&
-        message.includes("depth")
+        message.includes("pv")
     ) {
+
+        const multipvMatch =
+            message.match(/multipv (\d+)/);
 
         const depthMatch =
             message.match(/depth (\d+)/);
@@ -460,34 +601,94 @@ analysisStockfish.onmessage = function(event) {
         const scoreMateMatch =
             message.match(/score mate (-?\d+)/);
 
-        if (depthMatch) {
+        const pvMatch =
+            message.match(/ pv (.+)$/);
 
-            document.getElementById(
-                "analysisDepth"
-            ).textContent =
-                "Depth: " + depthMatch[1];
+        if (!multipvMatch || !pvMatch) {
+            return;
         }
+
+        const pvNumber =
+            parseInt(
+                multipvMatch[1],
+                10
+            );
+
+        const firstMove =
+            pvMatch[1].trim().split(" ")[0];
+
+        if (!firstMove || firstMove.length < 4) {
+            return;
+        }
+
+        /* =========================
+           Convert Stockfish move to SAN
+        ========================= */
+
+        const from =
+            firstMove.substring(0, 2);
+
+        const to =
+            firstMove.substring(2, 4);
+
+        const promotion =
+            firstMove.substring(4, 5);
+
+        const tempGame =
+            new Chess(
+                analysisGame.fen()
+            );
+
+        const move =
+            tempGame.move({
+                from: from,
+                to: to,
+                promotion: promotion || "q"
+            });
+
+        let moveText = firstMove;
+
+        if (move) {
+            moveText = move.san;
+        }
+
+        /* =========================
+           Evaluation
+        ========================= */
+
+        let scoreText = "";
 
         if (scoreCpMatch) {
 
             let score =
-    parseInt(
-        scoreCpMatch[1],
-        10
-    ) / 100;
+                parseInt(
+                    scoreCpMatch[1],
+                    10
+                ) / 100;
 
-if (analysisGame.turn() === "b") {
-    score = -score;
-}
+            if (analysisGame.turn() === "b") {
+                score = -score;
+            }
 
-updateAnalysisEvalBar(score);
-
-            document.getElementById(
-                "analysisEvaluation"
-            ).textContent =
-                "Evaluation: " +
+            scoreText =
                 (score >= 0 ? "+" : "") +
                 score.toFixed(2);
+
+            /*
+               Evaluation bar and main evaluation
+               only use the BEST line.
+            */
+
+            if (pvNumber === 1) {
+
+                updateAnalysisEvalBar(score);
+
+                document.getElementById(
+                    "analysisEvaluation"
+                ).textContent =
+                    "Evaluation: " +
+                    scoreText;
+            }
         }
 
         if (scoreMateMatch) {
@@ -498,58 +699,204 @@ updateAnalysisEvalBar(score);
                     10
                 );
 
+            scoreText =
+                "Mate " +
+                (mate > 0 ? "+" : "") +
+                mate;
+
+            if (pvNumber === 1) {
+
+                document.getElementById(
+                    "analysisEvaluation"
+                ).textContent =
+                    "Evaluation: Mate in " +
+                    Math.abs(mate);
+            }
+        }
+
+        /* =========================
+           Depth
+        ========================= */
+
+        if (
+            depthMatch &&
+            pvNumber === 1
+        ) {
+
             document.getElementById(
-                "analysisEvaluation"
+                "analysisDepth"
             ).textContent =
-                "Evaluation: Mate in " +
-                Math.abs(mate);
+                "Depth: " +
+                depthMatch[1];
+        }
+
+        /* =========================
+           Top 3 Moves
+        ========================= */
+
+        const moveElement =
+            document.getElementById(
+                "analysisMove" + pvNumber
+            );
+
+        if (moveElement) {
+
+            moveElement.textContent =
+                pvNumber +
+                ". " +
+                moveText +
+                (
+                    scoreText
+                        ? "    " + scoreText
+                        : ""
+                );
         }
 
         return;
     }
-if (message.startsWith("bestmove")) {
 
-    const parts = message.split(" ");
-    const bestMove = parts[1];
+    /* =========================
+       Best Move
+    ========================= */
 
-    if (bestMove && bestMove !== "(none)") {
+    if (message.startsWith("bestmove")) {
 
-        const from = bestMove.substring(0, 2);
-        const to = bestMove.substring(2, 4);
-        const promotion = bestMove.substring(4, 5);
+        const parts =
+            message.split(" ");
 
-        const tempGame = new Chess(
-            analysisGame.fen()
-        );
+        const bestMove =
+            parts[1];
 
-        const move = tempGame.move({
-            from: from,
-            to: to,
-            promotion: promotion || "q"
-        });
+        if (
+            bestMove &&
+            bestMove !== "(none)"
+        ) {
 
-        if (move) {
+            const from =
+                bestMove.substring(0, 2);
 
-            document.getElementById(
-                "analysisBestMove"
-            ).textContent =
-                "Best move: " + move.san;
+            const to =
+                bestMove.substring(2, 4);
 
-        } else {
+            const promotion =
+                bestMove.substring(4, 5);
 
-            document.getElementById(
-                "analysisBestMove"
-            ).textContent =
-                "Best move: " + bestMove;
+            const tempGame =
+                new Chess(
+                    analysisGame.fen()
+                );
+
+            const move =
+                tempGame.move({
+                    from: from,
+                    to: to,
+                    promotion:
+                        promotion || "q"
+                });
+
+            if (move) {
+
+                document.getElementById(
+                    "analysisBestMove"
+                ).textContent =
+                    "Best move: " +
+                    move.san;
+
+            } else {
+
+                document.getElementById(
+                    "analysisBestMove"
+                ).textContent =
+                    "Best move: " +
+                    bestMove;
+            }
+
+            drawAnalysisArrow(
+                bestMove
+            );
         }
 
-        // السهم يبقى باستخدام صيغة Stockfish
-        drawAnalysisArrow(bestMove);
+        return;
+    }
+};
+function drawManualArrow(from, to) {
+
+    const arrowLayer =
+        document.getElementById(
+            "analysisManualArrowLayer"
+        );
+
+    if (!arrowLayer) {
+        return;
     }
 
-    return;
+    const fromCol =
+        from.charCodeAt(0) - 97;
+
+    const fromRow =
+        8 - parseInt(from[1]);
+
+    const toCol =
+        to.charCodeAt(0) - 97;
+
+    const toRow =
+        8 - parseInt(to[1]);
+
+    const squareSize =
+        640 / 8;
+
+    const x1 =
+        fromCol * squareSize +
+        squareSize / 2;
+
+    const y1 =
+        fromRow * squareSize +
+        squareSize / 2;
+
+    const x2 =
+        toCol * squareSize +
+        squareSize / 2;
+
+    const y2 =
+        toRow * squareSize +
+        squareSize / 2;
+
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+
+    const length =
+        Math.sqrt(
+            dx * dx +
+            dy * dy
+        );
+
+    const angle =
+        Math.atan2(dy, dx) *
+        180 / Math.PI;
+
+    const arrow =
+        document.createElement("div");
+
+    arrow.className =
+        "analysis-manual-arrow";
+
+    arrow.dataset.from = from;
+    arrow.dataset.to = to;
+
+    arrow.style.width =
+        length + "px";
+
+    arrow.style.left =
+        x1 + "px";
+
+    arrow.style.top =
+        y1 + "px";
+
+    arrow.style.transform =
+        "rotate(" + angle + "deg)";
+
+    arrowLayer.appendChild(arrow);
 }
-};
 function drawAnalysisArrow(move) {
 
     const arrowLayer =
@@ -648,12 +995,16 @@ function analyzeCurrentPosition() {
     analysisStockfish.postMessage("stop");
 
     analysisStockfish.postMessage(
-        "position fen " + fen
-    );
+    "setoption name MultiPV value 3"
+);
 
-    analysisStockfish.postMessage(
-        "go depth 15"
-    );
+analysisStockfish.postMessage(
+    "position fen " + fen
+);
+
+analysisStockfish.postMessage(
+    "go depth 15"
+);
 }
 
 analysisStockfish.postMessage("uci");
