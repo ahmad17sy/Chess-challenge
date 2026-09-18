@@ -330,7 +330,6 @@ nav a:hover {
     background: #b52a2a !important;
 }
 
-
 /* =========================
    Computer Rating
 ========================= */
@@ -851,11 +850,31 @@ nav a:hover {
     padding: 10px;
     background: white;
     border-radius: 5px;
-}
-#analysisBoardArea {
+}#analysisBoardArea {
     display: flex;
-    align-items: stretch;
+    align-items: flex-start;
     gap: 8px;
+}
+
+#analysisEvalBar {
+    width: 28px;
+    height: 640px;
+    flex-shrink: 0;
+}
+
+#analysisBoardWrapper {
+    width: 640px;
+    height: auto;
+    position: relative;
+}
+
+#analysisNavigation {
+    width: 640px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 652px;
+    margin-left: -640px;
 }
 
 #analysisEvalBar {
@@ -953,4 +972,26 @@ nav a:hover {
 .analysis-move {
     display: inline-block;
     min-width: 50px;
+}
+
+#analysisNavigation {
+    width: 640px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+#analysisNavigation button {
+    width: 50px;
+    height: 38px;
+    font-size: 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #ddd;
+}
+
+#analysisNavigation button:hover {
+    background: #ccc;
 }
