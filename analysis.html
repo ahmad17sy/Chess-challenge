@@ -127,7 +127,7 @@ if (analysisBoardFlipped) {
                 document.createElement("div");
 
             square.classList.add("analysis-square");
-square.dataset.square = squareName;
+
             if ((row + col) % 2 === 0) {
                 square.classList.add("analysis-light");
             } else {
@@ -137,7 +137,7 @@ square.dataset.square = squareName;
             const squareName =
     String.fromCharCode(97 + boardCol) +
     (8 - boardRow);
-
+square.dataset.square = squareName;
             const piece =
     boardPosition[boardRow][boardCol];
 
