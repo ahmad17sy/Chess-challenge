@@ -136,7 +136,48 @@ if (analysisBoardFlipped) {
             const squareName =
     String.fromCharCode(97 + boardCol) +
     (8 - boardRow);
+
 square.dataset.square = squareName;
+
+
+/* =========================
+   COORDINATES
+========================= */
+
+const fileLabel =
+    document.createElement("span");
+
+fileLabel.className =
+    "analysis-coordinate analysis-file-coordinate";
+
+fileLabel.textContent =
+    String.fromCharCode(97 + boardCol);
+
+
+const rankLabel =
+    document.createElement("span");
+
+rankLabel.className =
+    "analysis-coordinate analysis-rank-coordinate";
+
+rankLabel.textContent =
+    8 - boardRow;
+
+
+/* إظهار الحروف فقط في الصف الأخير */
+if (row !== 7) {
+    fileLabel.style.display = "none";
+}
+
+
+/* إظهار الأرقام فقط في العمود الأول */
+if (col !== 0) {
+    rankLabel.style.display = "none";
+}
+
+
+square.appendChild(fileLabel);
+square.appendChild(rankLabel);
             const piece =
     boardPosition[boardRow][boardCol];
 

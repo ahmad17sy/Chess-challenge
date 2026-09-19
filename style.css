@@ -879,6 +879,38 @@ nav a:hover {
     height: 80px;
     box-sizing: border-box;
 }
+/* =========================
+   Analysis Board Coordinates
+========================= */
+
+#analysisChessboard .analysis-coordinate {
+    position: absolute;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+    pointer-events: none;
+    z-index: 20;
+    opacity: 0.9;
+}
+
+#analysisChessboard .analysis-rank-coordinate {
+    top: 3px;
+    left: 4px;
+}
+
+#analysisChessboard .analysis-file-coordinate {
+    bottom: 3px;
+    right: 4px;
+}
+
+#analysisChessboard .analysis-light .analysis-coordinate {
+    color: #b58863;
+}
+
+#analysisChessboard .analysis-dark .analysis-coordinate {
+    color: #f0d9b5;
+}
 
 .analysis-light {
     background-color: #f0d9b5;
