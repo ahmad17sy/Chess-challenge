@@ -1329,9 +1329,8 @@ const moveData = {
 
 };
 
-let currentMove = -1;
 let currentVariation = "main";
-createMoveList();
+
 const startingPosition = [
     ["♜","♞","♝","♛","♚","♝","♞","♜"],
     ["♟","♟","♟","♟","♟","♟","♟","♟"],
@@ -1344,7 +1343,10 @@ const startingPosition = [
 ];
 
 let currentPosition = startingPosition.map(row => [...row]);
+
 drawBoard();
+
+createMoveList();
 
 function drawBoard() {
 
