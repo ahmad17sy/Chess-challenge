@@ -410,7 +410,22 @@
 
         font-size: 14px;
     }
+.move-row {
+    display: flex;
+    align-items: center;
+    min-height: 32px;
+}
 
+.move-number {
+    width: 32px;
+    color: #718198;
+    font-weight: bold;
+    user-select: none;
+}
+
+.move {
+    margin-right: 6px;
+}
     .move {
     display: inline-block;
 
@@ -1067,7 +1082,7 @@ const startingPosition = [
     ["","","","","","","",""],
     ["","","","","","","",""],
     ["","","","","","","",""],
-    ["♙","♙","♙","♙","♙","♙","♙"],
+    ["♙","♙","♙","♙","♙","♙","♙","♙"],
     ["♖","♘","♗","♕","♔","♗","♘","♖"]
 ];
 
@@ -1264,8 +1279,8 @@ marker.setAttribute(
     "#e9ad3f"
 );
 
+arrowLayer.appendChild(line);
 arrowLayer.appendChild(marker);
-    arrowLayer.appendChild(line);
 }
 
 // ==========================
