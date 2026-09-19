@@ -801,20 +801,183 @@
 
 <script>
 
-    const board = document.getElementById("board");
+    /* =========================
+       OPENING DATA
+    ========================= */
 
-    const moves = [
-        "e4",
-        "c5",
-        "Nf3",
-        "d6",
-        "d4",
-        "cxd4",
-        "Nxd4",
-        "Nf6",
-        "Nc3",
-        "a6"
-    ];
+    const openings = {
+
+        italian: {
+
+            name: "Italian Game",
+
+            description:
+                "A classical opening beginning with 1.e4 e5 2.Nf3 Nc6 3.Bc4. It can lead to both strategic and tactical positions.",
+
+            eco: "C50",
+
+            side: "White",
+
+            style: "Classical",
+
+            difficulty: "Intermediate",
+
+            moves: [
+                "e4",
+                "e5",
+                "Nf3",
+                "Nc6",
+                "Bc4"
+            ]
+
+        },
+
+
+        najdorf: {
+
+            name: "Sicilian Najdorf",
+
+            description:
+                "One of the sharpest defenses against 1.e4. The Najdorf often leads to highly tactical and ambitious positions.",
+
+            eco: "B90",
+
+            side: "Black",
+
+            style: "Tactical",
+
+            difficulty: "Advanced",
+
+            moves: [
+                "e4",
+                "c5",
+                "Nf3",
+                "d6",
+                "d4",
+                "cxd4",
+                "Nxd4",
+                "Nf6",
+                "Nc3",
+                "a6"
+            ]
+
+        }
+
+    };
+
+
+    /* =========================
+       GET OPENING FROM URL
+    ========================= */
+
+    const urlParams =
+        new URLSearchParams(window.location.search);
+
+    const openingName =
+        urlParams.get("opening") || "najdorf";
+
+
+    const opening =
+        openings[openingName] || openings.najdorf;
+
+
+    /* =========================
+       PAGE ELEMENTS
+    ========================= */
+
+    const title =
+        document.querySelector(".study-header h1");
+
+    const description =
+        document.querySelector(".study-header p");
+
+    const infoTitle =
+        document.querySelector(".info-panel h2");
+
+    const infoDescription =
+        document.querySelector(".opening-description");
+
+
+    /* =========================
+       UPDATE PAGE
+    ========================= */
+
+    title.textContent =
+        opening.name;
+
+    infoTitle.textContent =
+        opening.name;
+
+    description.textContent =
+        "Study the main line and practice the opening move by move.";
+
+    infoDescription.textContent =
+        opening.description;
+
+
+    /* =========================
+       UPDATE DETAILS
+    ========================= */
+
+    const detailValues =
+        document.querySelectorAll(".detail-value");
+
+
+    detailValues[0].textContent =
+        opening.eco;
+
+    detailValues[1].textContent =
+        opening.side;
+
+    detailValues[2].textContent =
+        opening.style;
+
+    detailValues[3].textContent =
+        opening.difficulty;
+
+
+    /* =========================
+       CREATE MOVE LIST
+    ========================= */
+
+    const movesBox =
+        document.getElementById("movesBox");
+
+
+    movesBox.innerHTML = "";
+
+
+    opening.moves.forEach(function(move, index) {
+
+        const span =
+            document.createElement("span");
+
+        span.className = "move";
+
+        span.dataset.index = index;
+
+        span.textContent = move;
+
+        movesBox.appendChild(span);
+
+        if (index < opening.moves.length - 1) {
+
+            const space =
+                document.createTextNode(" ");
+
+            movesBox.appendChild(space);
+
+        }
+
+    });
+
+
+    /* =========================
+       BOARD
+    ========================= */
+
+    const board =
+        document.getElementById("board");
 
 
     const startingPosition = [
@@ -848,26 +1011,32 @@
 
         startingPosition.forEach(function(piece, index) {
 
-            const square = document.createElement("div");
+            const square =
+                document.createElement("div");
 
-            const row = Math.floor(index / 8);
 
-            const col = index % 8;
+            const row =
+                Math.floor(index / 8);
+
+            const col =
+                index % 8;
+
+
+            square.classList.add("square");
 
 
             if ((row + col) % 2 === 0) {
 
-                square.classList.add("square", "light");
+                square.classList.add("light");
 
             } else {
 
-                square.classList.add("square", "dark");
+                square.classList.add("dark");
 
             }
 
 
             square.textContent = piece;
-
 
             board.appendChild(square);
 
@@ -876,13 +1045,19 @@
     }
 
 
+    /* =========================
+       MOVE HIGHLIGHT
+    ========================= */
+
     function updateMoves() {
 
-        document.querySelectorAll(".move").forEach(function(move) {
+        document
+            .querySelectorAll(".move")
+            .forEach(function(move) {
 
-            move.classList.remove("active");
+                move.classList.remove("active");
 
-        });
+            });
 
 
         if (currentMove > 0) {
@@ -891,6 +1066,7 @@
                 document.querySelector(
                     `.move[data-index="${currentMove - 1}"]`
                 );
+
 
             if (activeMove) {
 
@@ -903,11 +1079,18 @@
     }
 
 
+    /* =========================
+       NEXT
+    ========================= */
+
     document
         .getElementById("nextButton")
         .addEventListener("click", function() {
 
-            if (currentMove < moves.length) {
+            if (
+                currentMove <
+                opening.moves.length
+            ) {
 
                 currentMove++;
 
@@ -917,6 +1100,10 @@
 
         });
 
+
+    /* =========================
+       PREVIOUS
+    ========================= */
 
     document
         .getElementById("previousButton")
@@ -933,6 +1120,10 @@
         });
 
 
+    /* =========================
+       RESET
+    ========================= */
+
     document
         .getElementById("resetButton")
         .addEventListener("click", function() {
@@ -943,6 +1134,10 @@
 
         });
 
+
+    /* =========================
+       START
+    ========================= */
 
     drawBoard();
 
