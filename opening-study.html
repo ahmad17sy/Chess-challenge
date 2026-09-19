@@ -838,9 +838,9 @@
             </p>
 
 
-            <div class="moves-title">
-                Main Line
-            </div>
+            <div class="moves-title" id="movesTitle">
+    Main Line
+</div>
 <div class="variation-title">
     Variations
 </div>
@@ -1231,7 +1231,7 @@ function createMoveList() {
     });
 
 }
-createMoveList();
+
 // ==========================
 // BOARD
 // ==========================
@@ -1331,7 +1331,7 @@ const moveData = {
 
 let currentMove = -1;
 let currentVariation = "main";
-
+createMoveList();
 const startingPosition = [
     ["♜","♞","♝","♛","♚","♝","♞","♜"],
     ["♟","♟","♟","♟","♟","♟","♟","♟"],
@@ -1788,6 +1788,25 @@ document
 
             currentVariation =
     button.dataset.variation;
+
+const movesTitle =
+    document.getElementById("movesTitle");
+
+if (currentVariation === "main") {
+    movesTitle.textContent = "Main Line";
+}
+
+if (currentVariation === "bg5") {
+    movesTitle.textContent = "6.Bg5";
+}
+
+if (currentVariation === "be3") {
+    movesTitle.textContent = "6.Be3";
+}
+
+if (currentVariation === "bc4") {
+    movesTitle.textContent = "6.Bc4";
+}
 
 currentMove = -1;
 
