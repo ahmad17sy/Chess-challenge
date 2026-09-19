@@ -1,84 +1,690 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>My Company</title>
-    <link rel="stylesheet" href="style.css">
+    <title>My Chess</title>
 
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #07111f;
+            color: #ffffff;
+        }
+
+        /* =========================
+           LAYOUT
+        ========================= */
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            width: 240px;
+            min-height: 100vh;
+            background: #0b1728;
+            border-right: 1px solid #1d2d43;
+            padding: 24px 15px;
+
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            font-size: 22px;
+            font-weight: bold;
+
+            padding: 0 12px 30px;
+        }
+
+        .logo-icon {
+            font-size: 28px;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .menu a {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+
+            padding: 12px 14px;
+
+            color: #aebbd0;
+            text-decoration: none;
+
+            border-radius: 9px;
+
+            font-size: 15px;
+
+            transition: 0.2s;
+        }
+
+        .menu a:hover {
+            background: #14243a;
+            color: white;
+        }
+
+        .menu a.active {
+            background: #1b3555;
+            color: white;
+        }
+
+        .menu-icon {
+            width: 24px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background: #1d2d43;
+            margin: 20px 10px;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main {
+            flex: 1;
+            padding: 0 35px 40px;
+            min-width: 0;
+        }
+
+        /* =========================
+           TOP BAR
+        ========================= */
+
+        .topbar {
+            height: 75px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            border-bottom: 1px solid #17283d;
+            margin-bottom: 30px;
+        }
+
+        .search {
+            width: 300px;
+
+            background: #0d1c30;
+            border: 1px solid #20344d;
+            border-radius: 9px;
+
+            padding: 11px 15px;
+
+            color: #9eabc0;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .notification {
+            font-size: 20px;
+            color: #aebbd0;
+        }
+
+        .login-button {
+            padding: 9px 17px;
+
+            border: 1px solid #50647e;
+            border-radius: 7px;
+
+            color: white;
+            text-decoration: none;
+
+            font-size: 14px;
+        }
+
+        .signup-button {
+            padding: 10px 18px;
+
+            background: #e9ad3f;
+            color: #111;
+
+            border-radius: 7px;
+
+            text-decoration: none;
+
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .hero {
+            position: relative;
+
+            min-height: 300px;
+
+            border-radius: 14px;
+
+            overflow: hidden;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(5, 14, 27, 0.97) 0%,
+                    rgba(5, 14, 27, 0.80) 48%,
+                    rgba(5, 14, 27, 0.25) 100%
+                ),
+                url("IMG1.jpg") center / cover;
+
+            border: 1px solid #233752;
+
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-content {
+            padding: 40px;
+            max-width: 600px;
+        }
+
+        .hero h1 {
+            margin: 0 0 12px;
+
+            font-size: 42px;
+            line-height: 1.1;
+        }
+
+        .hero h1 span {
+            color: #e9ad3f;
+        }
+
+        .hero p {
+            color: #bdc8d8;
+            font-size: 17px;
+            line-height: 1.6;
+
+            margin-bottom: 25px;
+        }
+
+        .hero-button {
+            display: inline-block;
+
+            padding: 13px 24px;
+
+            background: #e9ad3f;
+            color: #111;
+
+            border-radius: 8px;
+
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* =========================
+           FEATURE CARDS
+        ========================= */
+
+        .section-title {
+            margin: 30px 0 15px;
+
+            font-size: 21px;
+        }
+
+        .cards {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+
+            gap: 15px;
+        }
+
+        .card {
+            background: #0d1c30;
+
+            border: 1px solid #1d3048;
+            border-radius: 12px;
+
+            padding: 22px;
+
+            text-decoration: none;
+            color: white;
+
+            min-height: 155px;
+
+            transition: 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            border-color: #46617f;
+            background: #10243c;
+        }
+
+        .card-icon {
+            font-size: 27px;
+            margin-bottom: 14px;
+        }
+
+        .card h3 {
+            margin: 0 0 8px;
+            font-size: 17px;
+        }
+
+        .card p {
+            margin: 0;
+
+            color: #98a8bd;
+
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* =========================
+           BOTTOM SECTION
+        ========================= */
+
+        .bottom-grid {
+            display: grid;
+
+            grid-template-columns:
+                2fr 1fr;
+
+            gap: 15px;
+
+            margin-top: 15px;
+        }
+
+        .panel {
+            background: #0d1c30;
+
+            border: 1px solid #1d3048;
+            border-radius: 12px;
+
+            padding: 22px;
+        }
+
+        .panel h2 {
+            margin-top: 0;
+            font-size: 18px;
+        }
+
+        .opening-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .opening {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            padding: 11px 13px;
+
+            background: #102239;
+            border-radius: 7px;
+        }
+
+        .opening span:last-child {
+            color: #e9ad3f;
+            font-size: 13px;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1000px) {
+
+            .cards {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+            .bottom-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+
+            .sidebar {
+                width: 70px;
+                padding: 20px 8px;
+            }
+
+            .logo {
+                justify-content: center;
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            .logo-text,
+            .menu-text {
+                display: none;
+            }
+
+            .menu a {
+                justify-content: center;
+                padding: 12px 5px;
+            }
+
+            .main {
+                padding: 0 15px 30px;
+            }
+
+            .search {
+                width: 150px;
+            }
+
+            .hero-content {
+                padding: 25px;
+            }
+
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 
 <body>
-<nav>
-    <a href="index.html">Home</a>
-    <a href="chess.html">Play Against Computer</a>
-    <a href="analysis.html">Analysis Board</a>
-    <a href="openings.html">Openings</a>
-    <a href="contact.html">Contact</a>
-</nav>
 
-    <h1>chess challenge</h1>
-    <p>Welcome to our website.</p>
+<div class="dashboard">
 
-    <h2>Oppenings</h2>
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
 
-    <h3>White:</h3>
-    <ul>
-    <li>Italian Game</li>
-    <li>Ruy Lopez</li>
-    <li>Queen's Gambit</li>
-    </ul>
+    <aside class="sidebar">
 
-    <h3>Black:</h3>
-    <ul>
-    <li>Sicilian Defense</li>
-    <li>Dutch Defense</li>
-    </ul>
+        <div class="logo">
+            <span class="logo-icon">♛</span>
+            <span class="logo-text">MY CHESS</span>
+        </div>
 
-    <h2>My Favorite Openings</h2>
-    <ul>
-    <li>Italian Game</li>
-    <li>Ruy Lopez</li>
-    <li>Kingsgambit</li>
-    <li>Sicilian najdorf</li>
-    <li><a href="https://lichess.org/study/SgsARIGZ">Queen's Gambit:</a>
-    </li>
-    
-    </ul>
+        <nav class="menu">
 
-    <button onclick="playChess()">Play Against Computer</button>    <button>ِAnalysis</button>
-    <button onclick="newGame()">New Game</button>
-    <button>Players</button>
-    <button>الضعفـــاء</button>
-    <button>الأبطــــال</button>
+            <a href="index.html" class="active">
+                <span class="menu-icon">🏠</span>
+                <span class="menu-text">Home</span>
+            </a>
 
-    <p id="gameStatus">No game started yet.</p>
+            <a href="chess.html">
+                <span class="menu-icon">♟</span>
+                <span class="menu-text">Play</span>
+            </a>
 
-    <a href="openings.html">Openings</a>
-    
+            <a href="analysis.html">
+                <span class="menu-icon">🔍</span>
+                <span class="menu-text">Analysis</span>
+            </a>
 
-    <h3>Product 1</h3>
-    <p>High-quality industrial product.</p>
+            <a href="openings.html">
+                <span class="menu-icon">📖</span>
+                <span class="menu-text">Openings</span>
+            </a>
 
-    <h3>Product 2</h3>
-    <p>Reliable and durable product.</p>
+            <a href="#">
+                <span class="menu-icon">📄</span>
+                <span class="menu-text">My Games / PGN</span>
+            </a>
 
-    <h3>Product 3</h3>
-    <p>Professional product for industry.</p>
+            <a href="#">
+                <span class="menu-icon">👥</span>
+                <span class="menu-text">Friends</span>
+            </a>
 
-    <h2>Contact</h2>
+            <a href="#">
+                <span class="menu-icon">💬</span>
+                <span class="menu-text">Community</span>
+            </a>
 
-    <p>Email: info@mycompany.com</p>
+        </nav>
 
-    <h2>Contact Me</h2>
+        <div class="sidebar-bottom">
+
+            <div class="sidebar-divider"></div>
+
+            <div class="menu">
+
+                <a href="#">
+                    <span class="menu-icon">⚙</span>
+                    <span class="menu-text">Settings</span>
+                </a>
+
+                <a href="#">
+                    <span class="menu-icon">🔑</span>
+                    <span class="menu-text">Login</span>
+                </a>
+
+            </div>
+
+        </div>
+
+    </aside>
 
 
-    <img src="IMG1.jpg" width="500">
-    <img src="IMG3.jpg" width="500">
-    
-<script src="stockfish-18-lite-single.js"></script>
-<script src="script.js"></script>
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+
+    <main class="main">
+
+        <!-- TOP BAR -->
+
+        <header class="topbar">
+
+            <div class="search">
+                🔍 &nbsp; Search...
+            </div>
+
+            <div class="user-area">
+
+                <span class="notification">🔔</span>
+
+                <a href="#" class="login-button">
+                    Login
+                </a>
+
+                <a href="#" class="signup-button">
+                    Sign Up
+                </a>
+
+            </div>
+
+        </header>
+
+
+        <!-- HERO -->
+
+        <section class="hero">
+
+            <div class="hero-content">
+
+                <h1>
+                    Your Chess
+                    <span>Journey</span>
+                    Starts Here
+                </h1>
+
+                <p>
+                    Play chess, improve your skills,
+                    analyze your games and explore
+                    new openings.
+                </p>
+
+                <a href="chess.html" class="hero-button">
+                    Play Chess →
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- FEATURES -->
+
+        <h2 class="section-title">
+            What do you want to do?
+        </h2>
+
+        <section class="cards">
+
+            <a href="chess.html" class="card">
+
+                <div class="card-icon">♟</div>
+
+                <h3>
+                    Play vs Computer
+                </h3>
+
+                <p>
+                    Challenge Stockfish and
+                    improve your chess.
+                </p>
+
+            </a>
+
+
+            <a href="#" class="card">
+
+                <div class="card-icon">👥</div>
+
+                <h3>
+                    Play with Friends
+                </h3>
+
+                <p>
+                    Play online with friends
+                    and create private games.
+                </p>
+
+            </a>
+
+
+            <a href="analysis.html" class="card">
+
+                <div class="card-icon">🔍</div>
+
+                <h3>
+                    Analysis Board
+                </h3>
+
+                <p>
+                    Analyze positions with
+                    Stockfish and PGN.
+                </p>
+
+            </a>
+
+
+            <a href="openings.html" class="card">
+
+                <div class="card-icon">📖</div>
+
+                <h3>
+                    Openings
+                </h3>
+
+                <p>
+                    Explore chess openings
+                    and study variations.
+                </p>
+
+            </a>
+
+        </section>
+
+
+        <!-- BOTTOM -->
+
+        <section class="bottom-grid">
+
+            <div class="panel">
+
+                <h2>
+                    Favorite Openings
+                </h2>
+
+                <div class="opening-list">
+
+                    <div class="opening">
+                        <span>Italian Game</span>
+                        <span>White</span>
+                    </div>
+
+                    <div class="opening">
+                        <span>Ruy Lopez</span>
+                        <span>White</span>
+                    </div>
+
+                    <div class="opening">
+                        <span>Sicilian Defense</span>
+                        <span>Black</span>
+                    </div>
+
+                    <div class="opening">
+                        <span>Queen's Gambit</span>
+                        <span>White</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="panel">
+
+                <h2>
+                    My Chess
+                </h2>
+
+                <p style="color:#9eabc0; line-height:1.6;">
+                    Your games, analysis,
+                    openings and future online
+                    matches will appear here.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
 
 </body>
-
 </html>
