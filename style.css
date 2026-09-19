@@ -1174,3 +1174,29 @@ nav a:hover {
     background: #555 !important;
     transform: translateY(-1px);
 }
+.coordinate {
+    position: absolute;
+    font-size: 11px;
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 3;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.file-coordinate {
+    bottom: 3px;
+    right: 5px;
+}
+
+.rank-coordinate {
+    top: 3px;
+    left: 5px;
+}
+
+.light .coordinate {
+    color: #b58863;
+}
+
+.dark .coordinate {
+    color: #f0d9b5;
+}
