@@ -800,227 +800,170 @@
 </div>
 
 <script>
+const openings = {
 
-    /* =========================
-       OPENING DATA
-    ========================= */
+    italian: {
+        name: "Italian Game",
 
-    const openings = {
+        description:
+            "A classical opening beginning with 1.e4 e5 2.Nf3 Nc6 3.Bc4. It can lead to both strategic and tactical positions.",
 
-        italian: {
+        eco: "C50",
+        side: "White",
+        style: "Classical",
+        difficulty: "Intermediate",
 
-            name: "Italian Game",
+        moves: [
+            "e4",
+            "e5",
+            "Nf3",
+            "Nc6",
+            "Bc4"
+        ]
+    },
 
-            description:
-                "A classical opening beginning with 1.e4 e5 2.Nf3 Nc6 3.Bc4. It can lead to both strategic and tactical positions.",
 
-            eco: "C50",
+    najdorf: {
+        name: "Sicilian Najdorf",
 
-            side: "White",
+        description:
+            "One of the sharpest defenses against 1.e4. The Najdorf often leads to highly tactical and ambitious positions.",
 
-            style: "Classical",
+        eco: "B90",
+        side: "Black",
+        style: "Tactical",
+        difficulty: "Advanced",
 
-            difficulty: "Intermediate",
+        moves: [
+            "e4",
+            "c5",
+            "Nf3",
+            "d6",
+            "d4",
+            "cxd4",
+            "Nxd4",
+            "Nf6",
+            "Nc3",
+            "a6"
+        ]
+    }
 
-            moves: [
-                "e4",
-                "e5",
-                "Nf3",
-                "Nc6",
-                "Bc4"
-            ]
+};
 
-        },
 
+const urlParams =
+    new URLSearchParams(window.location.search);
 
-        najdorf: {
+const openingName =
+    urlParams.get("opening") || "najdorf";
 
-            name: "Sicilian Najdorf",
+const opening =
+    openings[openingName] || openings.najdorf;
 
-            description:
-                "One of the sharpest defenses against 1.e4. The Najdorf often leads to highly tactical and ambitious positions.",
 
-            eco: "B90",
+// ==========================
+// UPDATE PAGE INFORMATION
+// ==========================
 
-            side: "Black",
+document.querySelector(".study-header h1").textContent =
+    opening.name;
 
-            style: "Tactical",
+document.querySelector(".study-header p").textContent =
+    "Study the main moves and ideas of this opening.";
 
-            difficulty: "Advanced",
 
-            moves: [
-                "e4",
-                "c5",
-                "Nf3",
-                "d6",
-                "d4",
-                "cxd4",
-                "Nxd4",
-                "Nf6",
-                "Nc3",
-                "a6"
-            ]
+document.querySelector(".info-panel h2").textContent =
+    opening.name;
 
-        }
+document.querySelector(".opening-description").textContent =
+    opening.description;
 
-    };
 
+// ==========================
+// UPDATE DETAILS
+// ==========================
 
-    /* =========================
-       GET OPENING FROM URL
-    ========================= */
+const detailValues =
+    document.querySelectorAll(".detail-value");
 
-    const urlParams =
-        new URLSearchParams(window.location.search);
+detailValues[0].textContent =
+    opening.eco;
 
-    const openingName =
-        urlParams.get("opening") || "najdorf";
+detailValues[1].textContent =
+    opening.side;
 
+detailValues[2].textContent =
+    opening.style;
 
-    const opening =
-        openings[openingName] || openings.najdorf;
+detailValues[3].textContent =
+    opening.difficulty;
 
 
-    /* =========================
-       PAGE ELEMENTS
-    ========================= */
+// ==========================
+// CREATE MOVE LIST
+// ==========================
 
-    const title =
-        document.querySelector(".study-header h1");
+const movesBox =
+    document.getElementById("movesBox");
 
-    const description =
-        document.querySelector(".study-header p");
+movesBox.innerHTML = "";
 
-    const infoTitle =
-        document.querySelector(".info-panel h2");
 
-    const infoDescription =
-        document.querySelector(".opening-description");
+opening.moves.forEach(function(move, index) {
 
+    const moveElement =
+        document.createElement("span");
 
-    /* =========================
-       UPDATE PAGE
-    ========================= */
+    moveElement.className = "move";
 
-    title.textContent =
-        opening.name;
+    moveElement.textContent =
+        (index + 1) + ". " + move;
 
-    infoTitle.textContent =
-        opening.name;
+    movesBox.appendChild(moveElement);
 
-    description.textContent =
-        "Study the main line and practice the opening move by move.";
+});
 
-    infoDescription.textContent =
-        opening.description;
 
+// ==========================
+// BOARD
+// ==========================
 
-    /* =========================
-       UPDATE DETAILS
-    ========================= */
+const board =
+    document.getElementById("board");
 
-    const detailValues =
-        document.querySelectorAll(".detail-value");
 
+const startingPosition = [
 
-    detailValues[0].textContent =
-        opening.eco;
+    ["♜","♞","♝","♛","♚","♝","♞","♜"],
 
-    detailValues[1].textContent =
-        opening.side;
+    ["♟","♟","♟","♟","♟","♟","♟","♟"],
 
-    detailValues[2].textContent =
-        opening.style;
+    ["","","","","","","",""],
 
-    detailValues[3].textContent =
-        opening.difficulty;
+    ["","","","","","","",""],
 
+    ["","","","","","","",""],
 
-    /* =========================
-       CREATE MOVE LIST
-    ========================= */
+    ["","","","","","","",""],
 
-    const movesBox =
-        document.getElementById("movesBox");
+    ["♙","♙","♙","♙","♙","♙","♙","♙"],
 
+    ["♖","♘","♗","♕","♔","♗","♘","♖"]
 
-    movesBox.innerHTML = "";
+];
 
 
-    opening.moves.forEach(function(move, index) {
+function drawBoard() {
 
-        const span =
-            document.createElement("span");
+    board.innerHTML = "";
 
-        span.className = "move";
 
-        span.dataset.index = index;
+    for (let row = 0; row < 8; row++) {
 
-        span.textContent = move;
-
-        movesBox.appendChild(span);
-
-        if (index < opening.moves.length - 1) {
-
-            const space =
-                document.createTextNode(" ");
-
-            movesBox.appendChild(space);
-
-        }
-
-    });
-
-
-    /* =========================
-       BOARD
-    ========================= */
-
-    const board =
-        document.getElementById("board");
-
-
-    const startingPosition = [
-
-        "♜","♞","♝","♛","♚","♝","♞","♜",
-
-        "♟","♟","♟","♟","♟","♟","♟","♟",
-
-        "","","","","","","","",
-
-        "","","","","","","","",
-
-        "","","","","","","","",
-
-        "","","","","","","","",
-
-        "♙","♙","♙","♙","♙","♙","♙","♙",
-
-        "♖","♘","♗","♕","♔","♗","♘","♖"
-
-    ];
-
-
-    let currentMove = 0;
-
-
-    function drawBoard() {
-
-        board.innerHTML = "";
-
-
-        startingPosition.forEach(function(piece, index) {
+        for (let col = 0; col < 8; col++) {
 
             const square =
                 document.createElement("div");
-
-
-            const row =
-                Math.floor(index / 8);
-
-            const col =
-                index % 8;
-
 
             square.classList.add("square");
 
@@ -1036,113 +979,104 @@
             }
 
 
-            square.textContent = piece;
+            square.textContent =
+                startingPosition[row][col];
+
 
             board.appendChild(square);
-
-        });
-
-    }
-
-
-    /* =========================
-       MOVE HIGHLIGHT
-    ========================= */
-
-    function updateMoves() {
-
-        document
-            .querySelectorAll(".move")
-            .forEach(function(move) {
-
-                move.classList.remove("active");
-
-            });
-
-
-        if (currentMove > 0) {
-
-            const activeMove =
-                document.querySelector(
-                    `.move[data-index="${currentMove - 1}"]`
-                );
-
-
-            if (activeMove) {
-
-                activeMove.classList.add("active");
-
-            }
 
         }
 
     }
 
-
-    /* =========================
-       NEXT
-    ========================= */
-
-    document
-        .getElementById("nextButton")
-        .addEventListener("click", function() {
-
-            if (
-                currentMove <
-                opening.moves.length
-            ) {
-
-                currentMove++;
-
-                updateMoves();
-
-            }
-
-        });
+}
 
 
-    /* =========================
-       PREVIOUS
-    ========================= */
-
-    document
-        .getElementById("previousButton")
-        .addEventListener("click", function() {
-
-            if (currentMove > 0) {
-
-                currentMove--;
-
-                updateMoves();
-
-            }
-
-        });
+drawBoard();
 
 
-    /* =========================
-       RESET
-    ========================= */
+// ==========================
+// MOVE HIGHLIGHT
+// ==========================
 
-    document
-        .getElementById("resetButton")
-        .addEventListener("click", function() {
-
-            currentMove = 0;
-
-            updateMoves();
-
-        });
+let currentMove = -1;
 
 
-    /* =========================
-       START
-    ========================= */
+function updateMoveHighlight() {
 
-    drawBoard();
+    const moves =
+        document.querySelectorAll(".move");
 
-    updateMoves();
 
+    moves.forEach(function(move) {
+
+        move.classList.remove("active");
+
+    });
+
+
+    if (currentMove >= 0) {
+
+        moves[currentMove].classList.add("active");
+
+    }
+
+}
+
+
+// ==========================
+// NEXT
+// ==========================
+
+document
+    .getElementById("nextButton")
+    .addEventListener("click", function() {
+
+        if (currentMove < opening.moves.length - 1) {
+
+            currentMove++;
+
+            updateMoveHighlight();
+
+        }
+
+    });
+
+
+// ==========================
+// PREVIOUS
+// ==========================
+
+document
+    .getElementById("previousButton")
+    .addEventListener("click", function() {
+
+        if (currentMove > -1) {
+
+            currentMove--;
+
+            updateMoveHighlight();
+
+        }
+
+    });
+
+
+// ==========================
+// RESET
+// ==========================
+
+document
+    .getElementById("resetButton")
+    .addEventListener("click", function() {
+
+        currentMove = -1;
+
+        drawBoard();
+
+        updateMoveHighlight();
+
+    });
 </script>
 
 </body>
