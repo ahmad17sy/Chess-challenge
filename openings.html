@@ -898,7 +898,114 @@
 ```
 
 </div>
+<script>
 
+    const searchInput = document.querySelector(".opening-search");
+    const filterButtons = document.querySelectorAll(".filter");
+    const openingCards = document.querySelectorAll(".opening-card");
+
+
+    function filterOpenings() {
+
+        const searchText = searchInput.value.toLowerCase().trim();
+
+        const activeFilter =
+            document.querySelector(".filter.active").textContent.trim();
+
+
+        openingCards.forEach(function(card) {
+
+            const title =
+                card.querySelector("h2").textContent.toLowerCase();
+
+            const description =
+                card.querySelector("p").textContent.toLowerCase();
+
+            const moves =
+                card.querySelector(".moves").textContent.toLowerCase();
+
+
+            const fullText =
+                title + " " + description + " " + moves;
+
+
+            const matchesSearch =
+                fullText.includes(searchText);
+
+
+            let matchesFilter = true;
+
+
+            if (activeFilter === "1.e4") {
+
+                matchesFilter =
+                    moves.includes("1.e4");
+
+            }
+
+            else if (activeFilter === "1.d4") {
+
+                matchesFilter =
+                    moves.includes("1.d4");
+
+            }
+
+            else if (activeFilter === "1.c4") {
+
+                matchesFilter =
+                    moves.includes("1.c4");
+
+            }
+
+            else if (activeFilter === "1.Nf3") {
+
+                matchesFilter =
+                    moves.includes("1.nf3");
+
+            }
+
+
+            if (matchesSearch && matchesFilter) {
+
+                card.style.display = "";
+
+            }
+
+            else {
+
+                card.style.display = "none";
+
+            }
+
+        });
+
+    }
+
+
+    searchInput.addEventListener("input", filterOpenings);
+
+
+    filterButtons.forEach(function(button) {
+
+        button.addEventListener("click", function() {
+
+            filterButtons.forEach(function(btn) {
+
+                btn.classList.remove("active");
+
+            });
+
+
+            button.classList.add("active");
+
+
+            filterOpenings();
+
+        });
+
+    });
+
+</script>
 </body>
 
 </html>
