@@ -4543,7 +4543,6 @@ document.addEventListener(
             );
         }
 
-
         /*
            Full game analysis
         */

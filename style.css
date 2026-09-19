@@ -694,33 +694,6 @@ nav a:hover {
    Board Coordinates
 ========================= */
 
-.coordinates {
-    position: absolute;
-    font-size: 13px;
-    font-weight: bold;
-    line-height: 1;
-    pointer-events: none;
-    z-index: 10;
-}
-
-.rank-coordinate {
-    top: 4px;
-    left: 4px;
-}
-
-.file-coordinate {
-    bottom: 4px;
-    right: 4px;
-}
-
-.square.light .coordinates {
-    color: #555;
-}
-
-.square.dark .coordinates {
-    color: #eee;
-}
-
 /* الإحداثيات تبقى باتجاه صحيح */
 #chessboard.flipped .coordinates {
     transform: rotate(180deg);
@@ -1199,4 +1172,67 @@ nav a:hover {
 
 .dark .coordinate {
     color: #f0d9b5;
+}
+/* =========================
+   Final Board Coordinates
+========================= */
+
+#chessboard .coordinates {
+    position: absolute;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+    pointer-events: none;
+    z-index: 10;
+}
+
+#chessboard .rank-coordinate {
+    top: 4px;
+    left: 4px;
+}
+
+#chessboard .file-coordinate {
+    bottom: 4px;
+    right: 4px;
+}
+
+#chessboard .square.light .coordinates {
+    color: #555;
+}
+
+#chessboard .square.dark .coordinates {
+    color: #eee;
+}
+
+#chessboard.flipped .coordinates {
+    transform: rotate(180deg);
+}
+/* FINAL FIX - Chess Coordinates */
+
+#chessboard .square .coordinates {
+    position: absolute !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+    pointer-events: none !important;
+    z-index: 20 !important;
+    opacity: 0.8 !important;
+}
+
+#chessboard .square .rank-coordinate {
+    top: 3px !important;
+    left: 3px !important;
+}
+
+#chessboard .square .file-coordinate {
+    bottom: 3px !important;
+    right: 3px !important;
+}
+
+#chessboard .square.light .coordinates {
+    color: #555 !important;
+}
+
+#chessboard .square.dark .coordinates {
+    color: #eee !important;
 }
