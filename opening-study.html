@@ -234,7 +234,21 @@
 
         padding: 20px;
     }
+.board-wrapper {
+    position: relative;
+    width: 100%;
+}
+.arrow-layer {
+    position: absolute;
 
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    pointer-events: none;
+}
     .board {
         width: 100%;
 
@@ -273,7 +287,17 @@
     .dark {
         background: #b58863;
     }
+.move-from {
+    box-shadow:
+        inset 0 0 0 4px rgba(233, 173, 63, 0.75),
+        inset 0 0 0 999px rgba(233, 173, 63, 0.18);
+}
 
+.move-to {
+    box-shadow:
+        inset 0 0 0 4px rgba(233, 173, 63, 0.95),
+        inset 0 0 0 999px rgba(233, 173, 63, 0.35);
+}
 
     /* =========================
        BOARD CONTROLS
@@ -376,12 +400,22 @@
     }
 
     .move {
-        display: inline-block;
+    display: inline-block;
 
-        padding: 3px 5px;
+    padding: 3px 5px;
 
-        border-radius: 4px;
-    }
+    border-radius: 4px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.move:hover {
+    background: #1b3555;
+
+    color: white;
+}
 
     .move.active {
         background: #e9ad3f;
@@ -636,7 +670,17 @@
 
         <div class="board-panel">
 
-            <div id="board" class="board"></div>
+            <div class="board-wrapper">
+
+    <div id="board" class="board"></div>
+
+    <svg id="arrowLayer"
+         class="arrow-layer"
+         viewBox="0 0 8 8"
+         preserveAspectRatio="none">
+    </svg>
+
+</div>
 
 
             <div class="board-controls">
@@ -903,9 +947,6 @@ detailValues[3].textContent =
 // CREATE MOVE LIST
 // ==========================
 
-const movesBox =
-    document.getElementById("movesBox");
-
 movesBox.innerHTML = "";
 
 
@@ -916,8 +957,30 @@ opening.moves.forEach(function(move, index) {
 
     moveElement.className = "move";
 
-    moveElement.textContent =
-        (index + 1) + ". " + move;
+    const moveNumber =
+        Math.floor(index / 2) + 1;
+
+    if (index % 2 === 0) {
+
+        moveElement.textContent =
+            moveNumber + ". " + move;
+
+    } else {
+
+        moveElement.textContent =
+            move;
+
+    }
+
+    moveElement.addEventListener("click", function() {
+
+        currentMove = index;
+
+        updateBoardPosition();
+
+        updateMoveHighlight();
+
+    });
 
     movesBox.appendChild(moveElement);
 
@@ -930,77 +993,242 @@ opening.moves.forEach(function(move, index) {
 
 const board =
     document.getElementById("board");
+const moveData = {
 
+    italian: [
+        ["e2", "e4"],
+        ["e7", "e5"],
+        ["g1", "f3"],
+        ["b8", "c6"],
+        ["f1", "c4"]
+    ],
+
+    najdorf: [
+        ["e2", "e4"],
+        ["c7", "c5"],
+        ["g1", "f3"],
+        ["d7", "d6"],
+        ["d2", "d4"],
+        ["c5", "d4"],
+        ["f3", "d4"],
+        ["g8", "f6"],
+        ["b1", "c3"],
+        ["a7", "a6"]
+    ]
+
+};
+
+let currentMove = -1;
 
 const startingPosition = [
-
     ["♜","♞","♝","♛","♚","♝","♞","♜"],
-
     ["♟","♟","♟","♟","♟","♟","♟","♟"],
-
     ["","","","","","","",""],
-
     ["","","","","","","",""],
-
     ["","","","","","","",""],
-
     ["","","","","","","",""],
-
-    ["♙","♙","♙","♙","♙","♙","♙","♙"],
-
+    ["♙","♙","♙","♙","♙","♙","♙"],
     ["♖","♘","♗","♕","♔","♗","♘","♖"]
-
 ];
 
+let currentPosition = startingPosition.map(row => [...row]);
+drawBoard();
 
 function drawBoard() {
 
     board.innerHTML = "";
 
+    const moves = moveData[openingName] || [];
+
+    let currentFrom = null;
+    let currentTo = null;
+
+    if (currentMove >= 0 && moves[currentMove]) {
+
+        currentFrom = moves[currentMove][0];
+        currentTo = moves[currentMove][1];
+
+    }
 
     for (let row = 0; row < 8; row++) {
 
         for (let col = 0; col < 8; col++) {
 
-            const square =
-                document.createElement("div");
+            const square = document.createElement("div");
 
             square.classList.add("square");
 
-
             if ((row + col) % 2 === 0) {
-
                 square.classList.add("light");
-
             } else {
-
                 square.classList.add("dark");
-
             }
 
+            const file =
+                String.fromCharCode(97 + col);
+
+            const rank =
+                8 - row;
+
+            const squareName =
+                file + rank;
+
+            if (squareName === currentFrom) {
+                square.classList.add("move-from");
+            }
+
+            if (squareName === currentTo) {
+                square.classList.add("move-to");
+            }
 
             square.textContent =
-                startingPosition[row][col];
-
+                currentPosition[row][col];
 
             board.appendChild(square);
-
         }
+    }
+    drawMoveArrow();
+}
 
+function drawMoveArrow() {
+
+    const arrowLayer =
+        document.getElementById("arrowLayer");
+
+    arrowLayer.innerHTML = "";
+
+    if (currentMove < 0) {
+        return;
     }
 
+    const moves =
+        moveData[openingName] || [];
+
+    if (!moves[currentMove]) {
+        return;
+    }
+
+    const from =
+        moves[currentMove][0];
+
+    const to =
+        moves[currentMove][1];
+
+    const fromFile =
+        from.charCodeAt(0) - 97;
+
+    const fromRank =
+        8 - Number(from[1]);
+
+    const toFile =
+        to.charCodeAt(0) - 97;
+
+    const toRank =
+        8 - Number(to[1]);
+
+
+    const line =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "line"
+        );
+
+    line.setAttribute(
+        "x1",
+        fromFile + 0.5
+    );
+
+    line.setAttribute(
+        "y1",
+        fromRank + 0.5
+    );
+
+    line.setAttribute(
+        "x2",
+        toFile + 0.5
+    );
+
+    line.setAttribute(
+        "y2",
+        toRank + 0.5
+    );
+
+    line.setAttribute(
+        "stroke",
+        "#e9ad3f"
+    );
+
+    line.setAttribute(
+        "stroke-width",
+        "0.12"
+    );
+
+    line.setAttribute(
+        "stroke-linecap",
+        "round"
+    );
+
+    arrowLayer.appendChild(line);
+}
+
+// ==========================
+// SQUARE CONVERSION
+// ==========================
+
+function squareToPosition(square) {
+
+    const file =
+        square.charCodeAt(0) - 97;
+
+    const rank =
+        8 - Number(square[1]);
+
+    return [rank, file];
 }
 
 
-drawBoard();
+// ==========================
+// APPLY MOVES
+// ==========================
+
+function updateBoardPosition() {
+
+    currentPosition =
+        startingPosition.map(row => [...row]);
+
+
+    const moves =
+        moveData[openingName] || [];
+
+
+    for (let i = 0; i <= currentMove; i++) {
+
+        const from =
+            squareToPosition(moves[i][0]);
+
+        const to =
+            squareToPosition(moves[i][1]);
+
+
+        const piece =
+            currentPosition[from[0]][from[1]];
+
+
+        currentPosition[to[0]][to[1]] =
+            piece;
+
+        currentPosition[from[0]][from[1]] =
+            "";
+    }
+
+
+    drawBoard();
+}
 
 
 // ==========================
 // MOVE HIGHLIGHT
 // ==========================
-
-let currentMove = -1;
-
 
 function updateMoveHighlight() {
 
@@ -1032,9 +1260,14 @@ document
     .getElementById("nextButton")
     .addEventListener("click", function() {
 
-        if (currentMove < opening.moves.length - 1) {
+        if (
+            currentMove <
+            opening.moves.length - 1
+        ) {
 
             currentMove++;
+
+            updateBoardPosition();
 
             updateMoveHighlight();
 
@@ -1055,6 +1288,8 @@ document
 
             currentMove--;
 
+            updateBoardPosition();
+
             updateMoveHighlight();
 
         }
@@ -1072,7 +1307,7 @@ document
 
         currentMove = -1;
 
-        drawBoard();
+        updateBoardPosition();
 
         updateMoveHighlight();
 
