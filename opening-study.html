@@ -475,7 +475,40 @@
         font-weight: bold;
     }
 
+.variation-title {
+    font-size: 16px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
 
+.variations {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-bottom: 18px;
+}
+
+.variation {
+    padding: 7px 11px;
+    border: 1px solid #334b68;
+    background: #13243a;
+    color: #aebbd0;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.variation:hover {
+    background: #1b3555;
+    color: white;
+}
+
+.variation.active {
+    background: #e9ad3f;
+    color: #111;
+    border-color: #e9ad3f;
+    font-weight: bold;
+}
     /* =========================
        DETAILS
     ========================= */
@@ -808,7 +841,29 @@
             <div class="moves-title">
                 Main Line
             </div>
+<div class="variation-title">
+    Variations
+</div>
 
+<div class="variations">
+
+    <button class="variation active" data-variation="main">
+    Main Line
+</button>
+
+<button class="variation" data-variation="bg5">
+    6.Bg5
+</button>
+
+<button class="variation" data-variation="be3">
+    6.Be3
+</button>
+
+<button class="variation" data-variation="bc4">
+    6.Bc4
+</button>
+
+</div>
 
             <div id="movesBox" class="moves-box">
 
@@ -1019,79 +1074,164 @@ detailValues[2].textContent =
 detailValues[3].textContent =
     opening.difficulty;
 
-
 // ==========================
 // CREATE MOVE LIST
 // ==========================
 
-movesBox.innerHTML = "";
+function createMoveList() {
 
-let moveRows = [];
+    movesBox.innerHTML = "";
 
-opening.moves.forEach(function(move, index) {
+    const variationKey =
+        openingName === "najdorf" && currentVariation !== "main"
+            ? "najdorf_" + currentVariation
+            : openingName;
 
-    const rowIndex = Math.floor(index / 2);
+    let moves = [];
 
-    if (!moveRows[rowIndex]) {
-        moveRows[rowIndex] = [];
+    if (currentVariation === "main") {
+
+        moves = opening.moves;
+
+    } else {
+
+        if (currentVariation === "bg5") {
+
+            moves = [
+                "e4",
+                "c5",
+                "Nf3",
+                "d6",
+                "d4",
+                "cxd4",
+                "Nxd4",
+                "Nf6",
+                "Nc3",
+                "a6",
+                "Bg5"
+            ];
+
+        }
+
+        if (currentVariation === "be3") {
+
+            moves = [
+                "e4",
+                "c5",
+                "Nf3",
+                "d6",
+                "d4",
+                "cxd4",
+                "Nxd4",
+                "Nf6",
+                "Nc3",
+                "a6",
+                "Be3"
+            ];
+
+        }
+
+        if (currentVariation === "bc4") {
+
+            moves = [
+                "e4",
+                "c5",
+                "Nf3",
+                "d6",
+                "d4",
+                "cxd4",
+                "Nxd4",
+                "Nf6",
+                "Nc3",
+                "a6",
+                "Bc4"
+            ];
+
+        }
+
     }
 
-    moveRows[rowIndex].push({
-        move: move,
-        index: index
+    let moveRows = [];
+
+    moves.forEach(function(move, index) {
+
+        const rowIndex =
+            Math.floor(index / 2);
+
+        if (!moveRows[rowIndex]) {
+            moveRows[rowIndex] = [];
+        }
+
+        moveRows[rowIndex].push({
+            move: move,
+            index: index
+        });
+
     });
 
-});
+    moveRows.forEach(function(row, rowIndex) {
 
-moveRows.forEach(function(row, rowIndex) {
+        const rowElement =
+            document.createElement("div");
 
-    const rowElement =
-        document.createElement("div");
+        rowElement.className =
+            "move-row";
 
-    rowElement.className = "move-row";
-
-    const numberElement =
-        document.createElement("span");
-
-    numberElement.className = "move-number";
-
-    numberElement.textContent =
-        (rowIndex + 1) + ".";
-
-    rowElement.appendChild(numberElement);
-
-    row.forEach(function(item) {
-
-        const moveElement =
+        const numberElement =
             document.createElement("span");
 
-        moveElement.className = "move";
+        numberElement.className =
+            "move-number";
 
-        moveElement.textContent =
-            item.move;
+        numberElement.textContent =
+            (rowIndex + 1) + ".";
 
-        moveElement.dataset.index =
-            item.index;
+        rowElement.appendChild(
+            numberElement
+        );
 
-        moveElement.addEventListener("click", function() {
+        row.forEach(function(item) {
 
-            currentMove = item.index;
+            const moveElement =
+                document.createElement("span");
 
-            updateBoardPosition();
+            moveElement.className =
+                "move";
 
-            updateMoveHighlight();
+            moveElement.textContent =
+                item.move;
+
+            moveElement.dataset.index =
+                item.index;
+
+            moveElement.addEventListener(
+                "click",
+                function() {
+
+                    currentMove =
+                        item.index;
+
+                    updateBoardPosition();
+
+                    updateMoveHighlight();
+
+                }
+            );
+
+            rowElement.appendChild(
+                moveElement
+            );
 
         });
 
-        rowElement.appendChild(moveElement);
+        movesBox.appendChild(
+            rowElement
+        );
 
     });
 
-    movesBox.appendChild(rowElement);
-
-});
-
-
+}
+createMoveList();
 // ==========================
 // BOARD
 // ==========================
@@ -1120,6 +1260,8 @@ if (savedLightColor) {
 
 if (savedDarkColor) {
     darkColor.value = savedDarkColor;
+}
+
 const moveData = {
 
     italian: [
@@ -1141,11 +1283,54 @@ const moveData = {
         ["g8", "f6"],
         ["b1", "c3"],
         ["a7", "a6"]
+    ],
+
+    najdorf_bg5: [
+        ["e2", "e4"],
+        ["c7", "c5"],
+        ["g1", "f3"],
+        ["d7", "d6"],
+        ["d2", "d4"],
+        ["c5", "d4"],
+        ["f3", "d4"],
+        ["g8", "f6"],
+        ["b1", "c3"],
+        ["a7", "a6"],
+        ["c1", "g5"]
+    ],
+
+    najdorf_be3: [
+        ["e2", "e4"],
+        ["c7", "c5"],
+        ["g1", "f3"],
+        ["d7", "d6"],
+        ["d2", "d4"],
+        ["c5", "d4"],
+        ["f3", "d4"],
+        ["g8", "f6"],
+        ["b1", "c3"],
+        ["a7", "a6"],
+        ["c1", "e3"]
+    ],
+
+    najdorf_bc4: [
+        ["e2", "e4"],
+        ["c7", "c5"],
+        ["g1", "f3"],
+        ["d7", "d6"],
+        ["d2", "d4"],
+        ["c5", "d4"],
+        ["f3", "d4"],
+        ["g8", "f6"],
+        ["b1", "c3"],
+        ["a7", "a6"],
+        ["f1", "c4"]
     ]
 
 };
 
 let currentMove = -1;
+let currentVariation = "main";
 
 const startingPosition = [
     ["♜","♞","♝","♛","♚","♝","♞","♜"],
@@ -1165,7 +1350,13 @@ function drawBoard() {
 
     board.innerHTML = "";
 
-    const moves = moveData[openingName] || [];
+    const variationKey =
+    openingName === "najdorf" && currentVariation !== "main"
+        ? "najdorf_" + currentVariation
+        : openingName;
+
+const moves =
+    moveData[variationKey] || [];
 
     let currentFrom = null;
     let currentTo = null;
@@ -1236,8 +1427,13 @@ function drawMoveArrow() {
         return;
     }
 
-    const moves =
-        moveData[openingName] || [];
+    const variationKey =
+    openingName === "najdorf" && currentVariation !== "main"
+        ? "najdorf_" + currentVariation
+        : openingName;
+
+const moves =
+    moveData[variationKey] || [];
 
     if (!moves[currentMove]) {
         return;
@@ -1401,8 +1597,13 @@ function updateBoardPosition() {
         startingPosition.map(row => [...row]);
 
 
-    const moves =
-        moveData[openingName] || [];
+    const variationKey =
+    openingName === "najdorf" && currentVariation !== "main"
+        ? "najdorf_" + currentVariation
+        : openingName;
+
+const moves =
+    moveData[variationKey] || [];
 
 
     for (let i = 0; i <= currentMove; i++) {
@@ -1477,10 +1678,18 @@ document
     .getElementById("nextButton")
     .addEventListener("click", function() {
 
-        if (
-            currentMove <
-            opening.moves.length - 1
-        ) {
+        const variationKey =
+    openingName === "najdorf" && currentVariation !== "main"
+        ? "najdorf_" + currentVariation
+        : openingName;
+
+const currentMoves =
+    moveData[variationKey] || [];
+
+if (
+    currentMove <
+    currentMoves.length - 1
+) {
 
             currentMove++;
 
@@ -1512,7 +1721,6 @@ document
         }
 
     });
-
 
 // ==========================
 // RESET
@@ -1564,7 +1772,34 @@ document
         drawBoard();
 
     });
-    
+document
+    .querySelectorAll(".variation")
+    .forEach(function(button) {
+
+        button.addEventListener("click", function() {
+
+            document
+                .querySelectorAll(".variation")
+                .forEach(function(btn) {
+                    btn.classList.remove("active");
+                });
+
+            button.classList.add("active");
+
+            currentVariation =
+    button.dataset.variation;
+
+currentMove = -1;
+
+createMoveList();
+
+updateBoardPosition();
+
+updateMoveHighlight();
+
+        });
+
+    });
 </script>
 
 </body>
