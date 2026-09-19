@@ -1201,7 +1201,7 @@ function drawMoveArrow() {
     line.setAttribute(
     "x2",
     toFile + 0.5 -
-    0.30 * Math.cos(
+    0.50 * Math.cos(
         Math.atan2(
             toRank - fromRank,
             toFile - fromFile
@@ -1212,7 +1212,7 @@ function drawMoveArrow() {
 line.setAttribute(
     "y2",
     toRank + 0.5 -
-    0.30 * Math.sin(
+    0.50 * Math.sin(
         Math.atan2(
             toRank - fromRank,
             toFile - fromFile
