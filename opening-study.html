@@ -248,6 +248,18 @@
     height: 100%;
 
     pointer-events: none;
+
+    z-index: 1;
+}
+
+.board {
+    position: relative;
+    z-index: 0;
+}
+
+.square {
+    position: relative;
+    z-index: 2;
 }
     .board {
         width: 100%;
@@ -949,40 +961,68 @@ detailValues[3].textContent =
 
 movesBox.innerHTML = "";
 
+let moveRows = [];
 
 opening.moves.forEach(function(move, index) {
 
-    const moveElement =
-        document.createElement("span");
+    const rowIndex = Math.floor(index / 2);
 
-    moveElement.className = "move";
-
-    const moveNumber =
-        Math.floor(index / 2) + 1;
-
-    if (index % 2 === 0) {
-
-        moveElement.textContent =
-            moveNumber + ". " + move;
-
-    } else {
-
-        moveElement.textContent =
-            move;
-
+    if (!moveRows[rowIndex]) {
+        moveRows[rowIndex] = [];
     }
 
-    moveElement.addEventListener("click", function() {
+    moveRows[rowIndex].push({
+        move: move,
+        index: index
+    });
 
-        currentMove = index;
+});
 
-        updateBoardPosition();
+moveRows.forEach(function(row, rowIndex) {
 
-        updateMoveHighlight();
+    const rowElement =
+        document.createElement("div");
+
+    rowElement.className = "move-row";
+
+    const numberElement =
+        document.createElement("span");
+
+    numberElement.className = "move-number";
+
+    numberElement.textContent =
+        (rowIndex + 1) + ".";
+
+    rowElement.appendChild(numberElement);
+
+    row.forEach(function(item) {
+
+        const moveElement =
+            document.createElement("span");
+
+        moveElement.className = "move";
+
+        moveElement.textContent =
+            item.move;
+
+        moveElement.dataset.index =
+            item.index;
+
+        moveElement.addEventListener("click", function() {
+
+            currentMove = item.index;
+
+            updateBoardPosition();
+
+            updateMoveHighlight();
+
+        });
+
+        rowElement.appendChild(moveElement);
 
     });
 
-    movesBox.appendChild(moveElement);
+    movesBox.appendChild(rowElement);
 
 });
 
@@ -1159,15 +1199,72 @@ function drawMoveArrow() {
     );
 
     line.setAttribute(
-        "stroke-width",
-        "0.12"
-    );
+    "stroke-width",
+    "0.16"
+);
 
     line.setAttribute(
         "stroke-linecap",
         "round"
     );
+const marker =
+    document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "polygon"
+    );
 
+const arrowX =
+    toFile + 0.5 -
+    0.22 * Math.cos(
+        Math.atan2(
+            toRank - fromRank,
+            toFile - fromFile
+        )
+    );
+
+const arrowY =
+    toRank + 0.5 -
+    0.22 * Math.sin(
+        Math.atan2(
+            toRank - fromRank,
+            toFile - fromFile
+        )
+    );
+
+const angle =
+    Math.atan2(
+        toRank - fromRank,
+        toFile - fromFile
+    );
+
+const size = 0.28;
+
+const p1 = [
+    arrowX,
+    arrowY
+];
+
+const p2 = [
+    arrowX - size * Math.cos(angle - Math.PI / 6),
+    arrowY - size * Math.sin(angle - Math.PI / 6)
+];
+
+const p3 = [
+    arrowX - size * Math.cos(angle + Math.PI / 6),
+    arrowY - size * Math.sin(angle + Math.PI / 6)
+];
+
+marker.setAttribute(
+    "points",
+    `${p1[0]},${p1[1]} ${p2[0]},${p2[1]} ${p3[0]},${p3[1]}`
+);
+
+marker.setAttribute(
+    "fill",
+    "#e9ad3f"
+);
+
+arrowLayer.appendChild(marker);
     arrowLayer.appendChild(line);
 }
 
