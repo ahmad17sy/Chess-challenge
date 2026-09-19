@@ -73,10 +73,47 @@
 </div>
 
         <div id="analysisMoves">
-            <h3>Moves</h3>
-            <div id="analysisMoveList"></div>
-            
-        </div>
+
+    <h3>Moves</h3>
+
+    <div id="analysisMoveList"></div>
+
+</div>
+
+<div id="pgnControls">
+
+    <button id="copyPGN">📋 Copy PGN</button>
+    <button id="downloadPGN">💾 Download PGN</button>
+    <button id="shareGame">🔗 Share Game</button>
+
+    <br>
+
+    <input type="file" id="pgnFile" accept=".pgn">
+    <button id="importPGN">📂 Import PGN</button>
+
+    <div id="pgnNavigation">
+
+        <button id="pgnFirst">⏮ First</button>
+
+        <button id="pgnPrevious">
+            ◀ Previous
+        </button>
+
+        <span id="pgnMoveNumber">
+            0 / 0
+        </span>
+
+        <button id="pgnNext">
+            Next ▶
+        </button>
+
+        <button id="pgnLast">
+            Last ⏭
+        </button>
+
+    </div>
+
+</div>
 
     </div>
 
@@ -94,7 +131,68 @@ let selectedAnalysisSquare = null;
 let analysisMoves = [];
 
 let analysisBoardFlipped = false;
+// =========================================
+// IMPORT PGN
+// =========================================
 
+document.getElementById("importPGN").addEventListener(
+    "click",
+    function () {
+
+        const fileInput =
+            document.getElementById("pgnFile");
+
+        const file = fileInput.files[0];
+
+        if (!file) {
+            alert("Please select a PGN file first.");
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function (event) {
+
+            const pgnText = event.target.result;
+
+            const loadedGame = new Chess();
+
+            const success =
+                loadedGame.load_pgn(pgnText);
+
+            if (!success) {
+                alert("Invalid PGN file.");
+                return;
+            }
+
+            // Get all moves
+            analysisMoves =
+                loadedGame.history();
+
+            // Start from beginning
+            analysisCurrentMove = 0;
+
+            analysisGame.reset();
+
+            // Update move list
+            updateAnalysisMoveList();
+
+            // Show starting position
+            refreshAnalysisBoard();
+
+            // Update counter
+            document.getElementById(
+                "pgnMoveNumber"
+            ).textContent =
+                "0 / " + analysisMoves.length;
+
+            // Analyze starting position
+            analyzeCurrentPosition();
+        };
+
+        reader.readAsText(file);
+    }
+);
 let rightMouseDown = false;
 let rightMouseStart = null;
 let rightMouseMoved = false;
@@ -1015,10 +1113,15 @@ function showAnalysisMove(moveNumber) {
 
     analysisGame.load(tempGame.fen());
 
-    analysisCurrentMove = moveNumber;
+analysisCurrentMove = moveNumber;
 
-    refreshAnalysisBoard();
-    analyzeCurrentPosition();
+refreshAnalysisBoard();
+
+updateAnalysisMoveList();
+
+updatePGNCounter();
+
+analyzeCurrentPosition();
 }
 document.getElementById("analysisFirst").addEventListener(
     "click",
@@ -1338,6 +1441,239 @@ analysisBoard.addEventListener("mouseup", function(event) {
     }
 });
 refreshAnalysisBoard();
+// =========================================
+// PGN NAVIGATION
+// =========================================
+
+function updatePGNCounter() {
+
+    const counter =
+        document.getElementById("pgnMoveNumber");
+
+    if (!counter) {
+        return;
+    }
+
+    counter.textContent =
+        analysisCurrentMove +
+        " / " +
+        analysisMoves.length;
+}
+
+
+// FIRST
+document.getElementById("pgnFirst").addEventListener(
+    "click",
+    function () {
+
+        showAnalysisMove(0);
+        updatePGNCounter();
+
+    }
+);
+
+
+// PREVIOUS
+document.getElementById("pgnPrevious").addEventListener(
+    "click",
+    function () {
+
+        if (analysisCurrentMove > 0) {
+
+            showAnalysisMove(
+                analysisCurrentMove - 1
+            );
+
+            updatePGNCounter();
+        }
+
+    }
+);
+
+
+// NEXT
+document.getElementById("pgnNext").addEventListener(
+    "click",
+    function () {
+
+        if (
+            analysisCurrentMove <
+            analysisMoves.length
+        ) {
+
+            showAnalysisMove(
+                analysisCurrentMove + 1
+            );
+
+            updatePGNCounter();
+        }
+
+    }
+);
+
+
+// LAST
+document.getElementById("pgnLast").addEventListener(
+    "click",
+    function () {
+
+        showAnalysisMove(
+            analysisMoves.length
+        );
+
+        updatePGNCounter();
+
+    }
+);
+// =========================================
+// ANALYSIS BOARD PGN TOOLS
+// =========================================
+
+function generateAnalysisPGN() {
+
+    if (!analysisMoves || analysisMoves.length === 0) {
+        return "";
+    }
+
+    const game = new Chess();
+
+    for (let i = 0; i < analysisMoves.length; i++) {
+        game.move(analysisMoves[i]);
+    }
+
+    return game.pgn();
+}
+
+
+// =========================================
+// COPY PGN
+// =========================================
+
+document.getElementById("copyPGN").addEventListener(
+    "click",
+    async function () {
+
+        const pgn = generateAnalysisPGN();
+
+        if (!pgn) {
+            alert("There are no moves to copy.");
+            return;
+        }
+
+        try {
+
+            await navigator.clipboard.writeText(pgn);
+
+            this.textContent = "✅ Copied!";
+
+            setTimeout(() => {
+                this.textContent = "📋 Copy PGN";
+            }, 1500);
+
+        } catch (error) {
+
+            alert("Could not copy PGN.");
+        }
+    }
+);
+
+
+// =========================================
+// DOWNLOAD PGN
+// =========================================
+
+document.getElementById("downloadPGN").addEventListener(
+    "click",
+    function () {
+
+        const pgn = generateAnalysisPGN();
+
+        if (!pgn) {
+            alert("There are no moves to download.");
+            return;
+        }
+
+        const blob =
+            new Blob(
+                [pgn],
+                {
+                    type: "application/x-chess-pgn"
+                }
+            );
+
+        const url =
+            URL.createObjectURL(blob);
+
+        const link =
+            document.createElement("a");
+
+        link.href = url;
+        link.download = "my-chess-analysis.pgn";
+
+        document.body.appendChild(link);
+
+        link.click();
+
+        document.body.removeChild(link);
+
+        URL.revokeObjectURL(url);
+    }
+);
+
+
+// =========================================
+// SHARE GAME
+// =========================================
+
+document.getElementById("shareGame").addEventListener(
+    "click",
+    async function () {
+
+        const pgn = generateAnalysisPGN();
+
+        if (!pgn) {
+            alert("There are no moves to share.");
+            return;
+        }
+
+        const shareText =
+            "My Chess Game\n\n" + pgn;
+
+        if (navigator.share) {
+
+            try {
+
+                await navigator.share({
+                    title: "My Chess Game",
+                    text: shareText
+                });
+
+            } catch (error) {
+
+                console.log("Share cancelled.");
+            }
+
+        } else {
+
+            try {
+
+                await navigator.clipboard.writeText(
+                    shareText
+                );
+
+                this.textContent = "✅ Copied!";
+
+                setTimeout(() => {
+                    this.textContent = "🔗 Share Game";
+                }, 1500);
+
+            } catch (error) {
+
+                alert("Sharing is not available.");
+            }
+        }
+    }
+);
 </script>
 </body>
 </html>
