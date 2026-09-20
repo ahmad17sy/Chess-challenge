@@ -1,0 +1,2658 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Player Analysis - My Chess</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #07111f;
+            color: #fff;
+        }
+
+
+        /* =========================
+           TOP NAVIGATION
+        ========================= */
+
+        .top-navigation {
+            background: #0b1728;
+            border-bottom: 1px solid #1d2d43;
+            padding: 0 30px;
+            height: 72px;
+
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+
+            font-size: 21px;
+            font-weight: bold;
+
+            white-space: nowrap;
+
+            margin-right: 10px;
+        }
+
+
+        .logo-icon {
+            font-size: 27px;
+        }
+
+
+        .top-menu {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+
+            flex: 1;
+        }
+
+
+        .top-menu a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 10px 12px;
+
+            color: #aebbd0;
+            text-decoration: none;
+
+            border-radius: 8px;
+
+            font-size: 14px;
+
+            transition: 0.2s;
+        }
+
+
+        .top-menu a:hover {
+            background: #14243a;
+            color: white;
+        }
+
+
+        .top-menu a.active {
+            background: #1b3555;
+            color: white;
+        }
+
+
+        .menu-icon {
+            font-size: 16px;
+        }
+
+
+        .top-user-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+
+        .notification {
+            font-size: 19px;
+            color: #aebbd0;
+            margin-right: 5px;
+        }
+
+
+        .login-button {
+            padding: 8px 14px;
+
+            border: 1px solid #50647e;
+            border-radius: 7px;
+
+            color: white;
+            text-decoration: none;
+
+            font-size: 13px;
+        }
+
+
+        .signup-button {
+            padding: 9px 15px;
+
+            background: #e9ad3f;
+            color: #111;
+
+            border-radius: 7px;
+
+            text-decoration: none;
+
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main {
+            max-width: 1450px;
+
+            margin: 0 auto;
+
+            padding: 35px 35px 50px;
+        }
+
+
+        .page-title {
+            margin: 0 0 8px;
+
+            font-size: 28px;
+        }
+
+
+        .page-subtitle {
+            color: #8fa0b8;
+
+            margin: 0 0 30px;
+
+            font-size: 15px;
+        }
+
+
+        /* =========================
+           SEARCH CARDS
+        ========================= */
+
+        .player-search-grid {
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 20px;
+
+            margin-bottom: 30px;
+        }
+
+
+        .search-card {
+            background: #0d1c30;
+
+            border: 1px solid #20344d;
+
+            border-radius: 12px;
+
+            padding: 22px;
+        }
+
+
+        .platform-title {
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+
+            font-size: 18px;
+            font-weight: bold;
+
+            margin-bottom: 12px;
+        }
+
+
+        .platform-icon {
+            font-size: 24px;
+        }
+
+
+        .platform-description {
+            color: #8fa0b8;
+
+            font-size: 14px;
+
+            margin-bottom: 18px;
+
+            line-height: 1.5;
+        }
+
+
+        .player-input-row {
+            display: flex;
+
+            gap: 10px;
+        }
+
+
+        .player-input {
+            flex: 1;
+
+            min-width: 0;
+
+            background: #07111f;
+
+            border: 1px solid #2a405c;
+
+            border-radius: 8px;
+
+            padding: 11px 13px;
+
+            color: white;
+
+            font-size: 14px;
+
+            outline: none;
+        }
+
+
+        .player-input:focus {
+            border-color: #55779f;
+        }
+
+
+        .player-input::placeholder {
+            color: #65758b;
+        }
+
+
+        .analyze-button {
+            background: #e9ad3f;
+
+            color: #111;
+
+            border: none;
+
+            border-radius: 8px;
+
+            padding: 0 18px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            white-space: nowrap;
+        }
+
+
+        .analyze-button:hover {
+            background: #f2bc50;
+        }
+
+
+        .status-message {
+            display: none;
+
+            margin-top: 12px;
+
+            color: #8fa0b8;
+
+            font-size: 13px;
+        }
+
+
+        /* =========================
+           SECTIONS
+        ========================= */
+
+        .results-section {
+            background: #0d1c30;
+
+            border: 1px solid #20344d;
+
+            border-radius: 12px;
+
+            padding: 24px;
+
+            margin-bottom: 22px;
+        }
+
+
+        .section-title {
+            margin: 0 0 20px;
+
+            font-size: 20px;
+        }
+
+
+        /* =========================
+           STATISTICS
+        ========================= */
+
+        .stats-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 14px;
+        }
+
+
+        .stat-card {
+            background: #07111f;
+
+            border: 1px solid #1d2d43;
+
+            border-radius: 9px;
+
+            padding: 18px;
+        }
+
+
+        .stat-label {
+            color: #8fa0b8;
+
+            font-size: 13px;
+
+            margin-bottom: 9px;
+        }
+
+
+        .stat-value {
+            font-size: 25px;
+
+            font-weight: bold;
+        }
+
+
+        /* =========================
+           ANALYSIS COLUMNS
+        ========================= */
+
+        .analysis-grid {
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 20px;
+        }
+
+
+        .analysis-card {
+            background: #07111f;
+
+            border: 1px solid #1d2d43;
+
+            border-radius: 9px;
+
+            padding: 20px;
+        }
+
+
+        .opening-row {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            padding: 13px 0;
+
+            border-bottom: 1px solid #17283d;
+        }
+
+
+        .opening-row:last-child {
+            border-bottom: none;
+        }
+
+
+        .opening-name {
+            color: #dbe5f2;
+
+            font-size: 14px;
+        }
+
+
+        .opening-value {
+            color: #8fa0b8;
+
+            font-size: 14px;
+        }
+
+
+        /* =========================
+           PREPARATION
+        ========================= */
+
+        .preparation-box {
+            background: #07111f;
+
+            border: 1px solid #1d2d43;
+
+            border-radius: 9px;
+
+            padding: 0 20px;
+        }
+
+
+        .preparation-item {
+            padding: 17px 0;
+
+            border-bottom: 1px solid #17283d;
+        }
+
+
+        .preparation-item:last-child {
+            border-bottom: none;
+        }
+
+
+        .preparation-item strong {
+            display: block;
+
+            margin-bottom: 6px;
+
+            font-size: 15px;
+        }
+
+
+        .preparation-item span {
+            color: #8fa0b8;
+
+            font-size: 14px;
+
+            line-height: 1.5;
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1150px) {
+
+            .top-navigation {
+                gap: 15px;
+
+                padding: 0 18px;
+            }
+
+
+            .top-menu a {
+                padding: 9px 8px;
+            }
+
+
+            .menu-text {
+                display: none;
+            }
+
+
+            .top-menu a {
+                justify-content: center;
+            }
+
+        }
+
+
+        @media (max-width: 900px) {
+
+            .player-search-grid,
+            .analysis-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+            .stats-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+        }
+
+
+        @media (max-width: 650px) {
+
+            .top-navigation {
+                height: auto;
+
+                min-height: 65px;
+
+                flex-wrap: wrap;
+
+                padding: 12px 15px;
+            }
+
+
+            .top-menu {
+                order: 3;
+
+                width: 100%;
+
+                overflow-x: auto;
+            }
+
+
+            .top-user-area {
+                margin-left: auto;
+            }
+
+
+            .main {
+                padding: 25px 15px 40px;
+            }
+
+
+            .player-input-row {
+                flex-direction: column;
+            }
+
+
+            .analyze-button {
+                height: 42px;
+            }
+
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+/* =========================
+   TRAINING CHESSBOARD
+========================= */
+
+#trainingChessboard {
+    width: 640px;
+    height: 640px;
+
+    max-width: 100%;
+    max-height: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(8, 1fr);
+
+    grid-template-rows:
+        repeat(8, 1fr);
+
+    overflow: hidden;
+
+    user-select: none;
+}
+
+
+#trainingChessboard .analysis-square {
+    position: relative;
+
+    width: 80px;
+    height: 80px;
+
+    box-sizing: border-box;
+}
+
+
+#trainingChessboard .analysis-light {
+    background: #f0d9b5;
+}
+
+
+#trainingChessboard .analysis-dark {
+    background: #b58863;
+}
+
+
+#trainingChessboard .chess-piece {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    display: block;
+
+    position: relative;
+
+    z-index: 3;
+
+    user-select: none;
+}
+
+
+#trainingBoardArea {
+    margin-top: 25px;
+}
+
+
+#trainingQuestion {
+    margin-top: 15px;
+
+    color: #dbe5f2;
+
+    font-size: 15px;
+}
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     TOP NAVIGATION
+========================= -->
+
+<header class="top-navigation">
+
+
+    <div class="logo">
+
+        <span class="logo-icon">♛</span>
+
+        <span>MY CHESS</span>
+
+    </div>
+
+
+
+    <nav class="top-menu">
+
+
+        <a href="index.html">
+
+            <span class="menu-icon">🏠</span>
+
+            <span class="menu-text">Home</span>
+
+        </a>
+
+
+        <a href="chess.html">
+
+            <span class="menu-icon">♟</span>
+
+            <span class="menu-text">Play</span>
+
+        </a>
+
+
+        <a href="analysis.html">
+
+            <span class="menu-icon">🔍</span>
+
+            <span class="menu-text">Analysis</span>
+
+        </a>
+
+
+        <a href="openings.html">
+
+            <span class="menu-icon">📖</span>
+
+            <span class="menu-text">Openings</span>
+
+        </a>
+
+
+        <a href="player-analysis.html" class="active">
+
+            <span class="menu-icon">👤</span>
+
+            <span class="menu-text">Player Analysis</span>
+
+        </a>
+
+
+        <a href="#">
+
+            <span class="menu-icon">📄</span>
+
+            <span class="menu-text">My Games / PGN</span>
+
+        </a>
+
+
+        <a href="#">
+
+            <span class="menu-icon">👥</span>
+
+            <span class="menu-text">Friends</span>
+
+        </a>
+
+
+        <a href="#">
+
+            <span class="menu-icon">💬</span>
+
+            <span class="menu-text">Community</span>
+
+        </a>
+
+
+    </nav>
+
+
+
+    <div class="top-user-area">
+
+        <span class="notification">🔔</span>
+
+
+        <a href="#" class="login-button">
+            Login
+        </a>
+
+
+        <a href="#" class="signup-button">
+            Sign Up
+        </a>
+
+    </div>
+
+
+</header>
+
+
+
+<!-- =========================
+     MAIN CONTENT
+========================= -->
+
+<main class="main">
+
+
+    <h1 class="page-title">
+        Player Analysis
+    </h1>
+
+
+    <p class="page-subtitle">
+        Analyze a player's games, openings and playing patterns.
+    </p>
+
+
+
+    <!-- =========================
+         PLAYER SEARCH
+    ========================= -->
+
+    <div class="player-search-grid">
+
+
+        <!-- LICHESS -->
+
+        <div class="search-card">
+
+
+            <div class="platform-title">
+
+                <span class="platform-icon">♞</span>
+
+                <span>Lichess Player</span>
+
+            </div>
+
+
+            <div class="platform-description">
+
+                Enter a Lichess username to analyze the player's games.
+
+            </div>
+
+<div class="player-input-row">
+
+    <input
+        type="text"
+        id="lichessUsername"
+        class="player-input"
+        placeholder="Lichess username"
+    >
+
+    <button
+        class="analyze-button"
+        onclick="analyzeLichess()"
+    >
+        Analyze
+    </button>
+
+</div>
+
+
+<div style="margin-top: 15px; margin-bottom: 15px;">
+
+    <label
+        for="gameCount"
+        style="color: #dbe5f2; margin-right: 10px;"
+    >
+        Games to analyze:
+    </label>
+
+    <select
+        id="gameCount"
+        style="
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #34495e;
+            background: #162235;
+            color: #ffffff;
+        "
+    >
+        <option value="100">100</option>
+        <option value="200" selected>200</option>
+        <option value="300">300</option>
+        <option value="500">500</option>
+    </select>
+
+</div>
+
+
+            <div
+                id="lichessStatus"
+                class="status-message"
+            ></div>
+
+
+        </div>
+
+
+
+        <!-- CHESS.COM -->
+
+        <div class="search-card">
+
+
+            <div class="platform-title">
+
+                <span class="platform-icon">♟</span>
+
+                <span>Chess.com Player</span>
+
+            </div>
+
+
+            <div class="platform-description">
+
+                Enter a Chess.com username to analyze the player's games.
+
+            </div>
+
+
+            <div class="player-input-row">
+
+
+                <input
+                    type="text"
+                    id="chessUsername"
+                    class="player-input"
+                    placeholder="Chess.com username"
+                >
+
+
+                <button
+                    class="analyze-button"
+                    onclick="analyzeChessCom()"
+                >
+                    Analyze
+                </button>
+
+
+            </div>
+
+
+            <div
+                id="chessStatus"
+                class="status-message"
+            ></div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =========================
+         PLAYER STATISTICS
+    ========================= -->
+
+    <section class="results-section">
+
+
+        <h2 class="section-title">
+            Player Statistics
+        </h2>
+
+
+        <div class="stats-grid">
+
+
+            <div class="stat-card">
+
+                <div class="stat-label">
+                    Games Analyzed
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="gamesCount"
+                >
+                    —
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-label">
+                    Win Rate
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="winRate"
+                >
+                    —
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-label">
+                    Draw Rate
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="drawRate"
+                >
+                    —
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-label">
+                    Loss Rate
+                </div>
+
+                <div
+                    class="stat-value"
+                    id="lossRate"
+                >
+                    —
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =========================
+         OPENINGS
+    ========================= -->
+
+    <div class="analysis-grid">
+
+
+        <!-- MOST PLAYED -->
+
+        <section class="results-section">
+
+            <h2 class="section-title">
+                Most Played Openings
+            </h2>
+
+
+            <div
+                class="analysis-card"
+                id="mostPlayedOpenings"
+            >
+
+                <div class="opening-row">
+
+                    <span class="opening-name">
+                        No data yet
+                    </span>
+
+                    <span class="opening-value">
+                        —
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- PERFORMANCE -->
+
+        <section class="results-section">
+
+            <h2 class="section-title">
+                Opening Performance
+            </h2>
+
+
+            <div
+                class="analysis-card"
+                id="openingPerformance"
+            >
+
+                <div class="opening-row">
+
+                    <span class="opening-name">
+                        Best Result
+                    </span>
+
+                    <span
+                        class="opening-value"
+                        id="bestResult"
+                    >
+                        —
+                    </span>
+
+                </div>
+
+
+                <div class="opening-row">
+
+                    <span class="opening-name">
+                        Most Losses
+                    </span>
+
+                    <span
+                        class="opening-value"
+                        id="mostLosses"
+                    >
+                        —
+                    </span>
+
+                </div>
+
+
+                <div class="opening-row">
+
+                    <span class="opening-name">
+                        White
+                    </span>
+
+                    <span
+                        class="opening-value"
+                        id="whitePerformance"
+                    >
+                        —
+                    </span>
+
+                </div>
+
+
+                <div class="opening-row">
+
+                    <span class="opening-name">
+                        Black
+                    </span>
+
+                    <span
+                        class="opening-value"
+                        id="blackPerformance"
+                    >
+                        —
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </div>
+
+
+
+    <!-- =========================
+         OPPONENT PREPARATION
+    ========================= -->
+
+    <section class="results-section">
+
+
+        <h2 class="section-title">
+            Opponent Preparation
+        </h2>
+
+
+        <div class="preparation-box">
+
+
+            <div class="preparation-item">
+
+                <strong>
+                    Against 1.e4
+                </strong>
+
+                <span id="againstE4">
+                    The player's most frequent responses will appear here.
+                </span>
+
+            </div>
+
+
+            <div class="preparation-item">
+
+                <strong>
+                    Against 1.d4
+                </strong>
+
+                <span id="againstD4">
+                    The player's most frequent responses will appear here.
+                </span>
+
+            </div>
+
+
+            <div class="preparation-item">
+
+                <strong>
+                    Most Frequent Opening
+                </strong>
+
+                <span id="frequentOpening">
+                    The opening played most often will appear here.
+                </span>
+
+            </div>
+
+
+            <div class="preparation-item">
+
+                <strong>
+                    Most Losses
+                </strong>
+
+                <span id="preparationLosses">
+                    Openings with the highest number of losses will appear here.
+                </span>
+
+            </div>
+
+
+            <div class="preparation-item">
+
+                <strong>
+                    Repeated Patterns
+                </strong>
+
+                <span id="repeatedPatterns">
+                    Repeated opening choices and move patterns will appear here.
+                </span>
+
+            </div>
+<div class="preparation-item">
+
+    <strong>
+        Opponent Training
+    </strong>
+
+    <span>
+        Train against positions from this player's games.
+    </span>
+
+    <div style="margin-top: 15px;">
+
+
+                <br><br>
+
+                <button
+                    class="analyze-button"
+                    id="startTrainingBtn"
+                    onclick="startOpponentTraining()"
+                >
+                    Start Training
+                </button>
+
+                <div
+                    id="trainingStatus"
+                    class="status-message"
+                ></div>
+
+            </div>
+
+
+
+            </div>
+            
+        </div>
+
+
+    </section>
+
+<!-- =========================
+     OPPONENT TRAINING BOARD
+========================= -->
+
+<div
+    id="trainingBoardArea"
+    style="display: none;"
+>
+
+    <h2 class="section-title">
+        Opponent Training
+    </h2>
+
+    <div id="trainingChessboard"></div>
+
+    <div id="trainingQuestion">
+        What would you play?
+    </div>
+
+</div>
+
+</main>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+
+<script>
+
+
+// ========================================
+// LICHESS ANALYSIS
+// ========================================
+
+function analyzeLichess() {
+
+    const username =
+        document
+            .getElementById("lichessUsername")
+            .value
+            .trim();
+            const gameCount =
+    document.getElementById("gameCount").value;
+localStorage.setItem("analyzedLichessPlayer", username);
+    const status =
+        document.getElementById("lichessStatus");
+
+
+    if (!username) {
+
+        status.textContent =
+            "Please enter a Lichess username.";
+
+        status.style.display =
+            "block";
+
+        return;
+    }
+
+
+    status.textContent =
+        "Analyzing Lichess games...";
+
+    status.style.display =
+        "block";
+
+
+    fetch(
+    `http://localhost:3000/api/lichess/games/${encodeURIComponent(username)}?count=${gameCount}`
+)
+
+        .then(response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Could not load Lichess games."
+                );
+
+            }
+
+            return response.json();
+
+        })
+
+
+        .then(data => {
+
+            console.log(
+                "Lichess data:",
+                data
+            );
+
+
+            const games =
+                data.games || [];
+
+
+            if (games.length === 0) {
+
+                status.textContent =
+                    "No games found for this player.";
+
+                return;
+            }
+
+
+            const playerName =
+                username.toLowerCase();
+
+
+            // ========================================
+            // PLAYER RESULTS
+            // ========================================
+
+            let wins = 0;
+            let losses = 0;
+            let draws = 0;
+
+
+            games.forEach(game => {
+
+                const white =
+                    game.players?.white?.user?.name
+                    ?.toLowerCase();
+
+
+                const black =
+                    game.players?.black?.user?.name
+                    ?.toLowerCase();
+
+
+                if (!game.winner) {
+
+                    draws++;
+
+                }
+
+                else if (
+                    game.winner === "white" &&
+                    white === playerName
+                ) {
+
+                    wins++;
+
+                }
+
+                else if (
+                    game.winner === "black" &&
+                    black === playerName
+                ) {
+
+                    wins++;
+
+                }
+
+                else {
+
+                    losses++;
+
+                }
+
+            });
+
+
+            const total =
+                games.length;
+                console.log(
+    "Games analyzed on page:",
+    games.length
+);
+
+
+            const winRate =
+                Math.round(
+                    (wins / total) * 100
+                );
+
+
+            const drawRate =
+                Math.round(
+                    (draws / total) * 100
+                );
+
+
+            const lossRate =
+                Math.round(
+                    (losses / total) * 100
+                );
+
+
+            // ========================================
+            // PLAYER STATISTICS
+            // ========================================
+
+            document
+                .getElementById("gamesCount")
+                .textContent = total;
+
+
+            document
+                .getElementById("winRate")
+                .textContent =
+                winRate + "%";
+
+
+            document
+                .getElementById("drawRate")
+                .textContent =
+                drawRate + "%";
+
+
+            document
+                .getElementById("lossRate")
+                .textContent =
+                lossRate + "%";
+
+
+            // ========================================
+            // MOST PLAYED OPENINGS
+            // ========================================
+
+            const openingsContainer =
+                document.getElementById(
+                    "mostPlayedOpenings"
+                );
+
+
+            openingsContainer.innerHTML = "";
+
+
+            const openings =
+                data.openings || [];
+
+
+            if (openings.length === 0) {
+
+                openingsContainer.innerHTML = `
+
+                    <div class="opening-row">
+
+                        <span class="opening-name">
+                            No opening data available
+                        </span>
+
+                        <span class="opening-value">
+                            —
+                        </span>
+
+                    </div>
+
+                `;
+
+            }
+
+            else {
+
+                openings
+                    .slice(0, 5)
+                    .forEach(opening => {
+
+                        const row =
+                            document.createElement("div");
+
+
+                        row.className =
+                            "opening-row";
+
+
+                        row.innerHTML = `
+
+                            <span class="opening-name">
+                                ${opening.name}
+                            </span>
+
+                            <span class="opening-value">
+                                ${opening.count} games
+                            </span>
+
+                        `;
+
+
+                        openingsContainer
+                            .appendChild(row);
+
+                    });
+
+            }
+
+
+            // ========================================
+            // OPENING PERFORMANCE
+            // ========================================
+
+            const openingStats = {};
+
+
+            games.forEach(game => {
+
+                const openingName =
+                    game.opening?.name;
+
+
+                if (!openingName) {
+                    return;
+                }
+
+
+                if (!openingStats[openingName]) {
+
+                    openingStats[openingName] = {
+
+                        games: 0,
+                        wins: 0,
+                        losses: 0,
+                        draws: 0
+
+                    };
+
+                }
+
+
+                openingStats[openingName].games++;
+
+
+                const white =
+                    game.players?.white?.user?.name
+                    ?.toLowerCase();
+
+
+                const black =
+                    game.players?.black?.user?.name
+                    ?.toLowerCase();
+
+
+                if (!game.winner) {
+
+                    openingStats[openingName].draws++;
+
+                }
+
+                else if (
+                    (
+                        game.winner === "white" &&
+                        white === playerName
+                    )
+                    ||
+                    (
+                        game.winner === "black" &&
+                        black === playerName
+                    )
+                ) {
+
+                    openingStats[openingName].wins++;
+
+                }
+
+                else {
+
+                    openingStats[openingName].losses++;
+
+                }
+
+            });
+
+
+            const openingStatEntries =
+                Object.entries(openingStats);
+
+
+            // ========================================
+            // BEST RESULT
+            // Minimum 10 games
+            // ========================================
+
+            let bestOpening = null;
+
+
+            openingStatEntries.forEach(
+                ([name, stats]) => {
+
+                    if (stats.games < 5) {
+                        return;
+                    }
+
+
+                    const currentScore =
+                        stats.wins / stats.games;
+
+
+                    if (
+                        !bestOpening ||
+                        currentScore >
+                        bestOpening.score
+                    ) {
+
+                        bestOpening = {
+
+                            name: name,
+
+                            stats: stats,
+
+                            score: currentScore
+
+                        };
+
+                    }
+
+                }
+            );
+
+
+            if (bestOpening) {
+
+                const percentage =
+                    Math.round(
+                        bestOpening.score * 100
+                    );
+
+
+                document
+                    .getElementById("bestResult")
+                    .textContent =
+                    `${bestOpening.name} (${percentage}% win rate)`;
+
+            }
+
+            else {
+
+                document
+                    .getElementById("bestResult")
+                    .textContent =
+                    "Not enough games";
+
+            }
+
+
+            // ========================================
+            // MOST LOSSES
+            // Minimum 10 games
+            // ========================================
+
+            let worstOpening = null;
+
+
+            openingStatEntries.forEach(
+                ([name, stats]) => {
+
+                    if (stats.games < 5) {
+                        return;
+                    }
+
+
+                    if (
+                        !worstOpening ||
+                        stats.losses >
+                        worstOpening.stats.losses
+                    ) {
+
+                        worstOpening = {
+
+                            name: name,
+
+                            stats: stats
+
+                        };
+
+                    }
+
+                }
+            );
+
+
+            if (worstOpening) {
+
+                const lossRate =
+                    Math.round(
+                        (
+                            worstOpening.stats.losses /
+                            worstOpening.stats.games
+                        ) * 100
+                    );
+
+
+                document
+                    .getElementById("mostLosses")
+                    .textContent =
+                    `${worstOpening.name} (${worstOpening.stats.losses} losses, ${lossRate}%)`;
+
+            }
+
+            else {
+
+                document
+                    .getElementById("mostLosses")
+                    .textContent =
+                    "Not enough games";
+
+            }
+
+
+            // ========================================
+            // WHITE / BLACK PERFORMANCE
+            // ========================================
+
+            let whiteGames = 0;
+            let whiteWins = 0;
+
+            let blackGames = 0;
+            let blackWins = 0;
+
+
+            games.forEach(game => {
+
+                const white =
+                    game.players?.white?.user?.name
+                    ?.toLowerCase();
+
+
+                const black =
+                    game.players?.black?.user?.name
+                    ?.toLowerCase();
+
+
+                if (
+                    white === playerName
+                ) {
+
+                    whiteGames++;
+
+
+                    if (
+                        game.winner === "white"
+                    ) {
+
+                        whiteWins++;
+
+                    }
+
+                }
+
+
+                if (
+                    black === playerName
+                ) {
+
+                    blackGames++;
+
+
+                    if (
+                        game.winner === "black"
+                    ) {
+
+                        blackWins++;
+
+                    }
+
+                }
+
+            });
+
+
+            // ========================================
+            // WHITE
+            // ========================================
+
+            if (whiteGames >= 10) {
+
+                const whiteRate =
+                    Math.round(
+                        (whiteWins / whiteGames) * 100
+                    );
+
+
+                document
+                    .getElementById("whitePerformance")
+                    .textContent =
+                    `${whiteWins}/${whiteGames} wins (${whiteRate}%)`;
+
+            }
+
+            else {
+
+                document
+                    .getElementById("whitePerformance")
+                    .textContent =
+                    "Not enough games";
+
+            }
+
+
+            // ========================================
+            // BLACK
+            // ========================================
+
+            if (blackGames >= 10) {
+
+                const blackRate =
+                    Math.round(
+                        (blackWins / blackGames) * 100
+                    );
+
+
+                document
+                    .getElementById("blackPerformance")
+                    .textContent =
+                    `${blackWins}/${blackGames} wins (${blackRate}%)`;
+
+            }
+
+            else {
+
+                document
+                    .getElementById("blackPerformance")
+                    .textContent =
+                    "Not enough games";
+
+            }
+
+
+            // ========================================
+            // OPPONENT PREPARATION
+            // ========================================
+
+            const againstE4 =
+                data.againstE4 || [];
+
+
+            const againstD4 =
+                data.againstD4 || [];
+
+
+            const e4Entries =
+                againstE4;
+
+
+            const d4Entries =
+                againstD4;
+
+
+            // ========================================
+            // AGAINST 1.e4
+            // ========================================
+
+            const e4Text =
+                e4Entries.length > 0
+
+                    ? e4Entries
+                        .slice(0, 5)
+                        .map(
+                            item =>
+                                `${item.move} (${item.games})`
+                        )
+                        .join(", ")
+
+                    : "No games against 1.e4 found.";
+
+
+            document
+                .getElementById("againstE4")
+                .textContent =
+                e4Text;
+
+
+            // ========================================
+            // AGAINST 1.d4
+            // ========================================
+
+            const d4Text =
+                d4Entries.length > 0
+
+                    ? d4Entries
+                        .slice(0, 5)
+                        .map(
+                            item =>
+                                `${item.move} (${item.games})`
+                        )
+                        .join(", ")
+
+                    : "No games against 1.d4 found.";
+
+
+            document
+                .getElementById("againstD4")
+                .textContent =
+                d4Text;
+
+
+            // ========================================
+            // MOST FREQUENT OPENING
+            // Minimum 10 games
+            // ========================================
+
+            const frequentOpening =
+                openings.find(
+                    opening =>
+                        opening.count >= 10
+                );
+
+
+            if (frequentOpening) {
+
+                document
+                    .getElementById("frequentOpening")
+                    .textContent =
+                    `${frequentOpening.name} (${frequentOpening.count} games)`;
+
+            }
+
+            else {
+
+                document
+                    .getElementById("frequentOpening")
+                    .textContent =
+                    "Not enough games";
+
+            }
+
+
+            // ========================================
+            // PREPARATION LOSSES
+            // Minimum 10 games
+            // ========================================
+
+            const preparationPatterns = [
+
+                ...e4Entries
+                    .filter(
+                        item =>
+                            item.games >= 10
+                    )
+                    .map(item => ({
+
+                        side: "1.e4",
+
+                        move: item.move,
+
+                        games: item.games,
+
+                        losses: item.losses
+
+                    })),
+
+                ...d4Entries
+                    .filter(
+                        item =>
+                            item.games >= 10
+                    )
+                    .map(item => ({
+
+                        side: "1.d4",
+
+                        move: item.move,
+
+                        games: item.games,
+
+                        losses: item.losses
+
+                    }))
+
+            ];
+
+
+            preparationPatterns.sort(
+                (a, b) =>
+                    b.losses - a.losses
+            );
+
+
+            const preparationLoss =
+                preparationPatterns[0];
+
+
+            if (preparationLoss) {
+
+                const preparationLossRate =
+                    Math.round(
+                        (
+                            preparationLoss.losses /
+                            preparationLoss.games
+                        ) * 100
+                    );
+
+
+                document
+                    .getElementById("preparationLosses")
+                    .textContent =
+                    `${preparationLoss.side} ${preparationLoss.move}: ${preparationLoss.losses} losses / ${preparationLoss.games} games (${preparationLossRate}%)`;
+
+            }
+
+            else {
+
+                document
+                    .getElementById("preparationLosses")
+                    .textContent =
+                    "Not enough games";
+
+            }
+
+
+            // ========================================
+            // REPEATED PATTERNS
+            // Minimum 10 games
+            // ========================================
+
+            const repeatedPatterns = [];
+
+
+            if (
+                e4Entries.length > 0 &&
+                e4Entries[0].games >= 10
+            ) {
+
+                repeatedPatterns.push(
+                    `Against 1.e4: ${e4Entries[0].move} (${e4Entries[0].games} games)`
+                );
+
+            }
+
+
+            if (
+                d4Entries.length > 0 &&
+                d4Entries[0].games >= 10
+            ) {
+
+                repeatedPatterns.push(
+                    `Against 1.d4: ${d4Entries[0].move} (${d4Entries[0].games} games)`
+                );
+
+            }
+
+
+            const repeatedOpening =
+                openings.find(
+                    opening =>
+                        opening.count >= 10
+                );
+
+
+            if (repeatedOpening) {
+
+                repeatedPatterns.push(
+                    `Most played: ${repeatedOpening.name} (${repeatedOpening.count} games)`
+                );
+
+            }
+
+
+            document
+                .getElementById("repeatedPatterns")
+                .textContent =
+                repeatedPatterns.length > 0
+
+                    ? repeatedPatterns.join(" • ")
+
+                    : "No repeated patterns detected yet.";
+
+
+            // ========================================
+            // COMPLETE
+            // ========================================
+
+            status.textContent =
+                `Analysis complete: ${total} games analyzed.`;
+
+            status.style.display =
+                "block";
+
+
+            console.log(
+                "Wins:",
+                wins
+            );
+
+            console.log(
+                "Draws:",
+                draws
+            );
+
+            console.log(
+                "Losses:",
+                losses
+            );
+
+            console.log(
+                "Openings:",
+                openings
+            );
+
+        })
+
+
+        .catch(error => {
+
+            console.error(error);
+
+
+            status.textContent =
+                "Could not connect to Lichess server.";
+
+            status.style.display =
+                "block";
+
+        });
+
+}
+// ========================================
+// CHESS.COM
+// ========================================
+
+function analyzeChessCom() {
+
+    const status =
+        document.getElementById("chessStatus");
+
+
+    status.textContent =
+        "Chess.com analysis will be added next.";
+
+    status.style.display =
+        "block";
+
+}
+// ========================================
+// OPPONENT TRAINING
+// ========================================
+
+let trainingPositions = [];
+let currentTrainingIndex = 0;
+let trainingGame = null;
+let selectedTrainingSquare = null;
+let trainingBoardFlipped = false;
+
+
+// ========================================
+// START TRAINING
+// ========================================
+
+function startOpponentTraining() {
+
+    const username =
+        localStorage.getItem("analyzedLichessPlayer");
+
+    const status =
+        document.getElementById("trainingStatus");
+
+
+    if (!username) {
+
+        status.textContent =
+            "Analyze a Lichess player first.";
+
+        status.style.display =
+            "block";
+
+        return;
+    }
+
+
+    status.textContent =
+        "Preparing opponent training...";
+
+    status.style.display =
+        "block";
+
+const gameCount =
+    document.getElementById("gameCount").value;
+
+fetch(
+    `http://localhost:3000/api/lichess/games/${encodeURIComponent(username)}?count=${gameCount}`
+)
+
+        .then(response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Could not load games."
+                );
+
+            }
+
+            return response.json();
+
+        })
+
+
+        .then(data => {
+
+            trainingPositions =
+                data.trainingPositions || [];
+
+
+            console.log(
+                "Training positions:",
+                trainingPositions
+            );
+
+
+            if (
+                trainingPositions.length === 0
+            ) {
+
+                status.textContent =
+                    "No suitable training positions found.";
+
+                return;
+            }
+
+
+            currentTrainingIndex = 0;
+
+
+            document
+                .getElementById("trainingBoardArea")
+                .style.display = "block";
+
+
+            showTrainingPosition();
+
+
+            status.textContent =
+                `${trainingPositions.length} training positions found.`;
+
+        })
+
+
+        .catch(error => {
+
+            console.error(error);
+
+            status.textContent =
+                "Could not load training data.";
+
+            status.style.display =
+                "block";
+
+        });
+
+}
+
+// ========================================
+// SHOW TRAINING POSITION
+// ========================================
+
+function showTrainingPosition() {
+
+    const position =
+        trainingPositions[currentTrainingIndex];
+
+
+    if (!position) {
+        return;
+    }
+
+
+    trainingGame =
+        new Chess(position.fen);
+
+
+    selectedTrainingSquare = null;
+
+
+    renderTrainingBoard();
+
+
+    const question =
+        document.getElementById(
+            "trainingQuestion"
+        );
+
+
+    question.innerHTML = `
+        <strong>${position.opening}</strong>
+        <br>
+        Your move — what would you play?
+        <br>
+        <small>
+            Training position ${currentTrainingIndex + 1}
+            of ${trainingPositions.length}
+        </small>
+    `;
+
+}
+
+// ========================================
+// RENDER TRAINING BOARD
+// ========================================
+// ========================================
+// RENDER TRAINING BOARD WITH SVG PIECES
+// ========================================
+function renderTrainingBoard() {
+
+    const board =
+        document.getElementById("trainingChessboard");
+
+    if (!board || !trainingGame) {
+        return;
+    }
+
+    board.innerHTML = "";
+
+    const position =
+        trainingGame.board();
+
+    let rows = [0, 1, 2, 3, 4, 5, 6, 7];
+    let cols = [0, 1, 2, 3, 4, 5, 6, 7];
+
+    if (trainingBoardFlipped) {
+        rows.reverse();
+        cols.reverse();
+    }
+
+    for (let row = 0; row < 8; row++) {
+
+        for (let col = 0; col < 8; col++) {
+
+            const boardRow = rows[row];
+            const boardCol = cols[col];
+
+            const square =
+                document.createElement("div");
+
+            square.classList.add("analysis-square");
+
+            if ((row + col) % 2 === 0) {
+                square.classList.add("analysis-light");
+            } else {
+                square.classList.add("analysis-dark");
+            }
+
+            const squareName =
+                String.fromCharCode(97 + boardCol) +
+                (8 - boardRow);
+
+            square.dataset.square = squareName;
+
+            const piece =
+                position[boardRow][boardCol];
+
+            if (piece) {
+
+                const image =
+                    document.createElement("img");
+
+                const color =
+                    piece.color === "w" ? "w" : "b";
+
+                const type =
+                    piece.type.toUpperCase();
+
+                image.src =
+                    "./" + color + type + ".svg";
+
+                image.classList.add("chess-piece");
+
+                image.draggable = true;
+
+                image.addEventListener(
+                    "dragstart",
+                    function(event) {
+
+                        if (
+                            piece.color !==
+                            trainingGame.turn()
+                        ) {
+                            event.preventDefault();
+                            return;
+                        }
+
+                        selectedTrainingSquare =
+                            squareName;
+
+                        event.dataTransfer.setData(
+                            "text/plain",
+                            squareName
+                        );
+                    }
+                );
+
+                square.appendChild(image);
+            }
+
+            square.addEventListener(
+                "click",
+                function() {
+
+                    const currentPiece =
+                        trainingGame.get(squareName);
+
+                    if (
+                        selectedTrainingSquare === null
+                    ) {
+
+                        if (!currentPiece) return;
+
+                        if (
+                            currentPiece.color !==
+                            trainingGame.turn()
+                        ) {
+                            return;
+                        }
+
+                        selectedTrainingSquare =
+                            squareName;
+
+                        return;
+                    }
+
+                    if (
+                        selectedTrainingSquare ===
+                        squareName
+                    ) {
+                        selectedTrainingSquare = null;
+                        return;
+                    }
+
+                    makeTrainingMove(
+                        selectedTrainingSquare,
+                        squareName
+                    );
+
+                    selectedTrainingSquare = null;
+                }
+            );
+
+            square.addEventListener(
+                "dragover",
+                function(event) {
+                    event.preventDefault();
+                }
+            );
+
+            square.addEventListener(
+                "drop",
+                function(event) {
+
+                    event.preventDefault();
+
+                    const fromSquare =
+                        event.dataTransfer.getData(
+                            "text/plain"
+                        ) ||
+                        selectedTrainingSquare;
+
+                    if (!fromSquare) return;
+
+                    makeTrainingMove(
+                        fromSquare,
+                        squareName
+                    );
+
+                    selectedTrainingSquare = null;
+                }
+            );
+
+            board.appendChild(square);
+        }
+    }
+}
+// ========================================
+// HANDLE TRAINING MOVE
+// ========================================
+
+function makeTrainingMove(fromSquare, toSquare) {
+
+    if (!trainingGame) {
+        return;
+    }
+
+    try {
+
+        const move =
+            trainingGame.move({
+                from: fromSquare,
+                to: toSquare,
+                promotion: "q"
+            });
+
+        if (!move) {
+            return;
+        }
+
+        renderTrainingBoard();
+
+        checkTrainingMove(move.san);
+
+    } catch (error) {
+
+        console.log("Illegal training move");
+
+        selectedTrainingSquare = null;
+
+        renderTrainingBoard();
+    }
+}
+
+// ========================================
+// NEXT TRAINING POSITION
+// ========================================
+// ========================================
+// CHECK TRAINING MOVE
+// ========================================
+
+function checkTrainingMove(playerMove) {
+
+    const position =
+        trainingPositions[currentTrainingIndex];
+
+    if (!position) {
+        return;
+    }
+
+    const correctMove =
+        position.move;
+
+    const question =
+        document.getElementById(
+            "trainingQuestion"
+        );
+
+    if (playerMove === correctMove) {
+
+        question.innerHTML = `
+            <strong style="color: #4caf50;">
+                Correct!
+            </strong>
+            <br><br>
+            You played:
+            <strong>${playerMove}</strong>
+            <br>
+            This was the move played in the game.
+            <br><br>
+
+            <button
+                class="analyze-button"
+                onclick="nextTrainingPosition()"
+            >
+                Next Position
+            </button>
+        `;
+
+    } else {
+
+        question.innerHTML = `
+            <strong style="color: #e9ad3f;">
+                Different move
+            </strong>
+            <br><br>
+            You played:
+            <strong>${playerMove}</strong>
+            <br>
+            Actual game move:
+            <strong>${correctMove}</strong>
+            <br><br>
+
+            <button
+                class="analyze-button"
+                onclick="nextTrainingPosition()"
+            >
+                Next Position
+            </button>
+        `;
+
+    }
+
+}
+
+function nextTrainingPosition() {
+
+    currentTrainingIndex++;
+
+
+    if (
+        currentTrainingIndex >=
+        trainingPositions.length
+    ) {
+
+        document
+            .getElementById("trainingQuestion")
+            .innerHTML = `
+                <strong>
+                    Training complete!
+                </strong>
+                <br><br>
+                You completed all available positions.
+                <br><br>
+                <button
+                    class="analyze-button"
+                    onclick="startOpponentTraining()"
+                >
+                    Train Again
+                </button>
+            `;
+
+        return;
+    }
+
+
+    showTrainingPosition();
+
+}
+
+</script>
+
+
+</body>
+
+</html>
