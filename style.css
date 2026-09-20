@@ -158,16 +158,21 @@ nav a:hover {
 
 #chessGameArea {
     position: relative;
-    width: 640px;
-    height: 640px;
+    width: 1000px;
+    min-height: 680px;
     margin: 30px auto;
+    padding: 20px;
+    background: #262522;
+    border-radius: 14px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+    box-sizing: border-box;
     transform: translateX(0);
 }
 
 #chessGameArea #chessboard {
     width: 640px;
     height: 640px;
-    margin: 0;
+    margin: 0 auto;
 }
 
 
@@ -222,20 +227,19 @@ nav a:hover {
 /* =========================
    Move History
 ========================= */
-
 #moveHistory {
     position: absolute;
-    width: 320px;
+    width: 300px;
     height: 640px;
-    left: -400px;
+    left: -330px;
     top: 0;
     margin: 0;
-    padding: 12px;
+    padding: 14px;
     background: #262522;
     color: white;
     border-radius: 10px;
     box-sizing: border-box;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
 }
 
 #moveHistory h3 {
@@ -300,27 +304,32 @@ nav a:hover {
 
 #colorControls {
     width: 640px;
-    margin: 0 auto 12px auto;
+    margin: 0 auto 16px auto;
     display: flex;
     justify-content: center;
     gap: 8px;
+    flex-wrap: wrap;
 }
 
 #colorControls button {
-    background: #262522;
-    color: white;
-    border: none;
-    border-radius: 7px;
-    padding: 10px 18px;
+    background: #3c3b39;
+    color: #ddd;
+    border: 1px solid #555;
+    border-radius: 8px;
+    padding: 9px 16px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
-    transition: 0.15s ease;
+    transition: background 0.15s ease,
+            transform 0.1s ease,
+            box-shadow 0.15s ease;
 }
 
 #colorControls button:hover {
-    background: #44423f;
+    background: #4a4947;
+    color: #fff;
     transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
 }
 
 
@@ -401,13 +410,13 @@ nav a:hover {
 /* =========================
    Chess Clock
 ========================= */
-
 #chessClock {
     width: 640px;
-    margin: 10px auto;
+    margin: 14px auto 8px auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 12px;
 }
 
 .clock {
@@ -467,15 +476,14 @@ nav a:hover {
 /* =========================
    Time Control
 ========================= */
-
 #timeControl {
     position: absolute;
     left: 680px;
-    top: 0;
+    top: 20px;
     width: 220px;
     background: #262522;
-    padding: 18px;
-    border-radius: 12px;
+    padding: 16px;
+    border-radius: 10px;
     box-sizing: border-box;
     text-align: center;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
@@ -790,37 +798,6 @@ nav a:hover {
     border-left: 18px solid gold;
 }
 
-
-/* =========================
-   Analysis Board
-========================= */
-
-#analysisPage {
-    width: 1000px;
-    max-width: 95%;
-    margin: 30px auto;
-    display: flex;
-    gap: 25px;
-    align-items: flex-start;
-}
-
-#analysisBoard {
-    width: 640px;
-    height: 640px;
-}
-
-
-/* =========================
-   Analysis Board Area
-========================= */
-
-#analysisBoardArea {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-}
-
-
 /* =========================
    Analysis Evaluation Bar
 ========================= */
@@ -845,25 +822,9 @@ nav a:hover {
     transition: height 0.3s ease;
 }
 
-
-/* =========================
-   Analysis Board Column
-========================= */
-
-#analysisBoardColumn {
-    width: 640px;
-}
-
-
 /* =========================
    Analysis Chessboard
 ========================= */
-
-#analysisBoardWrapper {
-    width: 640px;
-    height: 640px;
-    position: relative;
-}
 
 #analysisChessboard {
     width: 640px;
@@ -952,34 +913,6 @@ nav a:hover {
     border-bottom: 14px solid transparent;
     border-left: 20px solid limegreen;
 }
-
-
-/* =========================
-   Analysis Panel
-========================= */
-
-#analysisPanel {
-    width: 300px;
-    min-height: 500px;
-    padding: 20px;
-    box-sizing: border-box;
-    background: #eeeeee;
-    border-radius: 8px;
-}
-
-#analysisPanel h2 {
-    margin-top: 0;
-}
-
-#analysisEvaluation,
-#analysisDepth,
-#analysisBestMove {
-    margin: 15px 0;
-    padding: 10px;
-    background: white;
-    border-radius: 5px;
-}
-
 
 /* =========================
    Analysis Move List
@@ -1146,19 +1079,6 @@ nav a:hover {
     border-left: 20px solid #e53935;
 }
 
-
-/* =========================
-   Analysis Board Controls
-========================= */
-
-#analysisBoardControls {
-    width: 640px;
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 10px;
-    margin-bottom: 5px;
-}
-
 #analysisFlipBoard {
     width: 150px;
     height: 42px;
@@ -1177,4 +1097,624 @@ nav a:hover {
 #analysisFlipBoard:hover {
     background: #555 !important;
     transform: translateY(-1px);
+}
+/* =========================
+   PAGE HEADER
+   ========================= */
+
+.page-header {
+    margin: 20px auto 25px auto;
+    text-align: center;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 42px;
+    color: #262522;
+}
+
+.page-header p {
+    margin: 6px 0 0 0;
+    font-size: 18px;
+    color: #666;
+}
+
+/* =========================
+   STOCKFISH ANALYSIS PANEL
+   ========================= */
+
+#pgnAnalysis {
+    width: 640px;
+    margin: 20px auto 0 auto;
+    padding: 18px;
+    background: #eeeeee;
+    border-radius: 10px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+#pgnAnalysis h3 {
+    margin: 0 0 15px 0;
+    font-size: 22px;
+    color: #262522;
+}
+#pgnAnalysis #analysisEvaluation,
+#pgnAnalysis #analysisBestMove,
+#pgnAnalysis #analysisDepth {
+    margin: 8px 0;
+    padding: 10px 12px;
+    background: #ffffff;
+    border-radius: 7px;
+    box-sizing: border-box;
+    text-align: left;
+    font-size: 16px;
+    color: #262522;
+}
+
+#analyzePosition {
+    width: 100%;
+    margin: 12px 0 0 0;
+    background: #3c3b39;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    padding: 11px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease;
+}
+
+#analyzePosition:hover {
+    background: #4a4947;
+    transform: translateY(-1px);
+}
+/* =========================
+   ANALYSIS PAGE
+   ========================= */
+
+#analysisPage {
+    width: 1080px;
+    max-width: 95%;
+    margin: 25px auto 40px auto;
+    padding: 20px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    background: #262522;
+    border-radius: 14px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+    box-sizing: border-box;
+}
+#analysisBoardArea {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+#analysisBoardColumn {
+    width: 640px;
+}
+
+#analysisBoardWrapper {
+    width: 640px;
+    height: 640px;
+    position: relative;
+}
+#analysisPanel {
+    width: 300px;
+    min-height: 640px;
+    padding: 16px;
+    background: #eeeeee;
+    border-radius: 10px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+    color: #262522;
+}
+
+#analysisPanel h2 {
+    margin: 0 0 15px 0;
+    font-size: 22px;
+    color: #262522;
+}
+
+#analysisPanel #analysisEvaluation,
+#analysisPanel #analysisDepth,
+#analysisPanel #analysisBestMove {
+    margin: 8px 0;
+    padding: 10px 12px;
+    background: #ffffff;
+    border-radius: 7px;
+    box-sizing: border-box;
+    text-align: left;
+    font-size: 16px;
+    color: #262522;
+}
+
+#analysisTopMoves {
+    margin-top: 15px;
+    padding: 12px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+#analysisTopMoves h3 {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+    color: #262522;
+}
+
+#analysisMoves {
+    margin-top: 15px;
+    padding: 12px;
+    background: #ffffff;
+    border-radius: 8px;
+    max-height: 220px;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+#analysisMoves h3 {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+    color: #262522;
+}
+#analysisBoardControls {
+    width: 640px;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+#analysisFlipBoard {
+    background: #3c3b39;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    padding: 9px 16px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+#analysisFlipBoard:hover {
+    background: #4a4947;
+}
+
+#analysisNavigation {
+    width: 640px;
+    height: 55px;
+    margin-top: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+}
+
+#analysisNavigation button {
+    background: #3c3b39;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    padding: 8px 13px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+#analysisNavigation button:hover {
+    background: #4a4947;
+}
+
+#pgnControls {
+    margin-top: 15px;
+    padding: 12px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+#pgnControls button {
+    background: #3c3b39;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    padding: 8px 12px;
+    margin: 3px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#pgnControls button:hover {
+    background: #4a4947;
+}
+
+#pgnControls input[type="file"] {
+    margin-top: 8px;
+    max-width: 100%;
+}
+/* =========================
+   RESPONSIVE LAYOUT
+   ========================= */
+
+@media (max-width: 1100px) {
+
+    #analysisPage {
+        width: 95%;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #analysisPanel {
+        width: 640px;
+        max-width: 100%;
+        min-height: auto;
+    }
+
+    #timeControl {
+        position: static;
+        width: 640px;
+        max-width: 100%;
+        margin: 15px auto;
+    }
+
+    #moveHistory {
+        position: static;
+        width: 640px;
+        max-width: 100%;
+        height: auto;
+        margin: 15px auto;
+    }
+
+    #movesList {
+        max-height: 250px;
+    }
+}
+
+@media (max-width: 700px) {
+
+    h1 {
+        font-size: 34px;
+    }
+
+    #chessGameArea {
+        width: 95%;
+        height: auto;
+    }
+
+    #chessGameArea #chessboard,
+    #chessboard {
+        width: min(90vw, 640px);
+        height: min(90vw, 640px);
+    }
+
+    .square {
+        width: auto;
+        height: auto;
+    }
+
+    #colorControls,
+    #chessClock,
+    #analysisNavigation,
+    #analysisBoardControls {
+        width: 95%;
+        max-width: 640px;
+    }
+
+    #analysisBoardWrapper,
+    #analysisChessboard,
+    #analysisBoard {
+        width: min(90vw, 640px);
+        height: min(90vw, 640px);
+    }
+
+    #analysisBoardArea {
+        max-width: 100%;
+    }
+}
+
+/* =========================
+   FINAL NAVBAR DESIGN
+========================= */
+
+nav {
+    margin: 0;
+    padding: 14px 20px;
+    background: #262522;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #d8d8d8;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    padding: 9px 14px;
+    border-radius: 7px;
+    transition: background 0.15s ease,
+                color 0.15s ease,
+                transform 0.1s ease;
+}
+
+nav a:hover {
+    color: #ffffff;
+    background: #3c3b39;
+    transform: translateY(-1px);
+}
+
+/* =========================
+   FINAL UI POLISH
+========================= */
+
+/* ---------- General ---------- */
+
+body {
+    background: #e5e5e5;
+    color: #262522;
+}
+
+button,
+select,
+input {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+button {
+    cursor: pointer;
+}
+
+button:focus-visible,
+select:focus-visible,
+input:focus-visible {
+    outline: 2px solid #888;
+    outline-offset: 2px;
+}
+
+
+/* ---------- Page Header ---------- */
+
+.page-header {
+    margin: 28px auto 24px auto;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 40px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #262522;
+}
+
+.page-header p {
+    margin: 7px 0 0 0;
+    font-size: 17px;
+    color: #666;
+}
+
+
+/* ---------- Main Game Area ---------- */
+
+#chessGameArea {
+    background: #262522;
+    border-radius: 16px;
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.28),
+        0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+
+/* ---------- Move History ---------- */
+
+#moveHistory {
+    background: #262522;
+    border: 1px solid #3c3b39;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+}
+
+#moveHistory h3 {
+    font-size: 19px;
+    letter-spacing: 0.2px;
+}
+
+.move-row {
+    transition: background 0.12s ease;
+}
+
+.move-row:hover {
+    background: #3c3b39;
+}
+
+
+/* ---------- Chess Clock ---------- */
+
+.clock {
+    border: 1px solid #3c3b39;
+    box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.22);
+}
+
+.clock.active {
+    border-color: #777;
+}
+
+
+/* ---------- Time Control ---------- */
+
+#timeControl {
+    border: 1px solid #3c3b39;
+    box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.28);
+}
+
+#timeSelect {
+    transition: background 0.15s ease,
+                border-color 0.15s ease;
+}
+
+
+/* ---------- Color Controls ---------- */
+
+#colorControls button {
+    border: 1px solid #555;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.18);
+}
+
+#colorControls button:active {
+    transform: translateY(1px);
+}
+
+
+/* ---------- Analysis Page ---------- */
+
+#analysisPage {
+    background: #262522;
+    border-radius: 16px;
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.28),
+        0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+
+/* ---------- Analysis Panel ---------- */
+
+#analysisPanel {
+    background: #eeeeee;
+    border: 1px solid #d5d5d5;
+    box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+#analysisPanel h2 {
+    font-weight: 700;
+}
+
+#analysisPanel #analysisEvaluation,
+#analysisPanel #analysisDepth,
+#analysisPanel #analysisBestMove {
+    border: 1px solid #e0e0e0;
+    transition: background 0.15s ease;
+}
+
+
+/* ---------- Analysis Cards ---------- */
+
+#analysisTopMoves,
+#analysisMoves,
+#pgnControls {
+    border: 1px solid #dedede;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+#analysisTopMoves div {
+    transition: background 0.12s ease,
+                transform 0.1s ease;
+}
+
+#analysisTopMoves div:hover {
+    background: #e5e5e5;
+    transform: translateX(2px);
+}
+
+
+/* ---------- Analysis Navigation ---------- */
+
+#analysisNavigation button {
+    transition: background 0.15s ease,
+                transform 0.1s ease,
+                box-shadow 0.15s ease;
+}
+
+
+/* ---------- Analysis Buttons ---------- */
+
+#analysisFlipBoard,
+#pgnControls button,
+#analyzePosition {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.18);
+}
+
+#analysisFlipBoard:active,
+#pgnControls button:active,
+#analyzePosition:active {
+    transform: translateY(1px);
+}
+
+
+/* ---------- PGN Controls ---------- */
+
+#pgnControls input[type="file"] {
+    padding: 7px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: #f7f7f7;
+}
+
+
+/* ---------- Stockfish Panel on Game Page ---------- */
+
+#pgnAnalysis {
+    border: 1px solid #d5d5d5;
+    box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+#pgnAnalysis #analysisEvaluation,
+#pgnAnalysis #analysisBestMove,
+#pgnAnalysis #analysisDepth {
+    border: 1px solid #e0e0e0;
+}
+
+
+/* ---------- Evaluation Bars ---------- */
+
+#evaluationBar,
+#analysisEvalBar {
+    box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+
+/* ---------- Board ---------- */
+
+#chessboard,
+#analysisChessboard {
+    box-shadow:
+        0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+
+/* ---------- Hover Polish ---------- */
+
+#analysisFlipBoard:hover,
+#pgnControls button:hover {
+    transform: translateY(-1px);
+}
+
+
+/* ---------- Mobile Navigation ---------- */
+
+@media (max-width: 700px) {
+
+    nav {
+        padding: 10px;
+        flex-wrap: wrap;
+    }
+
+    nav a {
+        font-size: 14px;
+        padding: 7px 9px;
+    }
+
+    .page-header h1 {
+        font-size: 32px;
+    }
+
+    .page-header p {
+        font-size: 15px;
+    }
 }
