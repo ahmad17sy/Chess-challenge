@@ -1,448 +1,397 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
 
-```
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Chess Openings - My Chess</title>
+    <title>Chess Openings - My Chess</title>
 
-<style>
+    <style>
 
-    * {
-        box-sizing: border-box;
-    }
-
-    body {
-        margin: 0;
-        font-family: Arial, Helvetica, sans-serif;
-        background: #07111f;
-        color: white;
-    }
-
-    .dashboard {
-        display: flex;
-        min-height: 100vh;
-    }
-
-    /* =========================
-       SIDEBAR
-    ========================= */
-
-    .sidebar {
-        width: 240px;
-        min-height: 100vh;
-        background: #0b1728;
-        border-right: 1px solid #1d2d43;
-        padding: 24px 15px;
-
-        display: flex;
-        flex-direction: column;
-    }
-
-    .logo {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-
-        font-size: 22px;
-        font-weight: bold;
-
-        padding: 0 12px 30px;
-    }
-
-    .logo-icon {
-        font-size: 28px;
-    }
-
-    .menu {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-    }
-
-    .menu a {
-        display: flex;
-        align-items: center;
-        gap: 13px;
-
-        padding: 12px 14px;
-
-        color: #aebbd0;
-        text-decoration: none;
-
-        border-radius: 9px;
-
-        font-size: 15px;
-
-        transition: 0.2s;
-    }
-
-    .menu a:hover {
-        background: #14243a;
-        color: white;
-    }
-
-    .menu a.active {
-        background: #1b3555;
-        color: white;
-    }
-
-    .menu-icon {
-        width: 24px;
-        text-align: center;
-        font-size: 18px;
-    }
-
-    .sidebar-bottom {
-        margin-top: auto;
-    }
-
-    .sidebar-divider {
-        height: 1px;
-        background: #1d2d43;
-        margin: 20px 10px;
-    }
-
-    /* =========================
-       MAIN
-    ========================= */
-
-    .main {
-        flex: 1;
-        padding: 0 35px 40px;
-        min-width: 0;
-    }
-
-    /* =========================
-       TOPBAR
-    ========================= */
-
-    .topbar {
-        height: 75px;
-
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        border-bottom: 1px solid #17283d;
-
-        margin-bottom: 30px;
-    }
-
-    .search {
-        width: 300px;
-
-        background: #0d1c30;
-        border: 1px solid #20344d;
-        border-radius: 9px;
-
-        padding: 11px 15px;
-
-        color: #9eabc0;
-    }
-
-    .user-area {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-
-    .notification {
-        font-size: 20px;
-        color: #aebbd0;
-    }
-
-    .login-button {
-        padding: 9px 17px;
-
-        border: 1px solid #50647e;
-        border-radius: 7px;
-
-        color: white;
-        text-decoration: none;
-
-        font-size: 14px;
-    }
-
-    .signup-button {
-        padding: 10px 18px;
-
-        background: #e9ad3f;
-        color: #111;
-
-        border-radius: 7px;
-
-        text-decoration: none;
-
-        font-weight: bold;
-        font-size: 14px;
-    }
-
-    /* =========================
-       PAGE HEADER
-    ========================= */
-
-    .page-header {
-        margin-bottom: 25px;
-    }
-
-    .page-header h1 {
-        margin: 0 0 10px;
-
-        font-size: 34px;
-    }
-
-    .page-header p {
-        margin: 0;
-
-        color: #9eabc0;
-
-        font-size: 15px;
-    }
-
-    /* =========================
-       SEARCH + FILTERS
-    ========================= */
-
-    .controls {
-        display: flex;
-        gap: 12px;
-
-        margin-bottom: 25px;
-
-        flex-wrap: wrap;
-    }
-
-    .opening-search {
-        flex: 1;
-        min-width: 240px;
-
-        background: #0d1c30;
-        border: 1px solid #20344d;
-
-        border-radius: 8px;
-
-        padding: 12px 15px;
-
-        color: white;
-
-        outline: none;
-    }
-
-    .opening-search::placeholder {
-        color: #718198;
-    }
-
-    .filter {
-        padding: 11px 16px;
-
-        border-radius: 8px;
-
-        border: 1px solid #263b55;
-
-        background: #0d1c30;
-
-        color: #aebbd0;
-
-        cursor: pointer;
-
-        transition: 0.2s;
-    }
-
-    .filter:hover {
-        background: #14243a;
-        color: white;
-    }
-
-    .filter.active {
-        background: #e9ad3f;
-        color: #111;
-        border-color: #e9ad3f;
-        font-weight: bold;
-    }
-
-    /* =========================
-       OPENING GRID
-    ========================= */
-
-    .opening-grid {
-        display: grid;
-
-        grid-template-columns:
-            repeat(3, minmax(0, 1fr));
-
-        gap: 16px;
-    }
-
-    .opening-card {
-        background: #0d1c30;
-
-        border: 1px solid #1d3048;
-
-        border-radius: 12px;
-
-        padding: 20px;
-
-        transition: 0.2s;
-    }
-
-    .opening-card:hover {
-        transform: translateY(-3px);
-
-        border-color: #46617f;
-
-        background: #10243c;
-    }
-
-    .opening-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-
-        margin-bottom: 18px;
-    }
-
-    .opening-icon {
-        width: 44px;
-        height: 44px;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        border-radius: 9px;
-
-        background: #172a43;
-
-        font-size: 24px;
-    }
-
-    .opening-side {
-        font-size: 12px;
-
-        padding: 5px 8px;
-
-        border-radius: 5px;
-
-        background: #172a43;
-
-        color: #e9ad3f;
-    }
-
-    .opening-card h2 {
-        margin: 0 0 8px;
-
-        font-size: 19px;
-    }
-
-    .opening-card p {
-        margin: 0 0 15px;
-
-        color: #98a8bd;
-
-        font-size: 13px;
-
-        line-height: 1.5;
-    }
-
-    .moves {
-        background: #091626;
-
-        border-radius: 7px;
-
-        padding: 10px 12px;
-
-        margin-bottom: 16px;
-
-        color: #d6deea;
-
-        font-family: monospace;
-
-        font-size: 13px;
-    }
-
-    .study-button {
-        display: block;
-
-        text-align: center;
-
-        padding: 10px;
-
-        border-radius: 7px;
-
-        background: #e9ad3f;
-
-        color: #111;
-
-        text-decoration: none;
-
-        font-weight: bold;
-
-        font-size: 13px;
-    }
-
-    .study-button:hover {
-        background: #f2bd59;
-    }
-
-    /* =========================
-       RESPONSIVE
-    ========================= */
-
-    @media (max-width: 1100px) {
-
-        .opening-grid {
-            grid-template-columns:
-                repeat(2, minmax(0, 1fr));
+        * {
+            box-sizing: border-box;
         }
-    }
 
-    @media (max-width: 750px) {
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #07111f;
+            color: #fff;
+        }
+
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
 
         .sidebar {
-            width: 70px;
-            padding: 20px 8px;
+            width: 240px;
+            min-height: 100vh;
+            background: #0b1728;
+            border-right: 1px solid #1d2d43;
+            padding: 24px 15px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
         }
 
         .logo {
-            justify-content: center;
-            padding-left: 0;
-            padding-right: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 22px;
+            font-weight: bold;
+            padding: 0 12px 30px;
         }
 
-        .logo-text,
-        .menu-text {
-            display: none;
+        .logo-icon {
+            font-size: 28px;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
         .menu a {
-            justify-content: center;
-            padding: 12px 5px;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 12px 14px;
+            color: #aebbd0;
+            text-decoration: none;
+            border-radius: 9px;
+            font-size: 15px;
+            transition: .2s;
         }
 
+        .menu a:hover {
+            background: #14243a;
+            color: white;
+        }
+
+        .menu a.active {
+            background: #1b3555;
+            color: white;
+        }
+
+        .menu-icon {
+            width: 24px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background: #1d2d43;
+            margin: 20px 10px;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
         .main {
-            padding: 0 15px 30px;
+            flex: 1;
+            padding: 0 35px 40px;
+            min-width: 0;
+        }
+
+        /* =========================
+           TOPBAR
+        ========================= */
+
+        .topbar {
+            height: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #17283d;
+            margin-bottom: 30px;
         }
 
         .search {
-            width: 150px;
+            width: 300px;
+            background: #0d1c30;
+            border: 1px solid #20344d;
+            border-radius: 9px;
+            padding: 11px 15px;
+            color: #9eabc0;
         }
 
-        .opening-grid {
-            grid-template-columns: 1fr;
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .notification {
+            font-size: 20px;
+            color: #aebbd0;
+        }
+
+        .login-button {
+            padding: 9px 17px;
+            border: 1px solid #50647e;
+            border-radius: 7px;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .signup-button {
+            padding: 10px 18px;
+            background: #e9ad3f;
+            color: #111;
+            border-radius: 7px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* =========================
+           PAGE HEADER
+        ========================= */
+
+        .page-header {
+            margin-bottom: 25px;
         }
 
         .page-header h1 {
-            font-size: 28px;
+            margin: 0 0 8px;
+            font-size: 30px;
+            font-weight: bold;
+            color: #fff;
         }
-    }
 
-</style>
-```
+        .page-header p {
+            margin: 0;
+            color: #8fa0b7;
+            font-size: 14px;
+        }
+
+        /* =========================
+           SEARCH + FILTERS
+        ========================= */
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .opening-search {
+            flex: 1;
+            min-width: 240px;
+            background: #0d1c30;
+            border: 1px solid #20344d;
+            border-radius: 8px;
+            padding: 12px 15px;
+            color: white;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .opening-search:focus {
+            border-color: #46617f;
+        }
+
+        .opening-search::placeholder {
+            color: #718198;
+        }
+
+        .filter {
+            padding: 11px 16px;
+            border-radius: 8px;
+            border: 1px solid #263b55;
+            background: #0d1c30;
+            color: #aebbd0;
+            cursor: pointer;
+            transition: .2s;
+            font-size: 14px;
+        }
+
+        .filter:hover {
+            background: #14243a;
+            color: white;
+        }
+
+        .filter.active {
+            background: #e9ad3f;
+            color: #111;
+            border-color: #e9ad3f;
+            font-weight: bold;
+        }
+
+        /* =========================
+           OPENING GRID
+        ========================= */
+
+        .opening-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .opening-card {
+            background: #0d1c30;
+            border: 1px solid #1d2d43;
+            border-radius: 12px;
+            padding: 20px;
+            transition: .2s;
+        }
+
+        .opening-card:hover {
+            transform: translateY(-3px);
+            border-color: #46617f;
+            background: #10243c;
+        }
+
+        .opening-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 18px;
+        }
+
+        .opening-icon {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9px;
+            background: #172a43;
+            font-size: 24px;
+        }
+
+        .opening-side {
+            font-size: 12px;
+            padding: 5px 8px;
+            border-radius: 5px;
+            background: #172a43;
+            color: #e9ad3f;
+        }
+
+        .opening-card h2 {
+            margin: 0 0 8px;
+            font-size: 19px;
+        }
+
+        .opening-card p {
+            margin: 0 0 15px;
+            color: #98a8bd;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .moves {
+            background: #091626;
+            border-radius: 7px;
+            padding: 10px 12px;
+            margin-bottom: 16px;
+            color: #d6deea;
+            font-family: monospace;
+            font-size: 13px;
+        }
+
+        .study-button {
+            display: block;
+            text-align: center;
+            padding: 10px;
+            border-radius: 7px;
+            background: #e9ad3f;
+            color: #111;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .study-button:hover {
+            background: #f2bd59;
+        }
+
+        /* =========================
+           NO RESULTS
+        ========================= */
+
+        .no-results {
+            display: none;
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 50px 20px;
+            color: #718198;
+            background: #0d1c30;
+            border: 1px solid #1d2d43;
+            border-radius: 12px;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1100px) {
+
+            .opening-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+        }
+
+        @media (max-width: 750px) {
+
+            .sidebar {
+                width: 70px;
+                padding: 20px 8px;
+            }
+
+            .logo {
+                justify-content: center;
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            .logo-text,
+            .menu-text {
+                display: none;
+            }
+
+            .menu a {
+                justify-content: center;
+                padding: 12px 5px;
+            }
+
+            .main {
+                padding: 0 15px 30px;
+            }
+
+            .search {
+                width: 150px;
+            }
+
+            .opening-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header h1 {
+                font-size: 28px;
+            }
+
+        }
+
+    </style>
 
 </head>
 
@@ -450,483 +399,548 @@
 
 <div class="dashboard">
 
-```
-<!-- =========================
-     SIDEBAR
-========================== -->
+    <!-- =========================
+         SIDEBAR
+    ========================= -->
 
-<aside class="sidebar">
+    <aside class="sidebar">
 
-    <div class="logo">
+        <div class="logo">
 
-        <span class="logo-icon">♛</span>
+            <span class="logo-icon">♛</span>
 
-        <span class="logo-text">
-            MY CHESS
-        </span>
-
-    </div>
-
-
-    <nav class="menu">
-
-        <a href="index.html">
-
-            <span class="menu-icon">🏠</span>
-
-            <span class="menu-text">
-                Home
+            <span class="logo-text">
+                MY CHESS
             </span>
 
-        </a>
+        </div>
 
+        <nav class="menu">
 
-        <a href="chess.html">
+            <a href="index.html">
 
-            <span class="menu-icon">♟</span>
-
-            <span class="menu-text">
-                Play
-            </span>
-
-        </a>
-
-
-        <a href="analysis.html">
-
-            <span class="menu-icon">🔍</span>
-
-            <span class="menu-text">
-                Analysis
-            </span>
-
-        </a>
-
-
-        <a href="openings.html" class="active">
-
-            <span class="menu-icon">📖</span>
-
-            <span class="menu-text">
-                Openings
-            </span>
-
-        </a>
-
-
-        <a href="#">
-
-            <span class="menu-icon">📄</span>
-
-            <span class="menu-text">
-                My Games / PGN
-            </span>
-
-        </a>
-
-
-        <a href="#">
-
-            <span class="menu-icon">👥</span>
-
-            <span class="menu-text">
-                Friends
-            </span>
-
-        </a>
-
-
-        <a href="#">
-
-            <span class="menu-icon">💬</span>
-
-            <span class="menu-text">
-                Community
-            </span>
-
-        </a>
-
-    </nav>
-
-
-    <div class="sidebar-bottom">
-
-        <div class="sidebar-divider"></div>
-
-        <div class="menu">
-
-            <a href="#">
-
-                <span class="menu-icon">⚙</span>
+                <span class="menu-icon">🏠</span>
 
                 <span class="menu-text">
-                    Settings
+                    Home
                 </span>
 
             </a>
 
+            <a href="chess.html">
+
+                <span class="menu-icon">♟</span>
+
+                <span class="menu-text">
+                    Play
+                </span>
+
+            </a>
+
+            <a href="analysis.html">
+
+                <span class="menu-icon">🔍</span>
+
+                <span class="menu-text">
+                    Analysis
+                </span>
+
+            </a>
+
+            <a href="openings.html" class="active">
+
+                <span class="menu-icon">📖</span>
+
+                <span class="menu-text">
+                    Openings
+                </span>
+
+            </a>
 
             <a href="#">
 
-                <span class="menu-icon">🔑</span>
+                <span class="menu-icon">📄</span>
 
                 <span class="menu-text">
+                    My Games / PGN
+                </span>
+
+            </a>
+
+            <a href="#">
+
+                <span class="menu-icon">👥</span>
+
+                <span class="menu-text">
+                    Friends
+                </span>
+
+            </a>
+
+            <a href="#">
+
+                <span class="menu-icon">💬</span>
+
+                <span class="menu-text">
+                    Community
+                </span>
+
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <div class="sidebar-divider"></div>
+
+            <div class="menu">
+
+                <a href="#">
+
+                    <span class="menu-icon">⚙</span>
+
+                    <span class="menu-text">
+                        Settings
+                    </span>
+
+                </a>
+
+                <a href="#">
+
+                    <span class="menu-icon">🔑</span>
+
+                    <span class="menu-text">
+                        Login
+                    </span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =========================
+         MAIN
+    ========================= -->
+
+    <main class="main">
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <div class="search">
+                🔍 &nbsp; Search...
+            </div>
+
+            <div class="user-area">
+
+                <span class="notification">
+                    🔔
+                </span>
+
+                <a href="#" class="login-button">
                     Login
-                </span>
+                </a>
 
-            </a>
-
-        </div>
-
-    </div>
-
-</aside>
-
-
-<!-- =========================
-     MAIN
-========================== -->
-
-<main class="main">
-
-
-    <!-- TOPBAR -->
-
-    <header class="topbar">
-
-        <div class="search">
-
-            🔍 &nbsp; Search...
-
-        </div>
-
-
-        <div class="user-area">
-
-            <span class="notification">
-                🔔
-            </span>
-
-
-            <a href="#" class="login-button">
-                Login
-            </a>
-
-
-            <a href="#" class="signup-button">
-                Sign Up
-            </a>
-
-        </div>
-
-    </header>
-
-
-    <!-- PAGE HEADER -->
-
-    <section class="page-header">
-
-        <h1>
-            Chess Openings
-        </h1>
-
-        <p>
-            Explore, study and practice your favorite chess openings.
-        </p>
-
-    </section>
-
-
-    <!-- SEARCH / FILTERS -->
-
-    <section class="controls">
-
-        <input
-            type="text"
-            class="opening-search"
-            placeholder="Search openings..."
-        >
-
-        <button class="filter active">
-            All
-        </button>
-
-        <button class="filter">
-            1.e4
-        </button>
-
-        <button class="filter">
-            1.d4
-        </button>
-
-        <button class="filter">
-            1.c4
-        </button>
-
-        <button class="filter">
-            1.Nf3
-        </button>
-
-    </section>
-
-
-    <!-- OPENINGS -->
-
-    <section class="opening-grid">
-
-
-        <!-- ITALIAN -->
-
-        <div class="opening-card">
-
-            <div class="opening-top">
-
-                <div class="opening-icon">
-                    ♗
-                </div>
-
-                <span class="opening-side">
-                    White
-                </span>
+                <a href="#" class="signup-button">
+                    Sign Up
+                </a>
 
             </div>
 
-            <h2>
-                Italian Game
-            </h2>
+        </header>
+
+
+        <!-- PAGE HEADER -->
+
+        <section class="page-header">
+
+            <h1>
+                Chess Openings
+            </h1>
 
             <p>
-                A classical and aggressive opening
-                beginning with 1.e4 e5 2.Nf3 Nc6 3.Bc4.
+                Explore, study and practice your favorite chess openings.
             </p>
 
-            <div class="moves">
-                1.e4 e5 2.Nf3 Nc6 3.Bc4
-            </div>
-
-            <a href="opening-study.html" class="study-button">
-    Study Opening →
-</a>
-
-        </div>
+        </section>
 
 
-        <!-- NAJDORF -->
+        <!-- SEARCH / FILTERS -->
 
-        <div class="opening-card">
+        <section class="controls">
 
-            <div class="opening-top">
+            <input
+                type="text"
+                id="openingSearch"
+                class="opening-search"
+                placeholder="Search openings..."
+            >
 
-                <div class="opening-icon">
-                    ♞
+            <button class="filter active">
+                All
+            </button>
+
+            <button class="filter">
+                1.e4
+            </button>
+
+            <button class="filter">
+                1.d4
+            </button>
+
+            <button class="filter">
+                1.c4
+            </button>
+
+            <button class="filter">
+                1.Nf3
+            </button>
+
+        </section>
+
+
+        <!-- OPENING GRID -->
+
+        <section class="opening-grid" id="openingGrid">
+
+
+            <!-- ITALIAN -->
+
+            <div
+                class="opening-card"
+                data-first-move="1.e4">
+
+                <div class="opening-top">
+
+                    <div class="opening-icon">
+                        ♗
+                    </div>
+
+                    <span class="opening-side">
+                        White
+                    </span>
+
                 </div>
 
-                <span class="opening-side">
-                    Black
-                </span>
+                <h2>
+                    Italian Game
+                </h2>
 
-            </div>
+                <p>
+                    A classical and aggressive opening
+                    beginning with 1.e4 e5 2.Nf3 Nc6 3.Bc4.
+                </p>
 
-            <h2>
-                Sicilian Najdorf
-            </h2>
-
-            <p>
-                One of the sharpest variations of the
-                Sicilian Defense with rich attacking play.
-            </p>
-
-            <div class="moves">
-                1.e4 c5 2.Nf3 d6 3.d4 cxd4
-            </div>
-
-            <a href="opening-study.html?opening=italian" class="study-button">
-    Study Opening →
-</a>
-
-        </div>
-
-
-        <!-- DRAGON -->
-
-        <div class="opening-card">
-
-            <div class="opening-top">
-
-                <div class="opening-icon">
-                    ♞
+                <div class="moves">
+                    1.e4 e5 2.Nf3 Nc6 3.Bc4
                 </div>
 
-                <span class="opening-side">
-                    Black
-                </span>
+                <a
+                    href="opening-study.html?opening=italian"
+                    class="study-button">
+                    Study Opening →
+                </a>
 
             </div>
 
-            <h2>
-                Sicilian Dragon
-            </h2>
 
-            <p>
-                A highly tactical Sicilian variation
-                with opposite-side attacking chances.
-            </p>
+            <!-- NAJDORF -->
 
-            <div class="moves">
-                1.e4 c5 2.Nf3 d6 3.d4 cxd4
-            </div>
+            <div
+                class="opening-card"
+                data-first-move="1.e4">
 
-            <a href="#" class="study-button">
-                Study Opening →
-            </a>
+                <div class="opening-top">
 
-        </div>
+                    <div class="opening-icon">
+                        ♞
+                    </div>
 
+                    <span class="opening-side">
+                        Black
+                    </span>
 
-        <!-- QUEENS GAMBIT -->
-
-        <div class="opening-card">
-
-            <div class="opening-top">
-
-                <div class="opening-icon">
-                    ♕
                 </div>
 
-                <span class="opening-side">
-                    White
-                </span>
+                <h2>
+                    Sicilian Najdorf
+                </h2>
 
-            </div>
+                <p>
+                    One of the sharpest variations of the
+                    Sicilian Defense with rich attacking play.
+                </p>
 
-            <h2>
-                Queen's Gambit
-            </h2>
-
-            <p>
-                A fundamental 1.d4 opening that
-                fights for control of the center.
-            </p>
-
-            <div class="moves">
-                1.d4 d5 2.c4
-            </div>
-
-            <a href="#" class="study-button">
-                Study Opening →
-            </a>
-
-        </div>
-
-
-        <!-- GRUNFELD -->
-
-        <div class="opening-card">
-
-            <div class="opening-top">
-
-                <div class="opening-icon">
-                    ♞
+                <div class="moves">
+                    1.e4 c5 2.Nf3 d6 3.d4 cxd4
                 </div>
 
-                <span class="opening-side">
-                    Black
-                </span>
+                <a
+                    href="opening-study.html?opening=najdorf"
+                    class="study-button">
+                    Study Opening →
+                </a>
 
             </div>
 
-            <h2>
-                Grünfeld Defense
-            </h2>
 
-            <p>
-                A dynamic defense against 1.d4,
-                allowing White a large center.
-            </p>
+            <!-- DRAGON -->
 
-            <div class="moves">
-                1.d4 Nf6 2.c4 g6 3.Nc3 d5
-            </div>
+            <div
+                class="opening-card"
+                data-first-move="1.e4">
 
-            <a href="#" class="study-button">
-                Study Opening →
-            </a>
+                <div class="opening-top">
 
-        </div>
+                    <div class="opening-icon">
+                        ♞
+                    </div>
 
+                    <span class="opening-side">
+                        Black
+                    </span>
 
-        <!-- NIMZO -->
-
-        <div class="opening-card">
-
-            <div class="opening-top">
-
-                <div class="opening-icon">
-                    ♞
                 </div>
 
-                <span class="opening-side">
-                    Black
-                </span>
+                <h2>
+                    Sicilian Dragon
+                </h2>
+
+                <p>
+                    A highly tactical Sicilian variation
+                    with opposite-side attacking chances.
+                </p>
+
+                <div class="moves">
+                    1.e4 c5 2.Nf3 d6 3.d4 cxd4
+                </div>
+
+                <a
+                    href="#"
+                    class="study-button">
+                    Study Opening →
+                </a>
 
             </div>
 
-            <h2>
-                Nimzo-Indian Defense
-            </h2>
 
-            <p>
-                A strategic defense against 1.d4
-                based on pressure against the center.
-            </p>
+            <!-- QUEEN'S GAMBIT -->
 
-            <div class="moves">
-                1.d4 Nf6 2.c4 e6 3.Nc3 Bb4
+            <div
+                class="opening-card"
+                data-first-move="1.d4">
+
+                <div class="opening-top">
+
+                    <div class="opening-icon">
+                        ♕
+                    </div>
+
+                    <span class="opening-side">
+                        White
+                    </span>
+
+                </div>
+
+                <h2>
+                    Queen's Gambit
+                </h2>
+
+                <p>
+                    A fundamental 1.d4 opening that
+                    fights for control of the center.
+                </p>
+
+                <div class="moves">
+                    1.d4 d5 2.c4
+                </div>
+
+                <a
+                    href="#"
+                    class="study-button">
+                    Study Opening →
+                </a>
+
             </div>
 
-            <a href="opening-study.html?opening=najdorf" class="study-button">
-    Study Opening →
-</a>
 
-        </div>
+            <!-- GRUNFELD -->
+
+            <div
+                class="opening-card"
+                data-first-move="1.d4">
+
+                <div class="opening-top">
+
+                    <div class="opening-icon">
+                        ♞
+                    </div>
+
+                    <span class="opening-side">
+                        Black
+                    </span>
+
+                </div>
+
+                <h2>
+                    Grünfeld Defense
+                </h2>
+
+                <p>
+                    A dynamic defense against 1.d4,
+                    allowing White a large center.
+                </p>
+
+                <div class="moves">
+                    1.d4 Nf6 2.c4 g6 3.Nc3 d5
+                </div>
+
+                <a
+                    href="#"
+                    class="study-button">
+                    Study Opening →
+                </a>
+
+            </div>
 
 
-    </section>
+            <!-- NIMZO -->
+
+            <div
+                class="opening-card"
+                data-first-move="1.d4">
+
+                <div class="opening-top">
+
+                    <div class="opening-icon">
+                        ♞
+                    </div>
+
+                    <span class="opening-side">
+                        Black
+                    </span>
+
+                </div>
+
+                <h2>
+                    Nimzo-Indian Defense
+                </h2>
+
+                <p>
+                    A strategic defense against 1.d4
+                    based on pressure against the center.
+                </p>
+
+                <div class="moves">
+                    1.d4 Nf6 2.c4 e6 3.Nc3 Bb4
+                </div>
+
+                <a
+                    href="#"
+                    class="study-button">
+                    Study Opening →
+                </a>
+
+            </div>
 
 
-</main>
-```
+            <!-- NO RESULTS -->
+
+            <div
+                id="noResults"
+                class="no-results">
+
+                No openings found.
+
+            </div>
+
+
+        </section>
+
+    </main>
 
 </div>
+
+
 <script>
 
-    const searchInput = document.querySelector(".opening-search");
-    const filterButtons = document.querySelectorAll(".filter");
-    const openingCards = document.querySelectorAll(".opening-card");
+    /* =========================
+       ELEMENTS
+    ========================= */
 
+    const searchInput =
+        document.getElementById("openingSearch");
+
+    const filterButtons =
+        document.querySelectorAll(".filter");
+
+    const openingCards =
+        document.querySelectorAll(".opening-card");
+
+    const noResults =
+        document.getElementById("noResults");
+
+
+    /* =========================
+       FILTER FUNCTION
+    ========================= */
 
     function filterOpenings() {
 
-        const searchText = searchInput.value.toLowerCase().trim();
+        const searchText =
+            searchInput.value
+                .toLowerCase()
+                .trim();
+
 
         const activeFilter =
-            document.querySelector(".filter.active").textContent.trim();
+            document
+                .querySelector(".filter.active")
+                .textContent
+                .trim();
+
+
+        let visibleCards = 0;
 
 
         openingCards.forEach(function(card) {
 
             const title =
-                card.querySelector("h2").textContent.toLowerCase();
+                card
+                    .querySelector("h2")
+                    .textContent
+                    .toLowerCase();
+
 
             const description =
-                card.querySelector("p").textContent.toLowerCase();
+                card
+                    .querySelector("p")
+                    .textContent
+                    .toLowerCase();
+
 
             const moves =
-                card.querySelector(".moves").textContent.toLowerCase();
+                card
+                    .querySelector(".moves")
+                    .textContent
+                    .toLowerCase();
 
 
             const fullText =
-                title + " " + description + " " + moves;
+                title +
+                " " +
+                description +
+                " " +
+                moves;
+
+
+            const firstMove =
+                card.dataset.firstMove;
 
 
             const matchesSearch =
@@ -936,38 +950,22 @@
             let matchesFilter = true;
 
 
-            if (activeFilter === "1.e4") {
+            if (activeFilter !== "All") {
 
                 matchesFilter =
-                    moves.includes("1.e4");
-
-            }
-
-            else if (activeFilter === "1.d4") {
-
-                matchesFilter =
-                    moves.includes("1.d4");
-
-            }
-
-            else if (activeFilter === "1.c4") {
-
-                matchesFilter =
-                    moves.includes("1.c4");
-
-            }
-
-            else if (activeFilter === "1.Nf3") {
-
-                matchesFilter =
-                    moves.includes("1.nf3");
+                    firstMove === activeFilter;
 
             }
 
 
-            if (matchesSearch && matchesFilter) {
+            if (
+                matchesSearch &&
+                matchesFilter
+            ) {
 
                 card.style.display = "";
+
+                visibleCards++;
 
             }
 
@@ -979,33 +977,64 @@
 
         });
 
+
+        if (visibleCards === 0) {
+
+            noResults.style.display = "block";
+
+        }
+
+        else {
+
+            noResults.style.display = "none";
+
+        }
+
     }
 
 
-    searchInput.addEventListener("input", filterOpenings);
+    /* =========================
+       SEARCH
+    ========================= */
 
+    searchInput.addEventListener(
+        "input",
+        filterOpenings
+    );
+
+
+    /* =========================
+       FILTER BUTTONS
+    ========================= */
 
     filterButtons.forEach(function(button) {
 
-        button.addEventListener("click", function() {
+        button.addEventListener(
+            "click",
+            function() {
 
-            filterButtons.forEach(function(btn) {
+                filterButtons.forEach(
+                    function(btn) {
 
-                btn.classList.remove("active");
+                        btn.classList.remove("active");
 
-            });
-
-
-            button.classList.add("active");
+                    }
+                );
 
 
-            filterOpenings();
+                button.classList.add("active");
 
-        });
+
+                filterOpenings();
+
+            }
+        );
 
     });
 
+
 </script>
+
 </body>
 
 </html>

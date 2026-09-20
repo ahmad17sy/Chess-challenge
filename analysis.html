@@ -1,139 +1,923 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <title>Analysis Board - My Chess</title>
+
     <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* =====================================================
+           ANALYSIS PAGE - SAME INTERFACE AS HOME
+        ===================================================== */
+
+        .analysis-page {
+            display: flex;
+            min-height: 100vh;
+            background: #07111f;
+            color: #fff;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .analysis-sidebar {
+            width: 240px;
+            min-height: 100vh;
+            background: #0b1728;
+            border-right: 1px solid #1d2d43;
+            padding: 24px 15px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .analysis-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 22px;
+            font-weight: bold;
+            padding: 0 12px 30px;
+        }
+
+        .analysis-logo-icon {
+            font-size: 28px;
+        }
+
+        .analysis-logo-text {
+            color: #fff;
+        }
+
+        .analysis-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+        }
+
+        .analysis-menu a {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+        .analysis-menu a {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 12px 14px;
+    color: #aebbd0;
+    text-decoration: none;
+    border-radius: 9px;
+    font-size: 15px;
+    text-align: left;
+    justify-content: flex-start;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.analysis-menu a:hover {
+    background: #14243a;
+    color: white;
+}
+
+.analysis-menu a.active {
+    background: #1b3555;
+    color: white;
+}
+
+.analysis-menu-icon {
+    width: 24px;
+    min-width: 24px;
+    text-align: center;
+    font-size: 18px;
+}
+
+.analysis-menu-text {
+    text-align: left;
+}
+
+        .analysis-sidebar-bottom {
+            margin-top: auto;
+        }
+
+        .analysis-sidebar-divider {
+            height: 1px;
+            background: #1d2d43;
+            margin: 20px 10px;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .analysis-main {
+            flex: 1;
+            padding: 0 35px 40px;
+            min-width: 0;
+            overflow-x: auto;
+        }
+
+        /* =========================
+           TOP BAR
+        ========================= */
+
+        /* =========================
+   TOP BAR - SAME AS HOME
+========================= */
+
+.analysis-topbar {
+    height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #17283d;
+    margin-bottom: 30px;
+}
+
+/* Search */
+
+.analysis-search {
+    width: 300px;
+    background: #0d1c30;
+    border: 1px solid #20344d;
+    border-radius: 9px;
+    padding: 11px 15px;
+    color: #9eabc0;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    box-sizing: border-box;
+}
+
+.analysis-search-icon {
+    width: 18px;
+    text-align: center;
+    font-size: 15px;
+}
+
+.analysis-search-text {
+    color: #73839a;
+}
+
+/* Right side */
+
+.analysis-user-area {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.analysis-notification {
+    font-size: 20px;
+    color: #aebbd0;
+}
+
+.analysis-login {
+    padding: 9px 17px;
+    border: 1px solid #50647e;
+    border-radius: 7px;
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.analysis-signup {
+    padding: 10px 18px;
+    background: #e9ad3f;
+    color: #111;
+    border-radius: 7px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+        /* =========================
+           PAGE TITLE
+        ========================= */
+
+        .analysis-page-title {
+    margin-bottom: 25px;
+}
+
+.analysis-page-title h1 {
+    margin: 0 0 8px;
+    font-size: 30px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.analysis-page-title p {
+    margin: 0;
+    color: #8fa0b7;
+    font-size: 14px;
+}
+
+        /* =====================================================
+           ANALYSIS BOARD AREA
+        ===================================================== */
+
+        #analysisPage {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            width: max-content;
+            min-width: 100%;
+        }
+
+        #analysisBoardArea {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: #0b1728;
+    border: 1px solid #1d2d43;
+    border-radius: 14px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+        #analysisEvalBar {
+            width: 18px;
+            height: 640px;
+            background: #111;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        #analysisEvalFill {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 50%;
+            background: #f1f1f1;
+            transition: height .25s ease;
+        }
+
+        #analysisBoardColumn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #analysisBoardWrapper {
+            width: 640px;
+            height: 640px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        #analysisChessboard {
+            width: 640px;
+            height: 640px;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .analysis-square {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            box-sizing: border-box;
+        }
+
+        .analysis-light {
+            background: #f0d9b5;
+        }
+
+        .analysis-dark {
+            background: #b58863;
+        }
+
+        .analysis-square .chess-piece {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            position: relative;
+            z-index: 3;
+            user-select: none;
+        }
+
+        .analysis-coordinate {
+            position: absolute;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .analysis-file-coordinate {
+            left: 4px;
+            bottom: 2px;
+        }
+
+        .analysis-rank-coordinate {
+            left: 4px;
+            top: 2px;
+        }
+
+        .analysis-light .analysis-coordinate {
+            color: #b58863;
+        }
+
+        .analysis-dark .analysis-coordinate {
+            color: #f0d9b5;
+        }
+
+        #analysisArrowLayer,
+        #analysisManualArrowLayer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: visible;
+            z-index: 8;
+        }
+
+        .analysis-arrow,
+        .analysis-manual-arrow {
+            position: absolute;
+            height: 10px;
+            transform-origin: left center;
+            border-radius: 5px;
+            pointer-events: none;
+        }
+
+        .analysis-arrow {
+            background: rgba(40, 170, 70, .82);
+        }
+
+        .analysis-manual-arrow {
+            background: rgba(35, 130, 220, .82);
+        }
+
+        .analysis-arrow::after,
+        .analysis-manual-arrow::after {
+            content: "";
+            position: absolute;
+            right: -2px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 13px solid transparent;
+            border-bottom: 13px solid transparent;
+            border-left: 20px solid rgba(40, 170, 70, .82);
+        }
+
+        .analysis-manual-arrow::after {
+            border-left-color: rgba(35, 130, 220, .82);
+        }
+
+        #analysisBoardControls {
+            width: 100%;
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+       #analysisBoardControls button,
+#analysisNavigation button,
+#pgnControls button {
+    border: 1px solid #314861;
+    background: #14243a;
+    color: #dce5f1;
+    border-radius: 7px;
+    padding: 9px 14px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: .2s;
+}
+
+#analysisBoardControls button:hover,
+#analysisNavigation button:hover,
+#pgnControls button:hover {
+    background: #1b3555;
+    color: white;
+}
+
+        #analysisNavigation {
+            display: flex;
+            justify-content: center;
+            gap: 7px;
+            margin-top: 10px;
+        }
+
+        /* =====================================================
+           ANALYSIS PANEL
+        ===================================================== */
+
+        #analysisPanel {
+    width: 390px;
+    background: #0b1728;
+    border: 1px solid #1d2d43;
+    border-radius: 14px;
+    padding: 25px;
+    box-sizing: border-box;
+    color: #fff;
+}
+
+        #analysisPanel h2 {
+    margin: 0 0 20px;
+    font-size: 21px;
+    font-weight: bold;
+    color: #fff;
+}
+
+        #analysisEvaluation,
+        #analysisDepth,
+        #analysisBestMove {
+            background: #0d1c30;
+            border: 1px solid #20344d;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            color: #dce5f1;
+        }
+
+        #analysisTopMoves,
+        #analysisMoves,
+        #pgnControls {
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px solid #1d2d43;
+        }
+
+        #analysisPanel h3 {
+            margin: 0 0 12px;
+            font-size: 16px;
+            color: #fff;
+        }
+
+        #analysisMove1,
+        #analysisMove2,
+        #analysisMove3 {
+            padding: 9px 10px;
+            margin-bottom: 6px;
+            background: #0d1c30;
+            border: 1px solid #20344d;
+            border-radius: 7px;
+            color: #cbd7e6;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        #analysisMoveList {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #0d1c30;
+            border: 1px solid #20344d;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .analysis-move-row {
+            display: grid;
+            grid-template-columns: 40px 1fr 1fr;
+            align-items: center;
+            min-height: 34px;
+            border-bottom: 1px solid #17283d;
+        }
+
+        .analysis-move-row:last-child {
+            border-bottom: none;
+        }
+
+        .analysis-move-number {
+            color: #70829a;
+            font-size: 13px;
+        }
+
+        .analysis-move-cell {
+            color: #dce5f1;
+            font-size: 14px;
+        }
+
+        .analysis-move {
+            cursor: pointer;
+            padding: 5px 7px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .analysis-move:hover {
+            background: #1b3555;
+            color: white;
+        }
+
+        /* =========================
+           PGN
+        ========================= */
+
+        #pgnControls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        #pgnControls br {
+            display: none;
+        }
+
+        #pgnFile {
+            width: 100%;
+            margin-top: 5px;
+            color: #aebbd0;
+            font-size: 13px;
+        }
+
+        #pgnControls input[type="file"]::file-selector-button {
+            border: 1px solid #314861;
+            background: #14243a;
+            color: #dce5f1;
+            border-radius: 6px;
+            padding: 7px 10px;
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        #pgnNavigation {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 5px;
+            flex-wrap: wrap;
+        }
+
+        #pgnMoveNumber {
+            color: #8fa0b7;
+            font-size: 13px;
+            min-width: 55px;
+            text-align: center;
+        }
+
+        /* =========================
+           MARKS
+        ========================= */
+
+        .analysis-mark-yellow {
+            box-shadow: inset 0 0 0 5px rgba(255, 215, 0, .75);
+        }
+
+        .analysis-mark-red {
+            box-shadow: inset 0 0 0 5px rgba(220, 50, 50, .75);
+        }
+
+        .analysis-mark-green {
+            box-shadow: inset 0 0 0 5px rgba(40, 180, 80, .75);
+        }
+
+        .analysis-mark-blue {
+            box-shadow: inset 0 0 0 5px rgba(40, 120, 220, .75);
+        }
+
+        /* =========================
+           SCROLLBAR
+        ========================= */
+
+        #analysisMoveList::-webkit-scrollbar {
+            width: 7px;
+        }
+
+        #analysisMoveList::-webkit-scrollbar-track {
+            background: #0b1728;
+        }
+
+        #analysisMoveList::-webkit-scrollbar-thumb {
+            background: #314861;
+            border-radius: 5px;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1200px) {
+
+            .analysis-main {
+                padding-left: 25px;
+                padding-right: 25px;
+            }
+
+            #analysisPage {
+                min-width: 0;
+            }
+
+            #analysisPanel {
+                width: 350px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<nav>
-    <a href="index.html">Home</a>
-    <a href="chess.html">Play Against Computer</a>
-    <a href="analysis.html">Analysis Board</a>
-    <a href="openings.html">Openings</a>
-    <a href="contact.html">Contact</a>
-</nav>
+<div class="analysis-page">
 
-<div class="page-header">
-    <h1>Analysis Board</h1>
-    <p>Analyze your games with Stockfish</p>
-</div>
+    <!-- =========================
+         SIDEBAR
+    ========================= -->
 
-<div id="analysisPage">
+    <aside class="analysis-sidebar">
 
-    <div id="analysisBoardArea">
-
-    <div id="analysisEvalBar">
-        <div id="analysisEvalFill"></div>
+    <div class="analysis-logo">
+        <span class="analysis-logo-icon">♛</span>
+        <span class="analysis-logo-text">MY CHESS</span>
     </div>
 
-    <div id="analysisBoardColumn">
+    <nav class="analysis-menu">
 
-        <div id="analysisBoardWrapper">
-    <div id="analysisChessboard"></div>
-    <div id="analysisArrowLayer"></div>
-    <div id="analysisManualArrowLayer"></div>
-</div>
-<div id="analysisBoardControls">
-    <button id="analysisFlipBoard">↔ Flip Board</button>
-</div>
-        <div id="analysisNavigation">
-            <button id="analysisFirst">⏮</button>
-            <button id="analysisPrevious">◀</button>
-            <button id="analysisNext">▶</button>
-            <button id="analysisLast">⏭</button>
+        <a href="index.html">
+            <span class="analysis-menu-icon">🏠</span>
+            <span class="analysis-menu-text">Home</span>
+        </a>
+
+        <a href="chess.html">
+            <span class="analysis-menu-icon">♟</span>
+            <span class="analysis-menu-text">Play</span>
+        </a>
+
+        <a href="analysis.html" class="active">
+            <span class="analysis-menu-icon">🔍</span>
+            <span class="analysis-menu-text">Analysis</span>
+        </a>
+
+        <a href="openings.html">
+            <span class="analysis-menu-icon">📖</span>
+            <span class="analysis-menu-text">Openings</span>
+        </a>
+
+        <a href="#">
+            <span class="analysis-menu-icon">📄</span>
+            <span class="analysis-menu-text">My Games / PGN</span>
+        </a>
+
+        <a href="#">
+            <span class="analysis-menu-icon">👥</span>
+            <span class="analysis-menu-text">Friends</span>
+        </a>
+
+        <a href="#">
+            <span class="analysis-menu-icon">💬</span>
+            <span class="analysis-menu-text">Community</span>
+        </a>
+
+    </nav>
+
+    <div class="analysis-sidebar-bottom">
+
+        <div class="analysis-sidebar-divider"></div>
+
+        <div class="analysis-menu">
+
+            <a href="#">
+                <span class="analysis-menu-icon">⚙</span>
+                <span class="analysis-menu-text">Settings</span>
+            </a>
+
+            <a href="#">
+                <span class="analysis-menu-icon">🔑</span>
+                <span class="analysis-menu-text">Login</span>
+            </a>
+
         </div>
 
     </div>
 
+</aside>
+
+    <!-- =========================
+         MAIN
+    ========================= -->
+
+    <main class="analysis-main">
+
+        <!-- TOP BAR -->
+
+        <div class="analysis-topbar">
+
+            <div class="analysis-search">
+    <span class="analysis-search-icon">🔍</span>
+    <span class="analysis-search-text">Search</span>
 </div>
 
-<div id="analysisPanel">
+            <div class="analysis-user-area">
 
-        <h2>Stockfish Analysis</h2>
+    <span class="analysis-notification">🔔</span>
 
-        <div id="analysisEvaluation">
-            Evaluation: 0.00
+    <a href="#" class="analysis-login">
+        Login
+    </a>
+
+    <a href="#" class="analysis-signup">
+        Sign Up
+    </a>
+
+</div>
+
         </div>
 
-        <div id="analysisDepth">
-            Depth: 0
+
+        <!-- PAGE TITLE -->
+
+        <div class="analysis-page-title">
+
+            <h1>Analysis Board</h1>
+
+            <p>
+                Analyze your games with Stockfish
+            </p>
+
         </div>
 
-        <div id="analysisBestMove">
-            
-            Best move: -
+
+        <!-- =================================================
+             EXISTING ANALYSIS CONTENT
+        ================================================= -->
+
+        <div id="analysisPage">
+
+            <div id="analysisBoardArea">
+
+                <div id="analysisEvalBar">
+                    <div id="analysisEvalFill"></div>
+                </div>
+
+                <div id="analysisBoardColumn">
+
+                    <div id="analysisBoardWrapper">
+
+                        <div id="analysisChessboard"></div>
+
+                        <div id="analysisArrowLayer"></div>
+
+                        <div id="analysisManualArrowLayer"></div>
+
+                    </div>
+
+                    <div id="analysisBoardControls">
+
+                        <button id="analysisFlipBoard">
+                            ↔ Flip Board
+                        </button>
+
+                    </div>
+
+                    <div id="analysisNavigation">
+
+                        <button id="analysisFirst">⏮</button>
+
+                        <button id="analysisPrevious">◀</button>
+
+                        <button id="analysisNext">▶</button>
+
+                        <button id="analysisLast">⏭</button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div id="analysisPanel">
+
+                <h2>Stockfish Analysis</h2>
+
+                <div id="analysisEvaluation">
+                    Evaluation: 0.00
+                </div>
+
+                <div id="analysisDepth">
+                    Depth: 0
+                </div>
+
+                <div id="analysisBestMove">
+                    Best move: -
+                </div>
+
+
+                <div id="analysisTopMoves">
+
+                    <h3>Top 3 Moves</h3>
+
+                    <div id="analysisMove1">
+                        1. -
+                    </div>
+
+                    <div id="analysisMove2">
+                        2. -
+                    </div>
+
+                    <div id="analysisMove3">
+                        3. -
+                    </div>
+
+                </div>
+
+
+                <div id="analysisMoves">
+
+                    <h3>Moves</h3>
+
+                    <div id="analysisMoveList"></div>
+
+                </div>
+
+
+                <div id="pgnControls">
+
+                    <button id="copyPGN">
+                        📋 Copy PGN
+                    </button>
+
+                    <button id="downloadPGN">
+                        💾 Download PGN
+                    </button>
+
+                    <button id="shareGame">
+                        🔗 Share Game
+                    </button>
+
+                    <input
+                        type="file"
+                        id="pgnFile"
+                        accept=".pgn"
+                    >
+
+                    <button id="importPGN">
+                        📂 Import PGN
+                    </button>
+
+                    <div id="pgnNavigation">
+
+                        <button id="pgnFirst">
+                            ⏮ First
+                        </button>
+
+                        <button id="pgnPrevious">
+                            ◀ Previous
+                        </button>
+
+                        <span id="pgnMoveNumber">
+                            0 / 0
+                        </span>
+
+                        <button id="pgnNext">
+                            Next ▶
+                        </button>
+
+                        <button id="pgnLast">
+                            Last ⏭
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
-        <div id="analysisTopMoves">
-    <h3>Top 3 Moves</h3>
 
-    <div id="analysisMove1">1. -</div>
-    <div id="analysisMove2">2. -</div>
-    <div id="analysisMove3">3. -</div>
-</div>
-
-        <div id="analysisMoves">
-
-    <h3>Moves</h3>
-
-    <div id="analysisMoveList"></div>
+    </main>
 
 </div>
 
-<div id="pgnControls">
 
-    <button id="copyPGN">📋 Copy PGN</button>
-    <button id="downloadPGN">💾 Download PGN</button>
-    <button id="shareGame">🔗 Share Game</button>
+<!-- =========================================================
+     YOUR ORIGINAL JAVASCRIPT — KEPT
+========================================================= -->
 
-    <br>
-
-    <input type="file" id="pgnFile" accept=".pgn">
-    <button id="importPGN">📂 Import PGN</button>
-
-    <div id="pgnNavigation">
-
-        <button id="pgnFirst">⏮ First</button>
-
-        <button id="pgnPrevious">
-            ◀ Previous
-        </button>
-
-        <span id="pgnMoveNumber">
-            0 / 0
-        </span>
-
-        <button id="pgnNext">
-            Next ▶
-        </button>
-
-        <button id="pgnLast">
-            Last ⏭
-        </button>
-
-    </div>
-
-</div>
-
-    </div>
-
-</div>
 <script>
+
 const analysisBoard =
     document.getElementById("analysisChessboard");
 
 </script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
 
 <script>
+
 const analysisGame = new Chess();
 let selectedAnalysisSquare = null;
 let analysisMoves = [];
 
 let analysisBoardFlipped = false;
+
 // =========================================
 // IMPORT PGN
 // =========================================
@@ -168,60 +952,57 @@ document.getElementById("importPGN").addEventListener(
                 return;
             }
 
-            // Get all moves
             analysisMoves =
                 loadedGame.history();
 
-            // Start from beginning
             analysisCurrentMove = 0;
 
             analysisGame.reset();
 
-            // Update move list
             updateAnalysisMoveList();
 
-            // Show starting position
             refreshAnalysisBoard();
 
-            // Update counter
             document.getElementById(
                 "pgnMoveNumber"
             ).textContent =
                 "0 / " + analysisMoves.length;
 
-            // Analyze starting position
             analyzeCurrentPosition();
         };
 
         reader.readAsText(file);
     }
 );
+
 let rightMouseDown = false;
 let rightMouseStart = null;
 let rightMouseMoved = false;
+
 function refreshAnalysisBoard() {
 
     analysisBoard.innerHTML = "";
 
     const boardPosition =
         analysisGame.board();
-        let displayRows = [0,1,2,3,4,5,6,7];
-let displayCols = [0,1,2,3,4,5,6,7];
 
-if (analysisBoardFlipped) {
-    displayRows.reverse();
-    displayCols.reverse();
-}
+    let displayRows = [0,1,2,3,4,5,6,7];
+    let displayCols = [0,1,2,3,4,5,6,7];
+
+    if (analysisBoardFlipped) {
+        displayRows.reverse();
+        displayCols.reverse();
+    }
 
     for (let row = 0; row < 8; row++) {
 
-    for (let col = 0; col < 8; col++) {
+        for (let col = 0; col < 8; col++) {
 
-        const boardRow =
-            displayRows[row];
+            const boardRow =
+                displayRows[row];
 
-        const boardCol =
-            displayCols[col];
+            const boardCol =
+                displayCols[col];
 
             const square =
                 document.createElement("div");
@@ -235,52 +1016,42 @@ if (analysisBoardFlipped) {
             }
 
             const squareName =
-    String.fromCharCode(97 + boardCol) +
-    (8 - boardRow);
+                String.fromCharCode(97 + boardCol) +
+                (8 - boardRow);
 
-square.dataset.square = squareName;
+            square.dataset.square = squareName;
 
+            const fileLabel =
+                document.createElement("span");
 
-/* =========================
-   COORDINATES
-========================= */
+            fileLabel.className =
+                "analysis-coordinate analysis-file-coordinate";
 
-const fileLabel =
-    document.createElement("span");
+            fileLabel.textContent =
+                String.fromCharCode(97 + boardCol);
 
-fileLabel.className =
-    "analysis-coordinate analysis-file-coordinate";
+            const rankLabel =
+                document.createElement("span");
 
-fileLabel.textContent =
-    String.fromCharCode(97 + boardCol);
+            rankLabel.className =
+                "analysis-coordinate analysis-rank-coordinate";
 
+            rankLabel.textContent =
+                8 - boardRow;
 
-const rankLabel =
-    document.createElement("span");
+            if (row !== 7) {
+                fileLabel.style.display = "none";
+            }
 
-rankLabel.className =
-    "analysis-coordinate analysis-rank-coordinate";
+            if (col !== 0) {
+                rankLabel.style.display = "none";
+            }
 
-rankLabel.textContent =
-    8 - boardRow;
+            square.appendChild(fileLabel);
+            square.appendChild(rankLabel);
 
-
-/* إظهار الحروف فقط في الصف الأخير */
-if (row !== 7) {
-    fileLabel.style.display = "none";
-}
-
-
-/* إظهار الأرقام فقط في العمود الأول */
-if (col !== 0) {
-    rankLabel.style.display = "none";
-}
-
-
-square.appendChild(fileLabel);
-square.appendChild(rankLabel);
             const piece =
-    boardPosition[boardRow][boardCol];
+                boardPosition[boardRow][boardCol];
 
             if (piece) {
 
@@ -294,7 +1065,7 @@ square.appendChild(rankLabel);
                     document.createElement("img");
 
                 image.src =
-    "./" + color + type + ".svg";
+                    "./" + color + type + ".svg";
 
                 image.classList.add(
                     "chess-piece"
@@ -303,47 +1074,44 @@ square.appendChild(rankLabel);
                 image.alt = "";
 
                 image.draggable = true;
-image.style.pointerEvents = "auto";
+                image.style.pointerEvents = "auto";
 
-image.addEventListener(
-    "dragstart",
-    function(event) {
+                image.addEventListener(
+                    "dragstart",
+                    function(event) {
 
-        if (
-            piece.color !==
-            analysisGame.turn()
-        ) {
-            event.preventDefault();
-            return;
-        }
+                        if (
+                            piece.color !==
+                            analysisGame.turn()
+                        ) {
+                            event.preventDefault();
+                            return;
+                        }
 
-        selectedAnalysisSquare =
-            squareName;
+                        selectedAnalysisSquare =
+                            squareName;
 
-        event.dataTransfer.setData(
-            "text/plain",
-            squareName
-        );
+                        event.dataTransfer.setData(
+                            "text/plain",
+                            squareName
+                        );
 
-        event.dataTransfer.effectAllowed =
-            "move";
-    }
-);
+                        event.dataTransfer.effectAllowed =
+                            "move";
+                    }
+                );
 
-image.addEventListener(
-    "dragend",
-    function() {
+                image.addEventListener(
+                    "dragend",
+                    function() {
 
-        selectedAnalysisSquare = null;
-    }
-);
+                        selectedAnalysisSquare = null;
+
+                    }
+                );
 
                 square.appendChild(image);
             }
-
-            /* =========================
-               النقر
-               ========================= */
 
             square.addEventListener(
                 "click",
@@ -392,49 +1160,46 @@ image.addEventListener(
                 }
             );
 
-            /* =========================
-               السحب والإفلات
-               ========================= */
+            square.addEventListener(
+                "dragover",
+                function(event) {
+
+                    event.preventDefault();
+
+                    event.dataTransfer.dropEffect =
+                        "move";
+                }
+            );
 
             square.addEventListener(
-    "dragover",
-    function(event) {
+                "drop",
+                function(event) {
 
-        event.preventDefault();
+                    event.preventDefault();
 
-        event.dataTransfer.dropEffect =
-            "move";
-    }
-);
+                    const fromSquare =
+                        event.dataTransfer.getData(
+                            "text/plain"
+                        ) || selectedAnalysisSquare;
 
-            square.addEventListener(
-    "drop",
-    function(event) {
+                    if (!fromSquare) {
+                        return;
+                    }
 
-        event.preventDefault();
+                    makeAnalysisMove(
+                        fromSquare,
+                        squareName
+                    );
 
-        const fromSquare =
-            event.dataTransfer.getData(
-                "text/plain"
-            ) || selectedAnalysisSquare;
-
-        if (!fromSquare) {
-            return;
-        }
-
-        makeAnalysisMove(
-            fromSquare,
-            squareName
-        );
-
-        selectedAnalysisSquare = null;
-    }
-);
+                    selectedAnalysisSquare = null;
+                }
+            );
 
             analysisBoard.appendChild(square);
         }
     }
 }
+
 function makeAnalysisMove(from, to) {
 
     const move =
@@ -445,14 +1210,10 @@ function makeAnalysisMove(from, to) {
         });
 
     if (!move) {
-    refreshAnalysisBoard();
-    return;
-}
+        refreshAnalysisBoard();
+        return;
+    }
 
-    /*
-       إذا كنا قد رجعنا إلى نقلة سابقة،
-       نحذف النقلات التي كانت بعدها.
-    */
     if (analysisCurrentMove < analysisMoves.length) {
 
         analysisMoves =
@@ -534,16 +1295,16 @@ function updateAnalysisMoveList() {
 
             row.appendChild(number);
 
-const whiteCell =
-    document.createElement("span");
+            const whiteCell =
+                document.createElement("span");
 
-whiteCell.classList.add(
-    "analysis-move-cell"
-);
+            whiteCell.classList.add(
+                "analysis-move-cell"
+            );
 
-whiteCell.appendChild(moveButton);
+            whiteCell.appendChild(moveButton);
 
-row.appendChild(whiteCell);
+            row.appendChild(whiteCell);
 
             if (analysisMoves[i + 1]) {
 
@@ -570,24 +1331,28 @@ row.appendChild(whiteCell);
                 );
 
                 const blackCell =
-    document.createElement("span");
+                    document.createElement("span");
 
-blackCell.classList.add(
-    "analysis-move-cell"
-);
+                blackCell.classList.add(
+                    "analysis-move-cell"
+                );
 
-blackCell.appendChild(blackMove);
+                blackCell.appendChild(
+                    blackMove
+                );
 
-row.appendChild(
-    blackCell
-);
+                row.appendChild(
+                    blackCell
+                );
             }
 
             moveList.appendChild(row);
         }
     }
 }
+
 </script>
+
 <script>
 
 const analysisStockfish = new Worker(
@@ -615,10 +1380,6 @@ analysisStockfish.onmessage = function(event) {
 
         return;
     }
-
-    /* =========================
-       Stockfish INFO
-    ========================= */
 
     if (
         message.startsWith("info") &&
@@ -659,10 +1420,6 @@ analysisStockfish.onmessage = function(event) {
             return;
         }
 
-        /* =========================
-           Convert Stockfish move to SAN
-        ========================= */
-
         const from =
             firstMove.substring(0, 2);
 
@@ -690,10 +1447,6 @@ analysisStockfish.onmessage = function(event) {
             moveText = move.san;
         }
 
-        /* =========================
-           Evaluation
-        ========================= */
-
         let scoreText = "";
 
         if (scoreCpMatch) {
@@ -711,11 +1464,6 @@ analysisStockfish.onmessage = function(event) {
             scoreText =
                 (score >= 0 ? "+" : "") +
                 score.toFixed(2);
-
-            /*
-               Evaluation bar and main evaluation
-               only use the BEST line.
-            */
 
             if (pvNumber === 1) {
 
@@ -752,10 +1500,6 @@ analysisStockfish.onmessage = function(event) {
             }
         }
 
-        /* =========================
-           Depth
-        ========================= */
-
         if (
             depthMatch &&
             pvNumber === 1
@@ -767,10 +1511,6 @@ analysisStockfish.onmessage = function(event) {
                 "Depth: " +
                 depthMatch[1];
         }
-
-        /* =========================
-           Top 3 Moves
-        ========================= */
 
         const moveElement =
             document.getElementById(
@@ -792,10 +1532,6 @@ analysisStockfish.onmessage = function(event) {
 
         return;
     }
-
-    /* =========================
-       Best Move
-    ========================= */
 
     if (message.startsWith("bestmove")) {
 
@@ -852,7 +1588,7 @@ analysisStockfish.onmessage = function(event) {
             drawAnalysisArrow(
                 bestMove
             );
-                }
+        }
 
         return;
     }
@@ -862,13 +1598,20 @@ analysisStockfish.onmessage = function(event) {
 function drawManualArrow(from, to) {
 
     const arrowLayer =
-        document.getElementById("analysisManualArrowLayer");
+        document.getElementById(
+            "analysisManualArrowLayer"
+        );
 
     if (!arrowLayer) return;
 
-    const existingArrow = arrowLayer.querySelector(
-        '[data-from="' + from + '"][data-to="' + to + '"]'
-    );
+    const existingArrow =
+        arrowLayer.querySelector(
+            '[data-from="' +
+            from +
+            '"][data-to="' +
+            to +
+            '"]'
+        );
 
     if (existingArrow) {
         existingArrow.remove();
@@ -983,23 +1726,27 @@ function drawAnalysisArrow(move) {
 
     const to =
         move.substring(2, 4);
-let fromCol =
-    from.charCodeAt(0) - 97;
 
-let fromRow =
-    8 - parseInt(from[1]);
+    let fromCol =
+        from.charCodeAt(0) - 97;
 
-let toCol =
-    to.charCodeAt(0) - 97;
+    let fromRow =
+        8 - parseInt(from[1]);
 
-let toRow =
-    8 - parseInt(to[1]);
+    let toCol =
+        to.charCodeAt(0) - 97;
+
+    let toRow =
+        8 - parseInt(to[1]);
+
     if (analysisBoardFlipped) {
-    fromCol = 7 - fromCol;
-    fromRow = 7 - fromRow;
-    toCol = 7 - toCol;
-    toRow = 7 - toRow;
-}
+
+        fromCol = 7 - fromCol;
+        fromRow = 7 - fromRow;
+
+        toCol = 7 - toCol;
+        toRow = 7 - toRow;
+    }
 
     const squareSize =
         640 / 8;
@@ -1066,16 +1813,16 @@ function analyzeCurrentPosition() {
     analysisStockfish.postMessage("stop");
 
     analysisStockfish.postMessage(
-    "setoption name MultiPV value 3"
-);
+        "setoption name MultiPV value 3"
+    );
 
-analysisStockfish.postMessage(
-    "position fen " + fen
-);
+    analysisStockfish.postMessage(
+        "position fen " + fen
+    );
 
-analysisStockfish.postMessage(
-    "go depth 15"
-);
+    analysisStockfish.postMessage(
+        "go depth 15"
+    );
 }
 
 analysisStockfish.postMessage("uci");
@@ -1104,6 +1851,7 @@ function updateAnalysisEvalBar(score) {
     evalFill.style.height =
         percentage + "%";
 }
+
 let analysisCurrentMove = 0;
 
 function showAnalysisMove(moveNumber) {
@@ -1116,16 +1864,17 @@ function showAnalysisMove(moveNumber) {
 
     analysisGame.load(tempGame.fen());
 
-analysisCurrentMove = moveNumber;
+    analysisCurrentMove = moveNumber;
 
-refreshAnalysisBoard();
+    refreshAnalysisBoard();
 
-updateAnalysisMoveList();
+    updateAnalysisMoveList();
 
-updatePGNCounter();
+    updatePGNCounter();
 
-analyzeCurrentPosition();
+    analyzeCurrentPosition();
 }
+
 document.getElementById("analysisFirst").addEventListener(
     "click",
     function() {
@@ -1138,6 +1887,7 @@ document.getElementById("analysisPrevious").addEventListener(
     function() {
 
         if (analysisCurrentMove > 0) {
+
             showAnalysisMove(
                 analysisCurrentMove - 1
             );
@@ -1154,6 +1904,7 @@ document.getElementById("analysisNext").addEventListener(
             analysisCurrentMove <
             analysisMoves.length
         ) {
+
             showAnalysisMove(
                 analysisCurrentMove + 1
             );
@@ -1165,11 +1916,14 @@ document.getElementById("analysisNext").addEventListener(
 document.getElementById("analysisLast").addEventListener(
     "click",
     function() {
+
         showAnalysisMove(
             analysisMoves.length
         );
+
     }
 );
+
 document.getElementById(
     "analysisFlipBoard"
 ).addEventListener(
@@ -1180,11 +1934,13 @@ document.getElementById(
             !analysisBoardFlipped;
 
         refreshAnalysisBoard();
+
     }
 );
+
 /* =========================
    Mouse Wheel Navigation
-   ========================= */
+========================= */
 
 analysisBoard.addEventListener(
     "wheel",
@@ -1194,18 +1950,15 @@ analysisBoard.addEventListener(
 
         if (event.deltaY < 0) {
 
-            // Wheel UP → previous move
             if (analysisCurrentMove > 0) {
 
                 showAnalysisMove(
                     analysisCurrentMove - 1
                 );
-
             }
 
         } else {
 
-            // Wheel DOWN → next move
             if (
                 analysisCurrentMove <
                 analysisMoves.length
@@ -1214,9 +1967,7 @@ analysisBoard.addEventListener(
                 showAnalysisMove(
                     analysisCurrentMove + 1
                 );
-
             }
-
         }
 
     },
@@ -1224,226 +1975,259 @@ analysisBoard.addEventListener(
         passive: false
     }
 );
-analysisBoard.addEventListener("contextmenu", function(event) {
-    event.preventDefault();
-});
 
-analysisBoard.addEventListener("mousedown", function(event) {
-
-    if (event.button !== 2) {
-        return;
+analysisBoard.addEventListener(
+    "contextmenu",
+    function(event) {
+        event.preventDefault();
     }
+);
 
-    event.preventDefault();
+analysisBoard.addEventListener(
+    "mousedown",
+    function(event) {
 
-    const rect = analysisBoard.getBoundingClientRect();
-
-    const col = Math.floor(
-        (event.clientX - rect.left) /
-        (rect.width / 8)
-    );
-
-    const row = Math.floor(
-        (event.clientY - rect.top) /
-        (rect.height / 8)
-    );
-
-    if (
-        col < 0 || col > 7 ||
-        row < 0 || row > 7
-    ) {
-        return;
-    }
-
-    let boardCol = col;
-    let boardRow = row;
-
-    if (analysisBoardFlipped) {
-        boardCol = 7 - col;
-        boardRow = 7 - row;
-    }
-
-    rightMouseStart =
-        String.fromCharCode(97 + boardCol) +
-        (8 - boardRow);
-
-    rightMouseDown = true;
-    rightMouseMoved = false;
-});
-
-analysisBoard.addEventListener("mousemove", function(event) {
-
-    if (!rightMouseDown) {
-        return;
-    }
-
-    const rect = analysisBoard.getBoundingClientRect();
-
-    const col = Math.floor(
-        (event.clientX - rect.left) /
-        (rect.width / 8)
-    );
-
-    const row = Math.floor(
-        (event.clientY - rect.top) /
-        (rect.height / 8)
-    );
-
-    if (
-        col < 0 || col > 7 ||
-        row < 0 || row > 7
-    ) {
-        return;
-    }
-
-    let boardCol = col;
-    let boardRow = row;
-
-    if (analysisBoardFlipped) {
-        boardCol = 7 - col;
-        boardRow = 7 - row;
-    }
-
-    const currentSquare =
-        String.fromCharCode(97 + boardCol) +
-        (8 - boardRow);
-
-    if (currentSquare !== rightMouseStart) {
-        rightMouseMoved = true;
-    }
-});
-
-analysisBoard.addEventListener("mouseup", function(event) {
-
-    if (event.button !== 2) {
-        return;
-    }
-
-    event.preventDefault();
-
-    if (!rightMouseDown) {
-        return;
-    }
-
-    const startSquare = rightMouseStart;
-
-    const rect =
-        analysisBoard.getBoundingClientRect();
-
-    const col = Math.floor(
-        (event.clientX - rect.left) /
-        (rect.width / 8)
-    );
-
-    const row = Math.floor(
-        (event.clientY - rect.top) /
-        (rect.height / 8)
-    );
-
-    rightMouseDown = false;
-    rightMouseStart = null;
-
-    if (
-        col < 0 || col > 7 ||
-        row < 0 || row > 7
-    ) {
-        return;
-    }
-
-    let boardCol = col;
-    let boardRow = row;
-
-    if (analysisBoardFlipped) {
-        boardCol = 7 - col;
-        boardRow = 7 - row;
-    }
-
-    const endSquare =
-        String.fromCharCode(97 + boardCol) +
-        (8 - boardRow);
-
-    if (
-        rightMouseMoved &&
-        startSquare !== endSquare
-    ) {
-
-        drawManualArrow(
-            startSquare,
-            endSquare
-        );
-
-        return;
-    }
-
-    const squareElements =
-        document.querySelectorAll(
-            ".analysis-square"
-        );
-
-    let targetSquare = null;
-
-    squareElements.forEach(function(element) {
-
-        if (
-            element.dataset.square ===
-            endSquare
-        ) {
-            targetSquare = element;
+        if (event.button !== 2) {
+            return;
         }
-    });
 
-    if (!targetSquare) {
-        return;
-    }
+        event.preventDefault();
 
-    const marks = [
-        "analysis-mark-yellow",
-        "analysis-mark-red",
-        "analysis-mark-green",
-        "analysis-mark-blue"
-    ];
+        const rect =
+            analysisBoard.getBoundingClientRect();
 
-    let currentMark = null;
+        const col =
+            Math.floor(
+                (event.clientX - rect.left) /
+                (rect.width / 8)
+            );
 
-    for (let i = 0; i < marks.length; i++) {
+        const row =
+            Math.floor(
+                (event.clientY - rect.top) /
+                (rect.height / 8)
+            );
 
         if (
-            targetSquare.classList.contains(
-                marks[i]
-            )
+            col < 0 || col > 7 ||
+            row < 0 || row > 7
         ) {
-            currentMark = marks[i];
-            break;
+            return;
+        }
+
+        let boardCol = col;
+        let boardRow = row;
+
+        if (analysisBoardFlipped) {
+            boardCol = 7 - col;
+            boardRow = 7 - row;
+        }
+
+        rightMouseStart =
+            String.fromCharCode(97 + boardCol) +
+            (8 - boardRow);
+
+        rightMouseDown = true;
+        rightMouseMoved = false;
+    }
+);
+
+analysisBoard.addEventListener(
+    "mousemove",
+    function(event) {
+
+        if (!rightMouseDown) {
+            return;
+        }
+
+        const rect =
+            analysisBoard.getBoundingClientRect();
+
+        const col =
+            Math.floor(
+                (event.clientX - rect.left) /
+                (rect.width / 8)
+            );
+
+        const row =
+            Math.floor(
+                (event.clientY - rect.top) /
+                (rect.height / 8)
+            );
+
+        if (
+            col < 0 || col > 7 ||
+            row < 0 || row > 7
+        ) {
+            return;
+        }
+
+        let boardCol = col;
+        let boardRow = row;
+
+        if (analysisBoardFlipped) {
+            boardCol = 7 - col;
+            boardRow = 7 - row;
+        }
+
+        const currentSquare =
+            String.fromCharCode(97 + boardCol) +
+            (8 - boardRow);
+
+        if (currentSquare !== rightMouseStart) {
+            rightMouseMoved = true;
         }
     }
+);
 
-    if (currentMark) {
+analysisBoard.addEventListener(
+    "mouseup",
+    function(event) {
 
-        const currentIndex =
-            marks.indexOf(currentMark);
+        if (event.button !== 2) {
+            return;
+        }
 
-        targetSquare.classList.remove(
-            currentMark
-        );
+        event.preventDefault();
+
+        if (!rightMouseDown) {
+            return;
+        }
+
+        const startSquare =
+            rightMouseStart;
+
+        const rect =
+            analysisBoard.getBoundingClientRect();
+
+        const col =
+            Math.floor(
+                (event.clientX - rect.left) /
+                (rect.width / 8)
+            );
+
+        const row =
+            Math.floor(
+                (event.clientY - rect.top) /
+                (rect.height / 8)
+            );
+
+        rightMouseDown = false;
+        rightMouseStart = null;
 
         if (
-            currentIndex <
-            marks.length - 1
+            col < 0 || col > 7 ||
+            row < 0 || row > 7
         ) {
+            return;
+        }
+
+        let boardCol = col;
+        let boardRow = row;
+
+        if (analysisBoardFlipped) {
+            boardCol = 7 - col;
+            boardRow = 7 - row;
+        }
+
+        const endSquare =
+            String.fromCharCode(97 + boardCol) +
+            (8 - boardRow);
+
+        if (
+            rightMouseMoved &&
+            startSquare !== endSquare
+        ) {
+
+            drawManualArrow(
+                startSquare,
+                endSquare
+            );
+
+            return;
+        }
+
+        const squareElements =
+            document.querySelectorAll(
+                ".analysis-square"
+            );
+
+        let targetSquare = null;
+
+        squareElements.forEach(
+            function(element) {
+
+                if (
+                    element.dataset.square ===
+                    endSquare
+                ) {
+                    targetSquare = element;
+                }
+            }
+        );
+
+        if (!targetSquare) {
+            return;
+        }
+
+        const marks = [
+            "analysis-mark-yellow",
+            "analysis-mark-red",
+            "analysis-mark-green",
+            "analysis-mark-blue"
+        ];
+
+        let currentMark = null;
+
+        for (
+            let i = 0;
+            i < marks.length;
+            i++
+        ) {
+
+            if (
+                targetSquare.classList.contains(
+                    marks[i]
+                )
+            ) {
+                currentMark = marks[i];
+                break;
+            }
+        }
+
+        if (currentMark) {
+
+            const currentIndex =
+                marks.indexOf(
+                    currentMark
+                );
+
+            targetSquare.classList.remove(
+                currentMark
+            );
+
+            if (
+                currentIndex <
+                marks.length - 1
+            ) {
+
+                targetSquare.classList.add(
+                    marks[currentIndex + 1]
+                );
+            }
+
+        } else {
 
             targetSquare.classList.add(
-                marks[currentIndex + 1]
+                "analysis-mark-yellow"
             );
         }
-
-    } else {
-
-        targetSquare.classList.add(
-            "analysis-mark-yellow"
-        );
     }
-});
+);
+
 refreshAnalysisBoard();
+
+
 // =========================================
 // PGN NAVIGATION
 // =========================================
@@ -1451,7 +2235,9 @@ refreshAnalysisBoard();
 function updatePGNCounter() {
 
     const counter =
-        document.getElementById("pgnMoveNumber");
+        document.getElementById(
+            "pgnMoveNumber"
+        );
 
     if (!counter) {
         return;
@@ -1463,8 +2249,6 @@ function updatePGNCounter() {
         analysisMoves.length;
 }
 
-
-// FIRST
 document.getElementById("pgnFirst").addEventListener(
     "click",
     function () {
@@ -1475,8 +2259,6 @@ document.getElementById("pgnFirst").addEventListener(
     }
 );
 
-
-// PREVIOUS
 document.getElementById("pgnPrevious").addEventListener(
     "click",
     function () {
@@ -1493,8 +2275,6 @@ document.getElementById("pgnPrevious").addEventListener(
     }
 );
 
-
-// NEXT
 document.getElementById("pgnNext").addEventListener(
     "click",
     function () {
@@ -1514,8 +2294,6 @@ document.getElementById("pgnNext").addEventListener(
     }
 );
 
-
-// LAST
 document.getElementById("pgnLast").addEventListener(
     "click",
     function () {
@@ -1528,20 +2306,31 @@ document.getElementById("pgnLast").addEventListener(
 
     }
 );
+
+
 // =========================================
 // ANALYSIS BOARD PGN TOOLS
 // =========================================
 
 function generateAnalysisPGN() {
 
-    if (!analysisMoves || analysisMoves.length === 0) {
+    if (
+        !analysisMoves ||
+        analysisMoves.length === 0
+    ) {
         return "";
     }
 
     const game = new Chess();
 
-    for (let i = 0; i < analysisMoves.length; i++) {
-        game.move(analysisMoves[i]);
+    for (
+        let i = 0;
+        i < analysisMoves.length;
+        i++
+    ) {
+        game.move(
+            analysisMoves[i]
+        );
     }
 
     return game.pgn();
@@ -1556,26 +2345,35 @@ document.getElementById("copyPGN").addEventListener(
     "click",
     async function () {
 
-        const pgn = generateAnalysisPGN();
+        const pgn =
+            generateAnalysisPGN();
 
         if (!pgn) {
-            alert("There are no moves to copy.");
+            alert(
+                "There are no moves to copy."
+            );
             return;
         }
 
         try {
 
-            await navigator.clipboard.writeText(pgn);
+            await navigator.clipboard.writeText(
+                pgn
+            );
 
-            this.textContent = "✅ Copied!";
+            this.textContent =
+                "✅ Copied!";
 
             setTimeout(() => {
-                this.textContent = "📋 Copy PGN";
+                this.textContent =
+                    "📋 Copy PGN";
             }, 1500);
 
         } catch (error) {
 
-            alert("Could not copy PGN.");
+            alert(
+                "Could not copy PGN."
+            );
         }
     }
 );
@@ -1585,14 +2383,19 @@ document.getElementById("copyPGN").addEventListener(
 // DOWNLOAD PGN
 // =========================================
 
-document.getElementById("downloadPGN").addEventListener(
+document.getElementById(
+    "downloadPGN"
+).addEventListener(
     "click",
     function () {
 
-        const pgn = generateAnalysisPGN();
+        const pgn =
+            generateAnalysisPGN();
 
         if (!pgn) {
-            alert("There are no moves to download.");
+            alert(
+                "There are no moves to download."
+            );
             return;
         }
 
@@ -1600,7 +2403,8 @@ document.getElementById("downloadPGN").addEventListener(
             new Blob(
                 [pgn],
                 {
-                    type: "application/x-chess-pgn"
+                    type:
+                        "application/x-chess-pgn"
                 }
             );
 
@@ -1611,7 +2415,9 @@ document.getElementById("downloadPGN").addEventListener(
             document.createElement("a");
 
         link.href = url;
-        link.download = "my-chess-analysis.pgn";
+
+        link.download =
+            "my-chess-analysis.pgn";
 
         document.body.appendChild(link);
 
@@ -1628,32 +2434,42 @@ document.getElementById("downloadPGN").addEventListener(
 // SHARE GAME
 // =========================================
 
-document.getElementById("shareGame").addEventListener(
+document.getElementById(
+    "shareGame"
+).addEventListener(
     "click",
     async function () {
 
-        const pgn = generateAnalysisPGN();
+        const pgn =
+            generateAnalysisPGN();
 
         if (!pgn) {
-            alert("There are no moves to share.");
+            alert(
+                "There are no moves to share."
+            );
             return;
         }
 
         const shareText =
-            "My Chess Game\n\n" + pgn;
+            "My Chess Game\n\n" +
+            pgn;
 
         if (navigator.share) {
 
             try {
 
                 await navigator.share({
-                    title: "My Chess Game",
-                    text: shareText
+                    title:
+                        "My Chess Game",
+                    text:
+                        shareText
                 });
 
             } catch (error) {
 
-                console.log("Share cancelled.");
+                console.log(
+                    "Share cancelled."
+                );
             }
 
         } else {
@@ -1664,19 +2480,28 @@ document.getElementById("shareGame").addEventListener(
                     shareText
                 );
 
-                this.textContent = "✅ Copied!";
+                this.textContent =
+                    "✅ Copied!";
 
                 setTimeout(() => {
-                    this.textContent = "🔗 Share Game";
+
+                    this.textContent =
+                        "🔗 Share Game";
+
                 }, 1500);
 
             } catch (error) {
 
-                alert("Sharing is not available.");
+                alert(
+                    "Sharing is not available."
+                );
             }
         }
     }
 );
+
+
 </script>
+
 </body>
 </html>

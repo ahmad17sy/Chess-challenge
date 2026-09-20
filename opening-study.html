@@ -1,660 +1,516 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
 
-```
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport"
-    content="width=device-width, initial-scale=1.0">
+    <title>Opening Study - My Chess</title>
 
-<title>Opening Study - My Chess</title>
+    <style>
 
-<style>
-
-    * {
-        box-sizing: border-box;
-    }
-
-    body {
-        margin: 0;
-        font-family: Arial, Helvetica, sans-serif;
-        background: #07111f;
-        color: white;
-    }
-
-    .dashboard {
-        display: flex;
-        min-height: 100vh;
-    }
-
-
-    /* =========================
-       SIDEBAR
-    ========================= */
-
-    .sidebar {
-        width: 240px;
-        min-height: 100vh;
-
-        background: #0b1728;
-
-        border-right: 1px solid #1d2d43;
-
-        padding: 24px 15px;
-
-        display: flex;
-        flex-direction: column;
-    }
-
-    .logo {
-        display: flex;
-        align-items: center;
-
-        gap: 10px;
-
-        font-size: 22px;
-        font-weight: bold;
-
-        padding: 0 12px 30px;
-    }
-
-    .logo-icon {
-        font-size: 28px;
-    }
-
-    .menu {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-    }
-
-    .menu a {
-        display: flex;
-        align-items: center;
-
-        gap: 13px;
-
-        padding: 12px 14px;
-
-        color: #aebbd0;
-
-        text-decoration: none;
-
-        border-radius: 9px;
-
-        font-size: 15px;
-
-        transition: 0.2s;
-    }
-
-    .menu a:hover {
-        background: #14243a;
-        color: white;
-    }
-
-    .menu a.active {
-        background: #1b3555;
-        color: white;
-    }
-
-    .menu-icon {
-        width: 24px;
-
-        text-align: center;
-
-        font-size: 18px;
-    }
-
-    .sidebar-bottom {
-        margin-top: auto;
-    }
-
-    .sidebar-divider {
-        height: 1px;
-
-        background: #1d2d43;
-
-        margin: 20px 10px;
-    }
-
-
-    /* =========================
-       MAIN
-    ========================= */
-
-    .main {
-        flex: 1;
-
-        padding: 0 35px 40px;
-
-        min-width: 0;
-    }
-
-
-    /* =========================
-       TOPBAR
-    ========================= */
-
-    .topbar {
-        height: 75px;
-
-        display: flex;
-
-        align-items: center;
-
-        justify-content: space-between;
-
-        border-bottom: 1px solid #17283d;
-
-        margin-bottom: 30px;
-    }
-
-    .user-area {
-        display: flex;
-
-        align-items: center;
-
-        gap: 15px;
-    }
-
-    .notification {
-        font-size: 20px;
-
-        color: #aebbd0;
-    }
-
-    .back-button {
-        padding: 9px 17px;
-
-        border: 1px solid #50647e;
-
-        border-radius: 7px;
-
-        color: white;
-
-        text-decoration: none;
-
-        font-size: 14px;
-    }
-
-
-    /* =========================
-       HEADER
-    ========================= */
-
-    .study-header {
-        margin-bottom: 25px;
-    }
-
-    .study-header h1 {
-        margin: 0 0 8px;
-
-        font-size: 34px;
-    }
-
-    .study-header p {
-        margin: 0;
-
-        color: #9eabc0;
-
-        font-size: 15px;
-    }
-
-
-    /* =========================
-       STUDY LAYOUT
-    ========================= */
-
-    .study-layout {
-        display: grid;
-
-        grid-template-columns:
-            minmax(400px, 620px)
-            minmax(300px, 1fr);
-
-        gap: 25px;
-
-        align-items: start;
-    }
-
-
-    /* =========================
-       BOARD
-    ========================= */
-
-    .board-panel {
-        background: #0d1c30;
-
-        border: 1px solid #1d3048;
-
-        border-radius: 12px;
-
-        padding: 20px;
-    }
-.board-wrapper {
-    position: relative;
-    width: 100%;
-}
-.arrow-layer {
-    position: absolute;
-
-    top: 0;
-    left: 0;
-
-    width: 100%;
-    height: 100%;
-
-    pointer-events: none;
-
-    z-index: 1;
-}
-
-.board {
-    position: relative;
-    z-index: 0;
-}
-
-.square {
-    position: relative;
-    z-index: 2;
-}
-    .board {
-        width: 100%;
-
-        aspect-ratio: 1 / 1;
-
-        display: grid;
-
-        grid-template-columns:
-            repeat(8, 1fr);
-
-        border-radius: 5px;
-
-        overflow: hidden;
-    }
-
-    .square {
-        display: flex;
-
-        align-items: center;
-
-        justify-content: center;
-
-        aspect-ratio: 1 / 1;
-
-        font-size: clamp(25px, 5vw, 55px);
-
-        cursor: default;
-
-        user-select: none;
-    }
-    .chess-piece {
-    width: 88%;
-    height: 88%;
-    object-fit: contain;
-    pointer-events: none;
-    user-select: none;
-}
-/* =========================
-   Lichess Style Coordinates
-========================= */
-
-#board .coordinate {
-    position: absolute;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 10px;
-    font-weight: 700;
-    line-height: 1;
-    pointer-events: none;
-    z-index: 10;
-    opacity: 0.9;
-}
-
-#board .rank-coordinate {
-    top: 3px;
-    left: 4px;
-}
-
-#board .file-coordinate {
-    bottom: 3px;
-    right: 4px;
-}
-
-#board .light .coordinate {
-    color: #b58863;
-}
-
-#board .dark .coordinate {
-    color: #f0d9b5;
-}
-    .light {
-        background: #f0d9b5;
-    }
-
-    .dark {
-        background: #b58863;
-    }
-.move-from {
-    box-shadow:
-        inset 0 0 0 4px rgba(233, 173, 63, 0.75),
-        inset 0 0 0 999px rgba(233, 173, 63, 0.18);
-}
-
-.move-to {
-    box-shadow:
-        inset 0 0 0 4px rgba(233, 173, 63, 0.95),
-        inset 0 0 0 999px rgba(233, 173, 63, 0.35);
-}
-.board-colors {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-bottom: 15px;
-}
-
-.board-colors label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #aebbd0;
-    font-size: 13px;
-}
-
-.board-colors input[type="color"] {
-    width: 38px;
-    height: 28px;
-    padding: 0;
-    border: 1px solid #334b68;
-    border-radius: 5px;
-    background: transparent;
-    cursor: pointer;
-}
-    /* =========================
-       BOARD CONTROLS
-    ========================= */
-
-    .board-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin-top: 15px;
-    flex-wrap: wrap;
-}
-
-    .control-button {
-        padding: 10px 18px;
-
-        border: 1px solid #334b68;
-
-        background: #13243a;
-
-        color: white;
-
-        border-radius: 7px;
-
-        cursor: pointer;
-
-        font-weight: bold;
-    }
-
-    .control-button:hover {
-        background: #1b3555;
-    }
-
-    .control-button.primary {
-        background: #e9ad3f;
-
-        color: #111;
-
-        border-color: #e9ad3f;
-    }
-.control-button.primary:hover {
-    background: #f3c45c;
-    border-color: #f3c45c;
-}
-
-    /* =========================
-       INFO PANEL
-    ========================= */
-
-    .info-panel {
-        background: #0d1c30;
-
-        border: 1px solid #1d3048;
-
-        border-radius: 12px;
-
-        padding: 22px;
-    }
-
-    .info-panel h2 {
-        margin-top: 0;
-
-        margin-bottom: 8px;
-
-        font-size: 22px;
-    }
-
-    .opening-description {
-        color: #9eabc0;
-
-        line-height: 1.6;
-
-        font-size: 14px;
-
-        margin-bottom: 22px;
-    }
-
-
-    /* =========================
-       MOVES
-    ========================= */
-
-    .moves-title {
-        font-size: 16px;
-
-        margin-bottom: 10px;
-    }
-
-    .moves-box {
-        background: #091626;
-
-        border-radius: 8px;
-
-        padding: 14px;
-
-        line-height: 2;
-
-        font-family: monospace;
-
-        font-size: 14px;
-    }
-.move-row {
-    display: flex;
-    align-items: center;
-    min-height: 32px;
-}
-
-.move-number {
-    width: 32px;
-    min-width: 32px;
-    color: #718198;
-    font-weight: bold;
-    user-select: none;
-    text-align: right;
-    margin-right: 8px;
-}
-
-.move {
-    margin-right: 10px;
-    min-width: 38px;
-}
-    .move {
-    display: inline-block;
-
-    padding: 5px 8px;
-
-    border-radius: 4px;
-
-    cursor: pointer;
-
-    transition: 0.2s;
-}
-
-.move:hover {
-    background: #1b3555;
-
-    color: white;
-}
-
-    .move.active {
-    background: #e9ad3f;
-    color: #111;
-    font-weight: bold;
-    padding: 4px 7px;
-    border-radius: 5px;
-}
-
-.variation-title {
-    font-size: 16px;
-    margin-top: 20px;
-    margin-bottom: 10px;
-}
-
-.variations {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 7px;
-    margin-bottom: 18px;
-}
-
-.variation {
-    padding: 7px 11px;
-    border: 1px solid #334b68;
-    background: #13243a;
-    color: #aebbd0;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 12px;
-}
-
-.variation:hover {
-    background: #1b3555;
-    color: white;
-}
-
-.variation.active {
-    background: #e9ad3f;
-    color: #111;
-    border-color: #e9ad3f;
-    font-weight: bold;
-}
-    /* =========================
-       DETAILS
-    ========================= */
-
-    .details {
-        margin-top: 22px;
-
-        display: grid;
-
-        grid-template-columns:
-            1fr 1fr;
-
-        gap: 10px;
-    }
-
-    .detail {
-        background: #102239;
-
-        border-radius: 7px;
-
-        padding: 12px;
-    }
-
-    .detail-label {
-        display: block;
-
-        color: #718198;
-
-        font-size: 11px;
-
-        margin-bottom: 5px;
-    }
-
-    .detail-value {
-        font-size: 13px;
-
-        color: #d6deea;
-    }
-
-
-    /* =========================
-       RESPONSIVE
-    ========================= */
-
-    @media (max-width: 950px) {
-
-        .study-layout {
-            grid-template-columns: 1fr;
+        * {
+            box-sizing: border-box;
         }
 
-    }
-@media (max-width: 600px) {
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #07111f;
+            color: #fff;
+        }
 
-    .board-controls {
-        gap: 7px;
-    }
+        /* =========================
+           MAIN LAYOUT
+        ========================= */
 
-    .control-button {
-        padding: 9px 12px;
-        font-size: 12px;
-    }
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
 
-}
-    @media (max-width: 700px) {
+        /* =========================
+           SIDEBAR
+        ========================= */
 
         .sidebar {
-            width: 70px;
-
-            padding: 20px 8px;
+            width: 240px;
+            min-height: 100vh;
+            background: #0b1728;
+            border-right: 1px solid #1d2d43;
+            padding: 24px 15px;
+            display: flex;
+            flex-direction: column;
         }
 
         .logo {
-            justify-content: center;
-
-            padding-left: 0;
-
-            padding-right: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 22px;
+            font-weight: bold;
+            padding: 0 12px 30px;
         }
 
-        .logo-text,
-        .menu-text {
-            display: none;
-        }
-
-        .menu a {
-            justify-content: center;
-
-            padding: 12px 5px;
-        }
-
-        .main {
-            padding: 0 15px 30px;
-        }
-
-        .study-header h1 {
+        .logo-icon {
             font-size: 28px;
         }
 
-    }
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
 
-</style>
-```
+        .menu a {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 12px 14px;
+            color: #aebbd0;
+            text-decoration: none;
+            border-radius: 9px;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+
+        .menu a:hover {
+            background: #14243a;
+            color: white;
+        }
+
+        .menu a.active {
+            background: #1b3555;
+            color: white;
+        }
+
+        .menu-icon {
+            width: 24px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background: #1d2d43;
+            margin: 20px 10px;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main {
+            flex: 1;
+            padding: 0 35px 40px;
+            min-width: 0;
+        }
+
+        /* =========================
+           TOPBAR
+        ========================= */
+
+        .topbar {
+            height: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #17283d;
+            margin-bottom: 30px;
+        }
+
+        .search {
+            width: 300px;
+            background: #0d1c30;
+            border: 1px solid #20344d;
+            border-radius: 9px;
+            padding: 11px 15px;
+            color: #9eabc0;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .notification {
+            font-size: 20px;
+            color: #aebbd0;
+        }
+
+        .login-button {
+            padding: 9px 17px;
+            border: 1px solid #50647e;
+            border-radius: 7px;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .signup-button {
+            padding: 10px 18px;
+            background: #e9ad3f;
+            color: #111;
+            border-radius: 7px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* =========================
+           PAGE
+        ========================= */
+
+        .study-page {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            margin: 0 0 8px;
+            font-size: 28px;
+        }
+
+        .page-header p {
+            margin: 0;
+            color: #8fa1b8;
+            font-size: 14px;
+        }
+
+        /* =========================
+           STUDY LAYOUT
+        ========================= */
+
+        .study-layout {
+            display: grid;
+            grid-template-columns: minmax(500px, 650px) minmax(280px, 1fr);
+            gap: 30px;
+            align-items: start;
+        }
+
+        /* =========================
+           BOARD AREA
+        ========================= */
+
+        .board-section {
+            background: #0b1728;
+            border: 1px solid #1d2d43;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .board-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 620px;
+            margin: 0 auto;
+        }
+
+        .board {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            position: relative;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .square {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .light {
+            background: #f0d9b5;
+        }
+
+        .dark {
+            background: #b58863;
+        }
+
+        .square img {
+            width: 88%;
+            height: 88%;
+            object-fit: contain;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        /* =========================
+           COORDINATES
+        ========================= */
+
+        #board .coordinate {
+            position: absolute;
+            font-size: 12px;
+            font-weight: bold;
+            opacity: 0.8;
+            pointer-events: none;
+        }
+
+        #board .rank {
+            top: 3px;
+            left: 4px;
+        }
+
+        #board .file {
+            right: 4px;
+            bottom: 3px;
+        }
+
+        .light .coordinate {
+            color: #b58863;
+        }
+
+        .dark .coordinate {
+            color: #f0d9b5;
+        }
+
+        /* =========================
+           MOVE ARROW
+        ========================= */
+
+        .arrow-layer {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* =========================
+           BOARD CONTROLS
+        ========================= */
+
+        .board-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+
+        .control-button {
+            background: #122238;
+            border: 1px solid #29415f;
+            color: #d8e2ef;
+            padding: 9px 15px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .control-button:hover {
+            background: #1a304c;
+        }
+
+        /* =========================
+           SIDE PANEL
+        ========================= */
+
+        .study-panel {
+            background: #0b1728;
+            border: 1px solid #1d2d43;
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .opening-name {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .opening-description {
+            color: #8fa1b8;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 22px;
+        }
+
+        /* =========================
+           MOVES
+        ========================= */
+
+        .section-title {
+            font-size: 15px;
+            font-weight: bold;
+            color: #dce6f3;
+            margin-bottom: 10px;
+        }
+
+        .moves-box {
+            background: #07111f;
+            border: 1px solid #1d2d43;
+            border-radius: 8px;
+            padding: 12px;
+            min-height: 100px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .move-row {
+            display: grid;
+            grid-template-columns: 38px 1fr 1fr;
+            align-items: center;
+            min-height: 34px;
+            border-radius: 5px;
+            padding: 2px 4px;
+        }
+
+        .move-row:hover {
+            background: #102036;
+        }
+
+        .move-number {
+            color: #657993;
+            font-size: 13px;
+        }
+
+        .move {
+            color: #cbd7e6;
+            padding: 6px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .move:hover {
+            background: #19314e;
+        }
+
+        .move.active {
+            background: #e9ad3f;
+            color: #111;
+            font-weight: bold;
+        }
+
+        /* =========================
+           VARIATIONS
+        ========================= */
+
+        #variationSection {
+            margin-top: 22px;
+        }
+
+        .variation-title {
+            font-size: 15px;
+            font-weight: bold;
+            color: #dce6f3;
+            margin-bottom: 10px;
+        }
+
+        .variations {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .variation {
+            background: #122238;
+            border: 1px solid #29415f;
+            color: #b9c7d9;
+            padding: 8px 11px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .variation:hover {
+            background: #1a304c;
+        }
+
+        .variation.active {
+            background: #1b3555;
+            color: white;
+            border-color: #3b587a;
+        }
+
+        /* =========================
+           INFO
+        ========================= */
+
+        .study-info {
+            margin-top: 22px;
+            padding-top: 18px;
+            border-top: 1px solid #1d2d43;
+        }
+
+        .study-info p {
+            margin: 0;
+            color: #7f92aa;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 1050px) {
+
+            .study-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .board-section {
+                max-width: 700px;
+                margin: 0 auto;
+                width: 100%;
+            }
+
+            .study-panel {
+                max-width: 700px;
+                margin: 0 auto;
+                width: 100%;
+            }
+
+        }
+
+        @media (max-width: 700px) {
+
+            .sidebar {
+                width: 190px;
+            }
+
+            .main {
+                padding: 0 15px 30px;
+            }
+
+            .search {
+                width: 220px;
+            }
+
+            .study-layout {
+                gap: 15px;
+            }
+
+            .board-section {
+                padding: 10px;
+            }
+
+            .study-panel {
+                padding: 15px;
+            }
+
+        }
+
+    </style>
 
 </head>
 
@@ -662,1391 +518,1315 @@
 
 <div class="dashboard">
 
-```
-<!-- =========================
-     SIDEBAR
-========================== -->
+    <!-- =========================
+         SIDEBAR
+    ========================= -->
 
-<aside class="sidebar">
+    <aside class="sidebar">
 
-    <div class="logo">
+        <div class="logo">
+            <span class="logo-icon">♛</span>
+            <span class="logo-text">MY CHESS</span>
+        </div>
 
-        <span class="logo-icon">♛</span>
-
-        <span class="logo-text">
-            MY CHESS
-        </span>
-
-    </div>
-
-
-    <nav class="menu">
-
-        <a href="index.html">
-
-            <span class="menu-icon">🏠</span>
-
-            <span class="menu-text">
-                Home
-            </span>
-
-        </a>
-
-
-        <a href="chess.html">
-
-            <span class="menu-icon">♟</span>
-
-            <span class="menu-text">
-                Play
-            </span>
-
-        </a>
-
-
-        <a href="analysis.html">
-
-            <span class="menu-icon">🔍</span>
-
-            <span class="menu-text">
-                Analysis
-            </span>
-
-        </a>
-
-
-        <a href="openings.html" class="active">
-
-            <span class="menu-icon">📖</span>
-
-            <span class="menu-text">
-                Openings
-            </span>
-
-        </a>
-
-    </nav>
-
-
-    <div class="sidebar-bottom">
-
-        <div class="sidebar-divider"></div>
-
-        <div class="menu">
+        <nav class="menu">
 
             <a href="index.html">
-
-                <span class="menu-icon">←</span>
-
-                <span class="menu-text">
-                    Back Home
-                </span>
-
+                <span class="menu-icon">🏠</span>
+                <span class="menu-text">Home</span>
             </a>
 
-        </div>
-
-    </div>
-
-</aside>
-
-
-<!-- =========================
-     MAIN
-========================== -->
-
-<main class="main">
-
-
-    <!-- TOPBAR -->
-
-    <header class="topbar">
-
-        <div>
-            <span style="color:#9eabc0;">
-                Opening Study
-            </span>
-        </div>
-
-
-        <div class="user-area">
-
-            <span class="notification">
-                🔔
-            </span>
-
-            <a href="openings.html" class="back-button">
-                ← Openings
+            <a href="chess.html">
+                <span class="menu-icon">♟</span>
+                <span class="menu-text">Play</span>
             </a>
 
+            <a href="analysis.html">
+                <span class="menu-icon">🔍</span>
+                <span class="menu-text">Analysis</span>
+            </a>
+
+            <a href="openings.html" class="active">
+                <span class="menu-icon">📖</span>
+                <span class="menu-text">Openings</span>
+            </a>
+
+            <a href="#">
+                <span class="menu-icon">📄</span>
+                <span class="menu-text">My Games / PGN</span>
+            </a>
+
+            <a href="#">
+                <span class="menu-icon">👥</span>
+                <span class="menu-text">Friends</span>
+            </a>
+
+            <a href="#">
+                <span class="menu-icon">💬</span>
+                <span class="menu-text">Community</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <div class="sidebar-divider"></div>
+
+            <div class="menu">
+
+                <a href="#">
+                    <span class="menu-icon">⚙</span>
+                    <span class="menu-text">Settings</span>
+                </a>
+
+                <a href="#">
+                    <span class="menu-icon">🔑</span>
+                    <span class="menu-text">Login</span>
+                </a>
+
+            </div>
+
         </div>
 
-    </header>
+    </aside>
 
 
-    <!-- HEADER -->
+    <!-- =========================
+         MAIN
+    ========================= -->
 
-    <section class="study-header">
+    <main class="main">
 
-        <h1>
-            Sicilian Najdorf
-        </h1>
+        <!-- TOPBAR -->
 
-        <p>
-            Study the main line and practice the opening move by move.
-        </p>
+        <div class="topbar">
 
-    </section>
+            <div class="search">
+                🔍 &nbsp; Search...
+            </div>
 
+            <div class="user-area">
 
-    <!-- STUDY -->
+                <span class="notification">🔔</span>
 
-    <section class="study-layout">
+                <a href="#" class="login-button">
+                    Login
+                </a>
 
-
-        <!-- BOARD -->
-
-        <div class="board-panel">
-
-            <div class="board-wrapper">
-
-    <div id="board" class="board"></div>
-
-    <svg id="arrowLayer"
-         class="arrow-layer"
-         viewBox="0 0 8 8"
-         preserveAspectRatio="none">
-    </svg>
-
-</div>
-
-<div class="board-colors">
-
-    <label>
-        Light
-        <input
-            type="color"
-            id="lightColor"
-            value="#f0d9b5">
-    </label>
-
-    <label>
-        Dark
-        <input
-            type="color"
-            id="darkColor"
-            value="#b58863">
-    </label>
-
-</div><div class="board-controls">
-
-    <button
-        id="resetColorsButton"
-        class="control-button">
-        Reset Colors
-    </button>
-<button
-        id="flipButton"
-        class="control-button">
-        🔄 Flip Board
-    </button>
-                <button
-                    id="previousButton"
-                    class="control-button">
-                    ← Previous
-                </button>
-
-
-                <button
-                    id="resetButton"
-                    class="control-button">
-                    Reset
-                </button>
-
-
-                <button
-                    id="nextButton"
-                    class="control-button primary">
-                    Next →
-                </button>
+                <a href="#" class="signup-button">
+                    Sign Up
+                </a>
 
             </div>
 
         </div>
 
 
-        <!-- INFORMATION -->
+        <!-- =========================
+             STUDY PAGE
+        ========================= -->
 
-        <div class="info-panel">
+        <div class="study-page">
 
-            <h2>
-                Sicilian Najdorf
-            </h2>
+            <div class="page-header">
 
+                <h1 id="pageTitle">
+                    Opening Study
+                </h1>
 
-            <p class="opening-description">
-
-                The Sicilian Najdorf is one of the most
-                ambitious defenses against 1.e4. It often
-                leads to sharp and highly tactical positions.
-
-            </p>
-
-
-            <div class="moves-title" id="movesTitle">
-    Main Line
-</div>
-<div id="variationSection">
-
-    <div class="variation-title">
-        Variations
-    </div>
-
-    <div class="variations" id="variations">
-
-        <button class="variation active" data-variation="main">
-            Main Line
-        </button>
-
-        <button class="variation" data-variation="bg5">
-            6.Bg5
-        </button>
-
-        <button class="variation" data-variation="be3">
-            6.Be3
-        </button>
-
-        <button class="variation" data-variation="bc4">
-            6.Bc4
-        </button>
-
-    </div>
-
-</div>
-
-    <button class="variation active" data-variation="main">
-        Main Line
-    </button>
-
-    <button class="variation" data-variation="bg5">
-        6.Bg5
-    </button>
-
-    <button class="variation" data-variation="be3">
-        6.Be3
-    </button>
-
-    <button class="variation" data-variation="bc4">
-        6.Bc4
-    </button>
-
-</div>
-
-            <div id="movesBox" class="moves-box">
-
-                <span class="move" data-index="0">
-                    1.e4
-                </span>
-
-                <span class="move" data-index="1">
-                    c5
-                </span>
-
-                <span class="move" data-index="2">
-                    2.Nf3
-                </span>
-
-                <span class="move" data-index="3">
-                    d6
-                </span>
-
-                <span class="move" data-index="4">
-                    3.d4
-                </span>
-
-                <span class="move" data-index="5">
-                    cxd4
-                </span>
-
-                <span class="move" data-index="6">
-                    4.Nxd4
-                </span>
-
-                <span class="move" data-index="7">
-                    Nf6
-                </span>
-
-                <span class="move" data-index="8">
-                    5.Nc3
-                </span>
-
-                <span class="move" data-index="9">
-                    a6
-                </span>
+                <p>
+                    Study the opening move by move and explore its variations.
+                </p>
 
             </div>
 
 
-            <div class="details">
+            <div class="study-layout">
 
-                <div class="detail">
+                <!-- BOARD -->
 
-                    <span class="detail-label">
-                        ECO
-                    </span>
+                <section class="board-section">
 
-                    <span class="detail-value">
-                        B90
-                    </span>
+                    <div class="board-wrapper">
 
-                </div>
+                        <div id="board" class="board"></div>
 
+                        <svg
+                            id="arrowLayer"
+                            class="arrow-layer"
+                            viewBox="0 0 100 100"
+                            preserveAspectRatio="none">
+                        </svg>
 
-                <div class="detail">
-
-                    <span class="detail-label">
-                        Played by
-                    </span>
-
-                    <span class="detail-value">
-                        Black
-                    </span>
-
-                </div>
+                    </div>
 
 
-                <div class="detail">
+                    <div class="board-controls">
 
-                    <span class="detail-label">
-                        Style
-                    </span>
+                        <button
+                            id="firstMove"
+                            class="control-button">
+                            ⏮ First
+                        </button>
 
-                    <span class="detail-value">
-                        Tactical
-                    </span>
+                        <button
+                            id="previousMove"
+                            class="control-button">
+                            ◀ Previous
+                        </button>
 
-                </div>
+                        <button
+                            id="nextMove"
+                            class="control-button">
+                            Next ▶
+                        </button>
+
+                        <button
+                            id="lastMove"
+                            class="control-button">
+                            Last ⏭
+                        </button>
+
+                        <button
+                            id="resetBoard"
+                            class="control-button">
+                            ↻ Reset
+                        </button>
+
+                    </div>
+
+                </section>
 
 
-                <div class="detail">
+                <!-- SIDE PANEL -->
 
-                    <span class="detail-label">
-                        Difficulty
-                    </span>
+                <section class="study-panel">
 
-                    <span class="detail-value">
-                        Advanced
-                    </span>
+                    <div
+                        id="openingName"
+                        class="opening-name">
+                        Sicilian Defense – Najdorf
+                    </div>
 
-                </div>
+                    <div
+                        id="openingDescription"
+                        class="opening-description">
+                        One of the most aggressive and deeply studied
+                        openings in chess.
+                    </div>
+
+
+                    <div class="section-title">
+                        Moves
+                    </div>
+
+                    <div
+                        id="movesBox"
+                        class="moves-box">
+                    </div>
+
+
+                    <!-- ONLY ONE VARIATION SECTION -->
+
+                    <div id="variationSection">
+
+                        <div class="variation-title">
+                            Variations
+                        </div>
+
+                        <div
+                            class="variations"
+                            id="variations">
+
+                            <button
+                                class="variation active"
+                                data-variation="main">
+                                Main Line
+                            </button>
+
+                            <button
+                                class="variation"
+                                data-variation="bg5">
+                                6.Bg5
+                            </button>
+
+                            <button
+                                class="variation"
+                                data-variation="be3">
+                                6.Be3
+                            </button>
+
+                            <button
+                                class="variation"
+                                data-variation="bc4">
+                                6.Bc4
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="study-info">
+
+                        <p>
+                            Use the buttons below the board to navigate
+                            through the opening. You can also click any
+                            move directly in the move list.
+                        </p>
+
+                    </div>
+
+                </section>
 
             </div>
 
         </div>
 
-    </section>
-
-
-</main>
-```
+    </main>
 
 </div>
+
 
 <script>
-const openings = {
 
-    italian: {
-        name: "Italian Game",
+    /* =========================
+       ELEMENTS
+    ========================= */
 
-        description:
-            "A classical opening beginning with 1.e4 e5 2.Nf3 Nc6 3.Bc4. It can lead to both strategic and tactical positions.",
+    const board = document.getElementById("board");
+    const arrowLayer = document.getElementById("arrowLayer");
+    const movesBox = document.getElementById("movesBox");
 
-        eco: "C50",
-        side: "White",
-        style: "Classical",
-        difficulty: "Intermediate",
+    const pageTitle = document.getElementById("pageTitle");
+    const openingNameElement = document.getElementById("openingName");
+    const openingDescriptionElement =
+        document.getElementById("openingDescription");
 
-        moves: [
-            "e4",
-            "e5",
-            "Nf3",
-            "Nc6",
-            "Bc4"
-        ]
-    },
+    const variationSection =
+        document.getElementById("variationSection");
 
+    const variationButtons =
+        document.querySelectorAll(".variation");
 
-    najdorf: {
-        name: "Sicilian Najdorf",
 
-        description:
-            "One of the sharpest defenses against 1.e4. The Najdorf often leads to highly tactical and ambitious positions.",
+    /* =========================
+       URL
+    ========================= */
 
-        eco: "B90",
-        side: "Black",
-        style: "Tactical",
-        difficulty: "Advanced",
+    const urlParams = new URLSearchParams(window.location.search);
 
-        moves: [
-            "e4",
-            "c5",
-            "Nf3",
-            "d6",
-            "d4",
-            "cxd4",
-            "Nxd4",
-            "Nf6",
-            "Nc3",
-            "a6"
-        ]
-    }
+    const openingName =
+        urlParams.get("opening") || "najdorf";
 
-};
 
-
-const urlParams =
-    new URLSearchParams(window.location.search);
-
-const openingName =
-    urlParams.get("opening") || "najdorf";
-
-const opening =
-    openings[openingName] || openings.najdorf;
-const variationSection =
-    document.getElementById("variationSection");
-
-if (openingName !== "najdorf") {
-    variationSection.style.display = "none";
-}
-
-// ==========================
-// UPDATE PAGE INFORMATION
-// ==========================
-
-document.querySelector(".study-header h1").textContent =
-    opening.name;
-
-document.querySelector(".study-header p").textContent =
-    "Study the main moves and ideas of this opening.";
-
-
-document.querySelector(".info-panel h2").textContent =
-    opening.name;
-
-document.querySelector(".opening-description").textContent =
-    opening.description;
-
-
-// ==========================
-// UPDATE DETAILS
-// ==========================
-
-const detailValues =
-    document.querySelectorAll(".detail-value");
-
-detailValues[0].textContent =
-    opening.eco;
-
-detailValues[1].textContent =
-    opening.side;
-
-detailValues[2].textContent =
-    opening.style;
-
-detailValues[3].textContent =
-    opening.difficulty;
-
-// ==========================
-// CREATE MOVE LIST
-// ==========================
-
-function createMoveList() {
-
-    movesBox.innerHTML = "";
-
-    const variationKey =
-        openingName === "najdorf" && currentVariation !== "main"
-            ? "najdorf_" + currentVariation
-            : openingName;
-
-    let moves = [];
-
-    if (currentVariation === "main") {
-
-        moves = opening.moves;
-
-    } else {
-
-        if (currentVariation === "bg5") {
-
-            moves = [
-                "e4",
-                "c5",
-                "Nf3",
-                "d6",
-                "d4",
-                "cxd4",
-                "Nxd4",
-                "Nf6",
-                "Nc3",
-                "a6",
-                "Bg5"
-            ];
-
-        }
-
-        if (currentVariation === "be3") {
-
-            moves = [
-                "e4",
-                "c5",
-                "Nf3",
-                "d6",
-                "d4",
-                "cxd4",
-                "Nxd4",
-                "Nf6",
-                "Nc3",
-                "a6",
-                "Be3"
-            ];
-
-        }
-
-        if (currentVariation === "bc4") {
-
-            moves = [
-                "e4",
-                "c5",
-                "Nf3",
-                "d6",
-                "d4",
-                "cxd4",
-                "Nxd4",
-                "Nf6",
-                "Nc3",
-                "a6",
-                "Bc4"
-            ];
-
-        }
-
-    }
-
-    let moveRows = [];
-
-    moves.forEach(function(move, index) {
-
-        const rowIndex =
-            Math.floor(index / 2);
-
-        if (!moveRows[rowIndex]) {
-            moveRows[rowIndex] = [];
-        }
-
-        moveRows[rowIndex].push({
-            move: move,
-            index: index
-        });
-
-    });
-
-    moveRows.forEach(function(row, rowIndex) {
-
-        const rowElement =
-            document.createElement("div");
-
-        rowElement.className =
-            "move-row";
-
-        const numberElement =
-            document.createElement("span");
-
-        numberElement.className =
-            "move-number";
-
-        numberElement.textContent =
-            (rowIndex + 1) + ".";
-
-        rowElement.appendChild(
-            numberElement
-        );
-
-        row.forEach(function(item) {
-
-            const moveElement =
-                document.createElement("span");
-
-            moveElement.className =
-                "move";
-
-            moveElement.textContent =
-                item.move;
-
-            moveElement.dataset.index =
-                item.index;
-
-            moveElement.addEventListener("click", function() {
-
-    currentMove = item.index;
-
-    updateBoardPosition();
-    updateMoveHighlight();
-    drawMoveArrow();
-
-});
-
-            rowElement.appendChild(
-                moveElement
-            );
-
-        });
-
-        movesBox.appendChild(
-            rowElement
-        );
-
-    });
-
-}
-
-// ==========================
-// BOARD
-// ==========================
-
-const board =
-    document.getElementById("board");
-    let boardFlipped =
-    localStorage.getItem("boardFlipped") === "true";
-    const lightColor =
-    document.getElementById("lightColor");
-
-const darkColor =
-    document.getElementById("darkColor");
-
-
-const savedLightColor =
-    localStorage.getItem("lightColor");
-
-const savedDarkColor =
-    localStorage.getItem("darkColor");
-
-
-if (savedLightColor) {
-    lightColor.value = savedLightColor;
-}
-
-if (savedDarkColor) {
-    darkColor.value = savedDarkColor;
-}
-
-const moveData = {
-
-    italian: [
-        ["e2", "e4"],
-        ["e7", "e5"],
-        ["g1", "f3"],
-        ["b8", "c6"],
-        ["f1", "c4"]
-    ],
-
-    najdorf: [
-        ["e2", "e4"],
-        ["c7", "c5"],
-        ["g1", "f3"],
-        ["d7", "d6"],
-        ["d2", "d4"],
-        ["c5", "d4"],
-        ["f3", "d4"],
-        ["g8", "f6"],
-        ["b1", "c3"],
-        ["a7", "a6"]
-    ],
-
-    najdorf_bg5: [
-        ["e2", "e4"],
-        ["c7", "c5"],
-        ["g1", "f3"],
-        ["d7", "d6"],
-        ["d2", "d4"],
-        ["c5", "d4"],
-        ["f3", "d4"],
-        ["g8", "f6"],
-        ["b1", "c3"],
-        ["a7", "a6"],
-        ["c1", "g5"]
-    ],
-
-    najdorf_be3: [
-        ["e2", "e4"],
-        ["c7", "c5"],
-        ["g1", "f3"],
-        ["d7", "d6"],
-        ["d2", "d4"],
-        ["c5", "d4"],
-        ["f3", "d4"],
-        ["g8", "f6"],
-        ["b1", "c3"],
-        ["a7", "a6"],
-        ["c1", "e3"]
-    ],
-
-    najdorf_bc4: [
-        ["e2", "e4"],
-        ["c7", "c5"],
-        ["g1", "f3"],
-        ["d7", "d6"],
-        ["d2", "d4"],
-        ["c5", "d4"],
-        ["f3", "d4"],
-        ["g8", "f6"],
-        ["b1", "c3"],
-        ["a7", "a6"],
-        ["f1", "c4"]
-    ]
-
-};
-
-let currentVariation = "main";
-let currentMove = -1;
-const startingPosition = [
-    ["♜","♞","♝","♛","♚","♝","♞","♜"],
-    ["♟","♟","♟","♟","♟","♟","♟","♟"],
-    ["","","","","","","",""],
-    ["","","","","","","",""],
-    ["","","","","","","",""],
-    ["","","","","","","",""],
-    ["♙","♙","♙","♙","♙","♙","♙","♙"],
-    ["♖","♘","♗","♕","♔","♗","♘","♖"]
-];
-
-let currentPosition = startingPosition.map(row => [...row]);
-
-drawBoard();
-
-createMoveList();
-
-function drawBoard() {
-
-    board.innerHTML = "";
-
-    const variationKey =
-    openingName === "najdorf" && currentVariation !== "main"
-        ? "najdorf_" + currentVariation
-        : openingName;
-
-const moves =
-    moveData[variationKey] || [];
-
-    let currentFrom = null;
-    let currentTo = null;
-
-    if (currentMove >= 0 && moves[currentMove]) {
-
-        currentFrom = moves[currentMove][0];
-        currentTo = moves[currentMove][1];
-
-    }
-
-    for (let row = 0; row < 8; row++) {
-
-    for (let col = 0; col < 8; col++) {
-
-        const actualRow =
-            boardFlipped ? 7 - row : row;
-
-        const actualCol =
-            boardFlipped ? 7 - col : col;
-
-            const square =
-    document.createElement("div");
-
-square.classList.add("square");
-
-const coordinate =
-    document.createElement("span");
-
-coordinate.className = "coordinate";
-
-            if ((row + col) % 2 === 0) {
-    square.classList.add("light");
-    square.style.backgroundColor = lightColor.value;
-} else {
-    square.classList.add("dark");
-    square.style.backgroundColor = darkColor.value;
-}
-
-            const file =
-    String.fromCharCode(97 + actualCol);
-
-const rank =
-    8 - actualRow;
-
-            const squareName =
-                file + rank;
-                const fileLabel =
-    document.createElement("span");
-
-fileLabel.className = "coordinate file-coordinate";
-
-fileLabel.textContent = file;
-
-const rankLabel =
-    document.createElement("span");
-
-rankLabel.className = "coordinate rank-coordinate";
-
-rankLabel.textContent = rank;
-
-square.appendChild(fileLabel);
-square.appendChild(rankLabel);
-const lastRow = 7;
-const firstCol = 0;
-
-if (row !== lastRow) {
-    fileLabel.style.display = "none";
-}
-
-if (col !== firstCol) {
-    rankLabel.style.display = "none";
-}
-
-            if (squareName === currentFrom) {
-                square.classList.add("move-from");
-            }
-
-            if (squareName === currentTo) {
-                square.classList.add("move-to");
-            }
-
-            const piece =
-    currentPosition[actualRow][actualCol];
-
-if (piece) {
+    /* =========================
+       PIECES
+    ========================= */
 
     const pieceMap = {
-        "♔": "wK",
-        "♕": "wQ",
-        "♖": "wR",
-        "♗": "wB",
-        "♘": "wN",
-        "♙": "wP",
-        "♚": "bK",
-        "♛": "bQ",
-        "♜": "bR",
-        "♝": "bB",
-        "♞": "bN",
-        "♟": "bP"
+
+        "wK": "wK",
+        "wQ": "wQ",
+        "wR": "wR",
+        "wB": "wB",
+        "wN": "wN",
+        "wP": "wP",
+
+        "bK": "bK",
+        "bQ": "bQ",
+        "bR": "bR",
+        "bB": "bB",
+        "bN": "bN",
+        "bP": "bP"
+
     };
 
-    const img =
-        document.createElement("img");
 
-    img.src =
-        "./" + pieceMap[piece] + ".svg";
+    /* =========================
+       STARTING POSITION
+    ========================= */
 
-    img.className =
-        "chess-piece";
+    const startingPosition = [
 
-    square.appendChild(img);
-}
+        "bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR",
 
-            board.appendChild(square);
+        "bP", "bP", "bP", "bP", "bP", "bP", "bP", "bP",
+
+        "", "", "", "", "", "", "", "",
+
+        "", "", "", "", "", "", "", "",
+
+        "", "", "", "", "", "", "", "",
+
+        "", "", "", "", "", "", "", "",
+
+        "wP", "wP", "wP", "wP", "wP", "wP", "wP", "wP",
+
+        "wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"
+
+    ];
+
+
+    let currentPosition = [...startingPosition];
+
+    let currentMove = -1;
+
+    let currentVariation = "main";
+
+    let boardFlipped = false;
+
+
+    /* =========================
+       OPENING DATA
+    ========================= */
+
+    const openings = {
+
+        italian: {
+
+            name: "Italian Game",
+
+            description:
+                "A classical opening beginning with 1.e4 e5 2.Nf3 Nc6 3.Bc4.",
+
+            moves: [
+
+                ["e2", "e4", "e4"],
+                ["e7", "e5", "e5"],
+
+                ["g1", "f3", "Nf3"],
+                ["b8", "c6", "Nc6"],
+
+                ["f1", "c4", "Bc4"]
+
+            ]
+
+        },
+
+
+        najdorf: {
+
+            name: "Sicilian Defense – Najdorf",
+
+            description:
+                "One of the most aggressive and deeply studied openings in chess.",
+
+            variations: {
+
+                main: [
+
+                    ["e2", "e4", "e4"],
+                    ["c7", "c5", "c5"],
+
+                    ["g1", "f3", "Nf3"],
+                    ["d7", "d6", "d6"],
+
+                    ["d2", "d4", "d4"],
+                    ["c5", "d4", "cxd4"],
+
+                    ["f3", "d4", "Nxd4"],
+                    ["g8", "f6", "Nf6"],
+
+                    ["b1", "c3", "Nc3"],
+                    ["a7", "a6", "a6"]
+
+                ],
+
+                bg5: [
+
+                    ["e2", "e4", "e4"],
+                    ["c7", "c5", "c5"],
+
+                    ["g1", "f3", "Nf3"],
+                    ["d7", "d6", "d6"],
+
+                    ["d2", "d4", "d4"],
+                    ["c5", "d4", "cxd4"],
+
+                    ["f3", "d4", "Nxd4"],
+                    ["g8", "f6", "Nf6"],
+
+                    ["b1", "c3", "Nc3"],
+                    ["a7", "a6", "a6"],
+
+                    ["c1", "g5", "Bg5"]
+
+                ],
+
+                be3: [
+
+                    ["e2", "e4", "e4"],
+                    ["c7", "c5", "c5"],
+
+                    ["g1", "f3", "Nf3"],
+                    ["d7", "d6", "d6"],
+
+                    ["d2", "d4", "d4"],
+                    ["c5", "d4", "cxd4"],
+
+                    ["f3", "d4", "Nxd4"],
+                    ["g8", "f6", "Nf6"],
+
+                    ["b1", "c3", "Nc3"],
+                    ["a7", "a6", "a6"],
+
+                    ["f1", "e3", "Be3"]
+
+                ],
+
+                bc4: [
+
+                    ["e2", "e4", "e4"],
+                    ["c7", "c5", "c5"],
+
+                    ["g1", "f3", "Nf3"],
+                    ["d7", "d6", "d6"],
+
+                    ["d2", "d4", "d4"],
+                    ["c5", "d4", "cxd4"],
+
+                    ["f3", "d4", "Nxd4"],
+                    ["g8", "f6", "Nf6"],
+
+                    ["b1", "c3", "Nc3"],
+                    ["a7", "a6", "a6"],
+
+                    ["f1", "c4", "Bc4"]
+
+                ]
+
+            }
+
         }
-    }
-    drawMoveArrow();
-}
 
-function drawMoveArrow() {
+    };
 
-    const arrowLayer =
-        document.getElementById("arrowLayer");
 
-    arrowLayer.innerHTML = "";
+    /* =========================
+       CURRENT MOVES
+    ========================= */
 
-    if (currentMove < 0) {
-        return;
-    }
+    function getCurrentMoves() {
 
-    const variationKey =
-    openingName === "najdorf" && currentVariation !== "main"
-        ? "najdorf_" + currentVariation
-        : openingName;
+        if (openingName === "najdorf") {
 
-const moves =
-    moveData[variationKey] || [];
+            return openings.najdorf.variations[currentVariation];
 
-    if (!moves[currentMove]) {
-        return;
+        }
+
+        return openings[openingName].moves;
+
     }
 
-    const from =
-        moves[currentMove][0];
 
-    const to =
-        moves[currentMove][1];
+    /* =========================
+       OPENING INFORMATION
+    ========================= */
 
-    let fromFile =
-    from.charCodeAt(0) - 97;
+    function updateOpeningInformation() {
 
-let fromRank =
-    8 - Number(from[1]);
+        if (openingName === "najdorf") {
 
-let toFile =
-    to.charCodeAt(0) - 97;
+            pageTitle.textContent =
+                "Sicilian Defense – Najdorf";
 
-let toRank =
-    8 - Number(to[1]);
+            openingNameElement.textContent =
+                openings.najdorf.name;
 
-if (boardFlipped) {
+            openingDescriptionElement.textContent =
+                openings.najdorf.description;
 
-    fromFile = 7 - fromFile;
-    fromRank = 7 - fromRank;
+            variationSection.style.display = "block";
 
-    toFile = 7 - toFile;
-    toRank = 7 - toRank;
-}
+        }
 
+        else if (openingName === "italian") {
 
-    const line =
-        document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "line"
-        );
+            pageTitle.textContent =
+                "Italian Game";
 
-    line.setAttribute(
-        "x1",
-        fromFile + 0.5
-    );
+            openingNameElement.textContent =
+                openings.italian.name;
 
-    line.setAttribute(
-        "y1",
-        fromRank + 0.5
-    );
+            openingDescriptionElement.textContent =
+                openings.italian.description;
 
-    line.setAttribute(
-    "x2",
-    toFile + 0.5 -
-    0.50 * Math.cos(
-        Math.atan2(
-            toRank - fromRank,
-            toFile - fromFile
-        )
-    )
-);
+            variationSection.style.display = "none";
 
-line.setAttribute(
-    "y2",
-    toRank + 0.5 -
-    0.50 * Math.sin(
-        Math.atan2(
-            toRank - fromRank,
-            toFile - fromFile
-        )
-    )
-);
+        }
 
-    line.setAttribute(
-        "stroke",
-        "rgba(80, 150, 255, 0.65)"
-    );
+        else {
 
-    line.setAttribute(
-    "stroke-width",
-    "0.18"
-);
+            pageTitle.textContent =
+                "Opening Study";
 
-    line.setAttribute(
-        "stroke-linecap",
-        "round"
-    );
-    line.setAttribute(
-    "filter",
-    "drop-shadow(0 0 2px rgba(0,0,0,0.35))"
-);
-const marker =
-    document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "polygon"
-    );
+            openingNameElement.textContent =
+                "Opening";
 
-const arrowX =
-    toFile + 0.5 -
-    0.35 * Math.cos(
-        Math.atan2(
-            toRank - fromRank,
-            toFile - fromFile
-        )
-    );
+            openingDescriptionElement.textContent =
+                "Study the opening move by move.";
 
-const arrowY =
-    toRank + 0.5 -
-    0.35 * Math.sin(
-        Math.atan2(
-            toRank - fromRank,
-            toFile - fromFile
-        )
-    );
+            variationSection.style.display = "none";
 
-const angle =
-    Math.atan2(
-        toRank - fromRank,
-        toFile - fromFile
-    );
+        }
 
-const size = 0.42;
-
-const p1 = [
-    arrowX,
-    arrowY
-];
-
-const p2 = [
-    arrowX - size * Math.cos(angle - Math.PI / 10),
-    arrowY - size * Math.sin(angle - Math.PI / 10)
-];
-
-const p3 = [
-    arrowX - size * Math.cos(angle + Math.PI / 10),
-    arrowY - size * Math.sin(angle + Math.PI / 10)
-];
-
-marker.setAttribute(
-    "points",
-    `${p1[0]},${p1[1]} ${p2[0]},${p2[1]} ${p3[0]},${p3[1]}`
-);
-
-marker.setAttribute(
-    "fill",
-    "rgba(80, 150, 255, 0.65)"
-);
-
-arrowLayer.appendChild(line);
-arrowLayer.appendChild(marker);
-}
-
-// ==========================
-// SQUARE CONVERSION
-// ==========================
-
-function squareToPosition(square) {
-
-    const file =
-        square.charCodeAt(0) - 97;
-
-    const rank =
-        8 - Number(square[1]);
-
-    return [rank, file];
-}
+    }
 
 
-// ==========================
-// APPLY MOVES
-// ==========================
+    /* =========================
+       SQUARE TO INDEX
+    ========================= */
 
-function updateBoardPosition() {
+    function squareToIndex(square) {
 
-    currentPosition =
-        startingPosition.map(row => [...row]);
+        const file =
+            square.charCodeAt(0) - 97;
 
+        const rank =
+            parseInt(square[1]);
 
-    const variationKey =
-    openingName === "najdorf" && currentVariation !== "main"
-        ? "najdorf_" + currentVariation
-        : openingName;
+        return (8 - rank) * 8 + file;
 
-const moves =
-    moveData[variationKey] || [];
+    }
 
 
-    for (let i = 0; i <= currentMove; i++) {
+    /* =========================
+       DRAW BOARD
+    ========================= */
+
+    function drawBoard() {
+
+        board.innerHTML = "";
+
+        arrowLayer.innerHTML = "";
+
+        const position =
+            currentPosition;
+
+        for (let row = 0; row < 8; row++) {
+
+            for (let col = 0; col < 8; col++) {
+
+                let boardRow = row;
+                let boardCol = col;
+
+                if (boardFlipped) {
+
+                    boardRow = 7 - row;
+                    boardCol = 7 - col;
+
+                }
+
+                const index =
+                    boardRow * 8 + boardCol;
+
+                const square =
+                    document.createElement("div");
+
+                square.classList.add("square");
+
+                if ((row + col) % 2 === 0) {
+
+                    square.classList.add("light");
+
+                } else {
+
+                    square.classList.add("dark");
+
+                }
+
+                const file =
+                    String.fromCharCode(97 + boardCol);
+
+                const rank =
+                    8 - boardRow;
+
+
+                /* COORDINATES */
+
+                if (col === 0) {
+
+                    const rankElement =
+                        document.createElement("span");
+
+                    rankElement.className =
+                        "coordinate rank";
+
+                    rankElement.textContent =
+                        rank;
+
+                    square.appendChild(rankElement);
+
+                }
+
+
+                if (row === 7) {
+
+                    const fileElement =
+                        document.createElement("span");
+
+                    fileElement.className =
+                        "coordinate file";
+
+                    fileElement.textContent =
+                        file;
+
+                    square.appendChild(fileElement);
+
+                }
+
+
+                /* PIECE */
+
+                const piece =
+                    position[index];
+
+                if (piece) {
+
+                    const img =
+                        document.createElement("img");
+
+                    img.src =
+                        "./" + pieceMap[piece] + ".svg";
+
+                    img.alt =
+                        piece;
+
+                    square.appendChild(img);
+
+                }
+
+
+                board.appendChild(square);
+
+            }
+
+        }
+
+
+        drawMoveArrow();
+
+    }
+
+
+    /* =========================
+       DRAW ARROW
+    ========================= */
+
+    function drawMoveArrow() {
+
+        if (currentMove < 0) {
+
+            return;
+
+        }
+
+        const moves =
+            getCurrentMoves();
+
+        if (!moves[currentMove]) {
+
+            return;
+
+        }
+
+        const move =
+            moves[currentMove];
 
         const from =
-            squareToPosition(moves[i][0]);
+            move[0];
 
         const to =
-            squareToPosition(moves[i][1]);
+            move[1];
 
 
-        const piece =
-            currentPosition[from[0]][from[1]];
+        const fromFile =
+            from.charCodeAt(0) - 97;
+
+        const fromRank =
+            8 - parseInt(from[1]);
+
+        const toFile =
+            to.charCodeAt(0) - 97;
+
+        const toRank =
+            8 - parseInt(to[1]);
 
 
-        currentPosition[to[0]][to[1]] =
-            piece;
+        let x1 =
+            fromFile * 12.5 + 6.25;
 
-        currentPosition[from[0]][from[1]] =
-            "";
+        let y1 =
+            fromRank * 12.5 + 6.25;
+
+        let x2 =
+            toFile * 12.5 + 6.25;
+
+        let y2 =
+            toRank * 12.5 + 6.25;
+
+
+        if (boardFlipped) {
+
+            x1 = 100 - x1;
+            y1 = 100 - y1;
+
+            x2 = 100 - x2;
+            y2 = 100 - y2;
+
+        }
+
+
+        const dx =
+            x2 - x1;
+
+        const dy =
+            y2 - y1;
+
+        const length =
+            Math.sqrt(dx * dx + dy * dy);
+
+        if (length === 0) {
+
+            return;
+
+        }
+
+
+        const ux =
+            dx / length;
+
+        const uy =
+            dy / length;
+
+
+        const arrowLength =
+            4.5;
+
+        const arrowWidth =
+            2.5;
+
+
+        const baseX =
+            x2 - ux * arrowLength;
+
+        const baseY =
+            y2 - uy * arrowLength;
+
+
+        const px =
+            -uy * arrowWidth;
+
+        const py =
+            ux * arrowWidth;
+
+
+        const line =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "line"
+            );
+
+        line.setAttribute("x1", x1);
+        line.setAttribute("y1", y1);
+        line.setAttribute("x2", baseX);
+        line.setAttribute("y2", baseY);
+
+        line.setAttribute(
+            "stroke",
+            "rgba(40, 170, 90, 0.9)"
+        );
+
+        line.setAttribute(
+            "stroke-width",
+            "2.8"
+        );
+
+        line.setAttribute(
+            "stroke-linecap",
+            "round"
+        );
+
+
+        const polygon =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "polygon"
+            );
+
+
+        polygon.setAttribute(
+            "points",
+            `${x2},${y2} ${baseX + px},${baseY + py} ${baseX - px},${baseY - py}`
+        );
+
+
+        polygon.setAttribute(
+            "fill",
+            "rgba(40, 170, 90, 0.9)"
+        );
+
+
+        arrowLayer.appendChild(line);
+        arrowLayer.appendChild(polygon);
+
     }
 
 
-    drawBoard();
-}
+    /* =========================
+       CREATE MOVE LIST
+    ========================= */
+
+    function createMoveList() {
+
+        movesBox.innerHTML = "";
+
+        const moves =
+            getCurrentMoves();
 
 
-// ==========================
-// MOVE HIGHLIGHT
-// ==========================
+        for (let i = 0; i < moves.length; i += 2) {
 
-function updateMoveHighlight() {
+            const row =
+                document.createElement("div");
 
-    const moves =
-        document.querySelectorAll(".move");
-
-
-    moves.forEach(function(move) {
-
-        move.classList.remove("active");
-
-    });
+            row.className =
+                "move-row";
 
 
-    if (
-    currentMove >= 0 &&
-    moves[currentMove]
-) {
+            const number =
+                document.createElement("span");
 
-    moves[currentMove].classList.add("active");
+            number.className =
+                "move-number";
 
-}
-
-}
-
-document
-    .getElementById("flipButton")
-    .addEventListener("click", function() {
-
-        boardFlipped = !boardFlipped;
-
-        localStorage.setItem(
-            "boardFlipped",
-            boardFlipped
-        );
-
-        drawBoard();
-
-    });
-// ==========================
-// NEXT
-// ==========================
-
-document
-    .getElementById("nextButton")
-    .addEventListener("click", function() {
-
-        const variationKey =
-    openingName === "najdorf" && currentVariation !== "main"
-        ? "najdorf_" + currentVariation
-        : openingName;
-
-const currentMoves =
-    moveData[variationKey] || [];
-
-if (
-    currentMove <
-    currentMoves.length - 1
-) {
-
-            currentMove++;
-
-            updateBoardPosition();
-
-            updateMoveHighlight();
-
-        }
-
-    });
+            number.textContent =
+                (i / 2 + 1) + ".";
 
 
-// ==========================
-// PREVIOUS
-// ==========================
+            row.appendChild(number);
 
-document
-    .getElementById("previousButton")
-    .addEventListener("click", function() {
 
-        if (currentMove > -1) {
+            const whiteMove =
+                document.createElement("span");
 
-            currentMove--;
+            whiteMove.className =
+                "move";
 
-            updateBoardPosition();
-            updateMoveHighlight();
-            drawMoveArrow();
+            whiteMove.textContent =
+                moves[i][2];
 
-        }
-    });
+            whiteMove.dataset.index =
+                i;
 
-// ==========================
-// RESET
-// ==========================
 
-document
-    .getElementById("resetButton")
-    .addEventListener("click", function() {
+            whiteMove.addEventListener(
+                "click",
+                function () {
 
-        currentMove = -1;
-        currentVariation = "main";
+                    currentMove =
+                        parseInt(this.dataset.index);
 
-        document
-            .querySelectorAll(".variation")
-            .forEach(function(btn) {
-                btn.classList.remove("active");
-            });
+                    updateBoardPosition();
 
-        const mainButton =
-            document.querySelector(
-                '.variation[data-variation="main"]'
+                    updateMoveHighlight();
+
+                }
             );
 
-        if (mainButton) {
-            mainButton.classList.add("active");
+
+            row.appendChild(whiteMove);
+
+
+            const blackMove =
+                document.createElement("span");
+
+
+            blackMove.className =
+                "move";
+
+
+            if (moves[i + 1]) {
+
+                blackMove.textContent =
+                    moves[i + 1][2];
+
+                blackMove.dataset.index =
+                    i + 1;
+
+
+                blackMove.addEventListener(
+                    "click",
+                    function () {
+
+                        currentMove =
+                            parseInt(this.dataset.index);
+
+                        updateBoardPosition();
+
+                        updateMoveHighlight();
+
+                    }
+                );
+
+            }
+
+
+            row.appendChild(blackMove);
+
+            movesBox.appendChild(row);
+
         }
 
-        document.getElementById("movesTitle").textContent =
-            "Main Line";
-
-        createMoveList();
-        updateBoardPosition();
-        updateMoveHighlight();
-        drawMoveArrow();
-    });
-    lightColor.addEventListener("input", function() {
-
-    localStorage.setItem(
-        "lightColor",
-        lightColor.value
-    );
-
-    drawBoard();
-
-});
+    }
 
 
-darkColor.addEventListener("input", function() {
+    /* =========================
+       HIGHLIGHT MOVE
+    ========================= */
 
-    localStorage.setItem(
-        "darkColor",
-        darkColor.value
-    );
+    function updateMoveHighlight() {
 
-    drawBoard();
+        const moves =
+            document.querySelectorAll(".move");
 
-});
-document
-    .getElementById("resetColorsButton")
-    .addEventListener("click", function() {
 
-        lightColor.value = "#f0d9b5";
-        darkColor.value = "#b58863";
+        moves.forEach(function (move) {
 
-        localStorage.removeItem("lightColor");
-        localStorage.removeItem("darkColor");
-
-        drawBoard();
-
-    });
-document
-    .querySelectorAll(".variation")
-    .forEach(function(button) {
-
-        button.addEventListener("click", function() {
-
-            document
-                .querySelectorAll(".variation")
-                .forEach(function(btn) {
-                    btn.classList.remove("active");
-                });
-
-            button.classList.add("active");
-
-            currentVariation =
-    button.dataset.variation;
-
-const movesTitle =
-    document.getElementById("movesTitle");
-
-if (currentVariation === "main") {
-    movesTitle.textContent = "Main Line";
-}
-
-if (currentVariation === "bg5") {
-    movesTitle.textContent = "6.Bg5";
-}
-
-if (currentVariation === "be3") {
-    movesTitle.textContent = "6.Be3";
-}
-
-if (currentVariation === "bc4") {
-    movesTitle.textContent = "6.Bc4";
-}
-
-currentMove = -1;
-
-createMoveList();
-
-updateBoardPosition();
-
-updateMoveHighlight();
+            move.classList.remove("active");
 
         });
 
-    });
-    document.addEventListener("keydown", function(event) {
 
-    if (event.key === "ArrowRight" || event.key === " ") {
+        if (
+            currentMove >= 0 &&
+            moves[currentMove]
+        ) {
 
-        event.preventDefault();
+            moves[currentMove].classList.add("active");
 
-        document
-            .getElementById("nextButton")
-            .click();
-    }
+            moves[currentMove].scrollIntoView({
+                block: "nearest"
+            });
 
-    if (event.key === "ArrowLeft") {
-
-        event.preventDefault();
-
-        document
-            .getElementById("previousButton")
-            .click();
-    }
-
-    if (event.key === "Home") {
-
-        event.preventDefault();
-
-        document
-            .getElementById("resetButton")
-            .click();
-    }
-
-    if (event.key === "End") {
-
-        event.preventDefault();
-
-        const variationKey =
-            openingName === "najdorf" &&
-            currentVariation !== "main"
-                ? "najdorf_" + currentVariation
-                : openingName;
-
-        const currentMoves =
-            moveData[variationKey] || [];
-
-        if (currentMoves.length > 0) {
-
-            currentMove =
-                currentMoves.length - 1;
-
-            updateBoardPosition();
-            updateMoveHighlight();
         }
+
     }
 
-});
+
+    /* =========================
+       UPDATE BOARD POSITION
+    ========================= */
+
+    function updateBoardPosition() {
+
+        currentPosition =
+            [...startingPosition];
+
+
+        const moves =
+            getCurrentMoves();
+
+
+        for (
+            let i = 0;
+            i <= currentMove;
+            i++
+        ) {
+
+            if (!moves[i]) {
+                break;
+            }
+
+
+            const from =
+                squareToIndex(moves[i][0]);
+
+            const to =
+                squareToIndex(moves[i][1]);
+
+
+            currentPosition[to] =
+                currentPosition[from];
+
+            currentPosition[from] =
+                "";
+
+        }
+
+
+        drawBoard();
+
+    }
+
+
+    /* =========================
+       VARIATIONS
+    ========================= */
+
+    variationButtons.forEach(
+        function (button) {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    variationButtons.forEach(
+                        function (item) {
+
+                            item.classList.remove("active");
+
+                        }
+                    );
+
+
+                    this.classList.add("active");
+
+
+                    currentVariation =
+                        this.dataset.variation;
+
+
+                    currentMove =
+                        -1;
+
+
+                    currentPosition =
+                        [...startingPosition];
+
+
+                    createMoveList();
+
+                    updateBoardPosition();
+
+                    updateMoveHighlight();
+
+                }
+            );
+
+        }
+    );
+
+
+    /* =========================
+       BUTTONS
+    ========================= */
+
+    document
+        .getElementById("firstMove")
+        .addEventListener(
+            "click",
+            function () {
+
+                currentMove = -1;
+
+                updateBoardPosition();
+
+                updateMoveHighlight();
+
+            }
+        );
+
+
+    document
+        .getElementById("previousMove")
+        .addEventListener(
+            "click",
+            function () {
+
+                if (currentMove >= 0) {
+
+                    currentMove--;
+
+                    updateBoardPosition();
+
+                    updateMoveHighlight();
+
+                }
+
+            }
+        );
+
+
+    document
+        .getElementById("nextMove")
+        .addEventListener(
+            "click",
+            function () {
+
+                const moves =
+                    getCurrentMoves();
+
+                if (
+                    currentMove <
+                    moves.length - 1
+                ) {
+
+                    currentMove++;
+
+                    updateBoardPosition();
+
+                    updateMoveHighlight();
+
+                }
+
+            }
+        );
+
+
+    document
+        .getElementById("lastMove")
+        .addEventListener(
+            "click",
+            function () {
+
+                const moves =
+                    getCurrentMoves();
+
+                currentMove =
+                    moves.length - 1;
+
+                updateBoardPosition();
+
+                updateMoveHighlight();
+
+            }
+        );
+
+
+    document
+        .getElementById("resetBoard")
+        .addEventListener(
+            "click",
+            function () {
+
+                currentMove = -1;
+
+                currentVariation = "main";
+
+
+                variationButtons.forEach(
+                    function (button) {
+
+                        button.classList.remove("active");
+
+                    }
+                );
+
+
+                const mainButton =
+                    document.querySelector(
+                        '.variation[data-variation="main"]'
+                    );
+
+
+                if (mainButton) {
+
+                    mainButton.classList.add("active");
+
+                }
+
+
+                currentPosition =
+                    [...startingPosition];
+
+
+                createMoveList();
+
+                updateBoardPosition();
+
+                updateMoveHighlight();
+
+            }
+        );
+
+
+    /* =========================
+       KEYBOARD NAVIGATION
+    ========================= */
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (event.key === "ArrowLeft") {
+
+                if (currentMove >= 0) {
+
+                    currentMove--;
+
+                    updateBoardPosition();
+
+                    updateMoveHighlight();
+
+                }
+
+            }
+
+
+            if (event.key === "ArrowRight") {
+
+                const moves =
+                    getCurrentMoves();
+
+                if (
+                    currentMove <
+                    moves.length - 1
+                ) {
+
+                    currentMove++;
+
+                    updateBoardPosition();
+
+                    updateMoveHighlight();
+
+                }
+
+            }
+
+
+            if (event.key === "Home") {
+
+                currentMove = -1;
+
+                updateBoardPosition();
+
+                updateMoveHighlight();
+
+            }
+
+
+            if (event.key === "End") {
+
+                const moves =
+                    getCurrentMoves();
+
+                currentMove =
+                    moves.length - 1;
+
+                updateBoardPosition();
+
+                updateMoveHighlight();
+
+            }
+
+        }
+    );
+
+
+    /* =========================
+       INITIALIZE
+    ========================= */
+
+    updateOpeningInformation();
+
+    createMoveList();
+
+    updateBoardPosition();
+
+    updateMoveHighlight();
+
 </script>
 
 </body>
