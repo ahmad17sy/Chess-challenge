@@ -1,134 +1,1078 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <title>My Chess</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Chess - Play</title>
+
     <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* =========================
+           HOME LAYOUT
+        ========================= */
+
+        .chess-page {
+            margin: 0;
+            min-height: 100vh;
+            background: #07111f;
+            color: #ffffff;
+
+            display: flex;
+
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .chess-sidebar {
+            width: 240px;
+            min-height: 100vh;
+
+            background: #0b1728;
+            border-right: 1px solid #1d2d43;
+
+            padding: 24px 15px;
+
+            display: flex;
+            flex-direction: column;
+
+            flex-shrink: 0;
+        }
+
+        .chess-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            font-size: 22px;
+            font-weight: bold;
+
+            padding: 0 12px 30px;
+        }
+
+        .chess-logo-icon {
+            font-size: 28px;
+        }
+
+        .chess-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .chess-menu a {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    padding: 12px 14px;
+
+    color: #aebbd0;
+    text-decoration: none;
+
+    border-radius: 9px;
+
+    font-size: 15px;
+
+    transition: 0.2s;
+}
+
+        .chess-menu a:hover {
+            background: #14243a;
+            color: white;
+        }
+
+        .chess-menu a.active {
+            background: #1b3555;
+            color: white;
+        }
+
+        .chess-menu-icon {
+            width: 24px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .chess-sidebar-bottom {
+            margin-top: auto;
+        }
+
+        .chess-sidebar-divider {
+            height: 1px;
+            background: #1d2d43;
+            margin: 20px 10px;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .chess-main {
+            flex: 1;
+            min-width: 0;
+
+            padding: 0 35px 40px;
+
+            overflow-x: auto;
+        }
+
+        /* =========================
+           TOPBAR
+        ========================= */
+
+        .chess-topbar {
+            height: 75px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            border-bottom: 1px solid #17283d;
+
+            margin-bottom: 30px;
+        }
+
+        .chess-search {
+            width: 300px;
+
+            background: #0d1c30;
+            border: 1px solid #20344d;
+            border-radius: 9px;
+
+            padding: 11px 15px;
+
+            color: #9eabc0;
+
+            flex-shrink: 0;
+            text-align: left;
+        }
+
+        .chess-user-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chess-notification {
+            font-size: 20px;
+            color: #aebbd0;
+        }
+
+        .chess-login {
+            padding: 9px 17px;
+
+            border: 1px solid #50647e;
+            border-radius: 7px;
+
+            color: white;
+            text-decoration: none;
+
+            font-size: 14px;
+        }
+
+        .chess-signup {
+            padding: 10px 18px;
+
+            background: #e9ad3f;
+            color: #111;
+
+            border-radius: 7px;
+
+            text-decoration: none;
+
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* =========================
+           PAGE TITLE
+        ========================= */
+
+        .chess-title {
+            margin-bottom: 20px;
+        }
+
+        .chess-title h1 {
+            margin: 0 0 8px;
+
+            font-size: 34px;
+        }
+
+        .chess-title p {
+            margin: 0;
+
+            color: #9eabc0;
+
+            font-size: 16px;
+        }
+
+        /* =========================
+           BOARD COLORS
+        ========================= */
+
+        .board-colors {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            margin-bottom: 15px;
+
+            color: #aebbd0;
+
+            font-size: 14px;
+        }
+
+        .board-colors input {
+            width: 38px;
+            height: 28px;
+
+            padding: 2px;
+
+            border: 1px solid #30445e;
+            border-radius: 6px;
+
+            background: #0d1c30;
+        }
+
+        /* =========================
+           PLAYER CONTROLS
+        ========================= */
+
+        #colorControls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+
+            margin-bottom: 12px;
+        }
+
+        #colorControls button {
+            padding: 9px 14px;
+
+            background: #0d1c30;
+            color: #d8e0ec;
+
+            border: 1px solid #30445e;
+            border-radius: 7px;
+
+            cursor: pointer;
+        }
+
+        #colorControls button:hover {
+            background: #14243a;
+            color: white;
+        }
+
+        #gameStatus {
+            min-height: 22px;
+
+            margin-bottom: 10px;
+
+            color: #e9ad3f;
+        }
+
+        /* =========================
+           CLOCK
+        ========================= */
+
+        #chessClock {
+            display: flex;
+            gap: 10px;
+
+            margin-bottom: 15px;
+        }
+
+        .clock {
+            min-width: 120px;
+
+            padding: 9px 15px;
+
+            background: #0d1c30;
+
+            border: 1px solid #20344d;
+            border-radius: 8px;
+
+            font-size: 20px;
+            font-weight: bold;
+
+            text-align: center;
+        }
+
+        /* =========================
+           GAME AREA
+        ========================= */
+
+        #chessGameArea {
+            position: relative;
+
+            width: 1080px;
+            min-height: 700px;
+
+            background: #0b1728;
+
+            border: 1px solid #1d3048;
+            border-radius: 14px;
+
+            padding: 25px;
+
+            box-shadow:
+                0 8px 25px rgba(0, 0, 0, 0.35);
+        }
+
+        /* =========================
+           MOVE HISTORY
+        ========================= */
+
+        #moveHistory {
+            position: absolute;
+
+            left: 25px;
+            top: 25px;
+
+            width: 220px;
+
+            background: #0d1c30;
+
+            border: 1px solid #1d3048;
+            border-radius: 10px;
+
+            padding: 15px;
+        }
+
+        #moveHistory h3 {
+            margin: 0 0 10px;
+        }
+
+        #movesList {
+            max-height: 500px;
+            overflow-y: auto;
+
+            color: #b9c6d8;
+        }
+
+        /* =========================
+           TIME CONTROL
+        ========================= */
+
+        #timeControl {
+            position: absolute;
+
+            right: 25px;
+            top: 25px;
+
+            width: 220px;
+
+            background: #0d1c30;
+
+            border: 1px solid #1d3048;
+            border-radius: 10px;
+
+            padding: 15px;
+        }
+
+        .time-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .time-category {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+
+            margin-bottom: 10px;
+        }
+
+        .time-category button {
+            padding: 6px 8px;
+
+            background: #102239;
+
+            border: 1px solid #29415f;
+            border-radius: 6px;
+
+            color: #b9c6d8;
+
+            cursor: pointer;
+
+            font-size: 12px;
+        }
+
+        .time-category button:hover {
+            background: #1b3555;
+            color: white;
+        }
+
+        #timeSelect {
+            width: 100%;
+
+            padding: 8px;
+
+            background: #07111f;
+
+            border: 1px solid #30445e;
+            border-radius: 6px;
+
+            color: white;
+        }
+
+        /* =========================
+           BOARD
+        ========================= */
+
+        #chessboard {
+            width: 560px;
+            height: 560px;
+
+            margin: 40px auto 0;
+
+            box-shadow:
+                0 8px 25px rgba(0, 0, 0, 0.45);
+        }
+
+        /* =========================
+           CAPTURED
+        ========================= */
+
+        #capturedPieces {
+            width: 560px;
+
+            margin: 12px auto;
+
+            color: #9eabc0;
+        }
+
+        #capturedWhite,
+        #capturedBlack {
+            min-height: 22px;
+        }
+
+        /* =========================
+           OPENING TRAINING
+        ========================= */
+
+        #openingTraining {
+            width: 560px;
+
+            margin: 18px auto 0;
+
+            padding: 15px;
+
+            background: #0d1c30;
+
+            border: 1px solid #1d3048;
+            border-radius: 10px;
+
+            color: #b9c6d8;
+        }
+
+        #openingSelect {
+            padding: 8px;
+
+            background: #07111f;
+
+            border: 1px solid #30445e;
+            border-radius: 6px;
+
+            color: white;
+        }
+
+        #startOpening {
+            padding: 8px 12px;
+
+            margin-left: 6px;
+
+            background: #e9ad3f;
+
+            border: none;
+            border-radius: 6px;
+
+            color: #111;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        /* =========================
+           STOCKFISH
+        ========================= */
+
+        #pgnAnalysis {
+            width: 560px;
+
+            margin: 18px auto 0;
+
+            padding: 18px;
+
+            background: #0d1c30;
+
+            border: 1px solid #1d3048;
+            border-radius: 10px;
+        }
+
+        #pgnAnalysis h3 {
+            margin-top: 0;
+        }
+
+        #pgnAnalysis #analysisEvaluation,
+        #pgnAnalysis #analysisBestMove,
+        #pgnAnalysis #analysisDepth {
+            padding: 8px 10px;
+
+            margin-bottom: 6px;
+
+            background: #102239;
+
+            border-radius: 6px;
+
+            color: #b9c6d8;
+        }
+
+        #analyzePosition {
+            padding: 9px 14px;
+
+            background: #e9ad3f;
+
+            border: none;
+            border-radius: 7px;
+
+            color: #111;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            .chess-sidebar {
+                width: 70px;
+                padding: 20px 8px;
+            }
+
+            .chess-logo {
+                justify-content: center;
+
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            .chess-logo-text,
+            .chess-menu-text {
+                display: none;
+            }
+
+            .chess-menu a {
+                justify-content: center;
+                padding: 12px 5px;
+            }
+
+            .chess-main {
+                padding: 0 15px 30px;
+            }
+
+            .chess-search {
+                width: 150px;
+            }
+        }
+    </style>
 </head>
 
 <body>
-<nav>
-    <a href="index.html">Home</a>
-    <a href="chess.html">Play Against Computer</a>
-    <a href="analysis.html">Analysis Board</a>
-    <a href="openings.html">Openings</a>
-    <a href="contact.html">Contact</a>
-</nav>
-    <div class="page-header">
-    <h1>My Chess</h1>
-    <p>Play Against Computer</p>
-</div>
 
-    <div>
-        <label>Light Squares:</label>
-        <input type="color" id="lightColor" value="#f0d9b5">
+<div class="chess-page">
 
-        <label>Dark Squares:</label>
-        <input type="color" id="darkColor" value="#b58863">
-    </div>
+    <!-- SIDEBAR -->
 
-    <div id="colorControls">
-        <button id="whiteButton">♙ Play White</button>
-        <button id="blackButton">♟ Play Black</button>
-        <button id="randomButton">🎲 Random</button>
-        <button onclick="flipBoard()">🔄 Flip Board</button>
-    </div>
-<div id="gameStatus"></div>
+    <aside class="chess-sidebar">
 
-<div id="chessClock">
-    <div class="clock black-clock" id="blackClock">10:00</div>
-    <div class="clock white-clock" id="whiteClock">10:00</div>
-</div>
+        <div class="chess-logo">
 
-    <div id="chessGameArea">
+            <span class="chess-logo-icon">♛</span>
 
-   <div id="timeControl">
+            <span class="chess-logo-text">
+                MY CHESS
+            </span>
 
-    <div class="time-title">Time control</div>
-
-    <div class="time-category">
-        <button type="button" data-category="bullet">⚡ Bullet</button>
-        <button type="button" data-category="blitz">🔥 Blitz</button>
-        <button type="button" data-category="rapid">♟ Rapid</button>
-        <button type="button" data-category="classical">🕐 Classical</button>
-    </div>
-
-    <select id="timeSelect">
-
-        <option value="60,0">1 + 0</option>
-        <option value="60,1">1 + 1</option>
-
-        <option value="120,1">2 + 1</option>
-
-        <option value="180,0">3 + 0</option>
-        <option value="180,2">3 + 2</option>
-
-        <option value="300,0">5 + 0</option>
-        <option value="300,3">5 + 3</option>
-
-        <option value="600,0" selected>10 + 0</option>
-        <option value="600,5">10 + 5</option>
-
-        <option value="900,10">15 + 10</option>
-
-        <option value="1800,0">30 + 0</option>
-
-    </select>
-
-</div>
-
-    <div id="moveHistory">
-            <h3>Moves</h3>
-            <div id="movesList"></div>
         </div>
 
-        <div id="chessboard"></div>
-<div id="capturedPieces">
-    <div id="capturedWhite"></div>
-    <div id="capturedBlack"></div>
+
+        <div class="chess-menu">
+
+            <a href="index.html">
+
+                <span class="chess-menu-icon">🏠</span>
+
+                <span class="chess-menu-text">
+                    Home
+                </span>
+
+            </a>
+
+
+            <a href="chess.html" class="active">
+
+                <span class="chess-menu-icon">♟</span>
+
+                <span class="chess-menu-text">
+                    Play
+                </span>
+
+            </a>
+
+
+            <a href="analysis.html">
+
+                <span class="chess-menu-icon">🔍</span>
+
+                <span class="chess-menu-text">
+                    Analysis
+                </span>
+
+            </a>
+
+
+            <a href="openings.html">
+
+                <span class="chess-menu-icon">📖</span>
+
+                <span class="chess-menu-text">
+                    Openings
+                </span>
+
+            </a>
+
+
+            <a href="#">
+
+                <span class="chess-menu-icon">📄</span>
+
+                <span class="chess-menu-text">
+                    My Games / PGN
+                </span>
+
+            </a>
+
+
+            <a href="#">
+
+                <span class="chess-menu-icon">👥</span>
+
+                <span class="chess-menu-text">
+                    Friends
+                </span>
+
+            </a>
+
+
+            <a href="#">
+
+                <span class="chess-menu-icon">💬</span>
+
+                <span class="chess-menu-text">
+                    Community
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <div class="chess-sidebar-bottom">
+
+            <div class="chess-sidebar-divider"></div>
+
+            <div class="chess-menu">
+
+                <a href="#">
+
+                    <span class="chess-menu-icon">⚙</span>
+
+                    <span class="chess-menu-text">
+                        Settings
+                    </span>
+
+                </a>
+
+
+                <a href="#">
+
+                    <span class="chess-menu-icon">🔑</span>
+
+                    <span class="chess-menu-text">
+                        Login
+                    </span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="chess-main">
+
+
+        <!-- TOP BAR -->
+
+        <header class="chess-topbar">
+
+            <div class="chess-search">
+                🔍 &nbsp; Search...
+            </div>
+
+
+            <div class="chess-user-area">
+
+                <span class="chess-notification">
+                    🔔
+                </span>
+
+
+                <a href="#" class="chess-login">
+                    Login
+                </a>
+
+
+                <a href="#" class="chess-signup">
+                    Sign Up
+                </a>
+
+            </div>
+
+        </header>
+
+
+        <!-- TITLE -->
+
+        <div class="chess-title">
+
+            <h1>
+                Play Chess
+            </h1>
+
+            <p>
+                Play against Stockfish and improve your chess.
+            </p>
+
+        </div>
+
+
+        <!-- COLORS -->
+
+        <div class="board-colors">
+
+            <label>
+                Light Squares:
+            </label>
+
+            <input
+                type="color"
+                id="lightColor"
+                value="#f0d9b5"
+            >
+
+
+            <label>
+                Dark Squares:
+            </label>
+
+            <input
+                type="color"
+                id="darkColor"
+                value="#b58863"
+            >
+
+        </div>
+
+
+        <!-- PLAYER -->
+
+        <div id="colorControls">
+
+            <button id="whiteButton">
+                ♙ Play White
+            </button>
+
+            <button id="blackButton">
+                ♟ Play Black
+            </button>
+
+            <button id="randomButton">
+                🎲 Random
+            </button>
+
+            <button onclick="flipBoard()">
+                🔄 Flip Board
+            </button>
+
+        </div>
+
+
+        <div id="gameStatus"></div>
+
+
+        <!-- CLOCK -->
+
+        <div id="chessClock">
+
+            <div
+                class="clock black-clock"
+                id="blackClock"
+            >
+                10:00
+            </div>
+
+
+            <div
+                class="clock white-clock"
+                id="whiteClock"
+            >
+                10:00
+            </div>
+
+        </div>
+
+
+        <!-- GAME -->
+
+        <div id="chessGameArea">
+
+
+            <!-- TIME CONTROL -->
+
+            <div id="timeControl">
+
+                <div class="time-title">
+                    Time control
+                </div>
+
+
+                <div class="time-category">
+
+                    <button
+                        type="button"
+                        data-category="bullet"
+                    >
+                        ⚡ Bullet
+                    </button>
+
+
+                    <button
+                        type="button"
+                        data-category="blitz"
+                    >
+                        🔥 Blitz
+                    </button>
+
+
+                    <button
+                        type="button"
+                        data-category="rapid"
+                    >
+                        ♟ Rapid
+                    </button>
+
+
+                    <button
+                        type="button"
+                        data-category="classical"
+                    >
+                        🕐 Classical
+                    </button>
+
+                </div>
+
+
+                <select id="timeSelect">
+
+                    <option value="60,0">
+                        1 + 0
+                    </option>
+
+                    <option value="60,1">
+                        1 + 1
+                    </option>
+
+                    <option value="120,1">
+                        2 + 1
+                    </option>
+
+                    <option value="180,0">
+                        3 + 0
+                    </option>
+
+                    <option value="180,2">
+                        3 + 2
+                    </option>
+
+                    <option value="300,0">
+                        5 + 0
+                    </option>
+
+                    <option value="300,3">
+                        5 + 3
+                    </option>
+
+                    <option
+                        value="600,0"
+                        selected
+                    >
+                        10 + 0
+                    </option>
+
+                    <option value="600,5">
+                        10 + 5
+                    </option>
+
+                    <option value="900,10">
+                        15 + 10
+                    </option>
+
+                    <option value="1800,0">
+                        30 + 0
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- MOVES -->
+
+            <div id="moveHistory">
+
+                <h3>
+                    Moves
+                </h3>
+
+                <div id="movesList"></div>
+
+            </div>
+
+
+            <!-- BOARD -->
+
+            <div id="chessboard"></div>
+
+
+            <!-- CAPTURED -->
+
+            <div id="capturedPieces">
+
+                <div id="capturedWhite"></div>
+
+                <div id="capturedBlack"></div>
+
+            </div>
+
+
+            <!-- OPENINGS -->
+
+            <div id="openingTraining">
+
+                <label for="openingSelect">
+                    ♟️ Opening Training:
+                </label>
+
+
+                <select id="openingSelect">
+
+                    <option value="">
+                        Choose an opening
+                    </option>
+
+                    <option value="italian">
+                        Italian Game
+                    </option>
+
+                    <option value="sicilian">
+                        Sicilian Defense
+                    </option>
+
+                    <option value="najdorf">
+                        Sicilian Najdorf
+                    </option>
+
+                    <option value="spanish">
+                        Ruy Lopez
+                    </option>
+
+                    <option value="queensGambit">
+                        Queen's Gambit
+                    </option>
+
+                </select>
+
+
+                <button id="startOpening">
+                    Start Training
+                </button>
+
+            </div>
+
+
+            <!-- STOCKFISH -->
+
+            <div id="pgnAnalysis">
+
+                <h3>
+                    🤖 Stockfish Analysis
+                </h3>
+
+
+                <div id="analysisEvaluation">
+                    Evaluation: 0.00
+                </div>
+
+
+                <div id="analysisBestMove">
+                    Best move: -
+                </div>
+
+
+                <div id="analysisDepth">
+                    Depth: -
+                </div>
+
+
+                <button id="analyzePosition">
+                    🔍 Analyze Position
+                </button>
+
+
+                <div id="gameAnalysisResults"></div>
+
+            </div>
+
+        </div>
+
+    </main>
+
 </div>
-<div id="openingTraining">
-    <label for="openingSelect">♟️ Opening Training:</label>
 
-    <select id="openingSelect">
-        <option value="">Choose an opening</option>
-        <option value="italian">Italian Game</option>
-        <option value="sicilian">Sicilian Defense</option>
-        <option value="najdorf">Sicilian Najdorf</option>
-        <option value="spanish">Ruy Lopez</option>
-        <option value="queensGambit">Queen's Gambit</option>
-    </select>
 
-    <button id="startOpening">Start Training</button>
-</div>
+<!-- CHESS.JS -->
 
-    <div id="pgnAnalysis">
-    <h3>🤖 Stockfish Analysis</h3>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
 
-    <div id="analysisEvaluation">
-        Evaluation: 0.00
-    </div>
 
-    <div id="analysisBestMove">
-        Best move: -
-    </div>
+<!-- YOUR SCRIPT -->
 
-    <div id="analysisDepth">
-        Depth: -
-    </div>
-
-    <button id="analyzePosition">
-        🔍 Analyze Position
-    </button>
-
-<div id="gameAnalysisResults"></div>
-</div>
-
-</div>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
 <script src="./script.js?v=3"></script>
 
 </body>

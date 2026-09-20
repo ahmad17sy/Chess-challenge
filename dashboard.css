@@ -1,0 +1,197 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #07111f;
+    color: #ffffff;
+}
+
+.dashboard {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar {
+    width: 240px;
+    min-height: 100vh;
+    background: #0b1728;
+    border-right: 1px solid #1d2d43;
+    padding: 24px 15px;
+
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-size: 22px;
+    font-weight: bold;
+
+    padding: 0 12px 30px;
+}
+
+.logo-icon {
+    font-size: 28px;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.menu a {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    padding: 12px 14px;
+
+    color: #aebbd0;
+    text-decoration: none;
+
+    border-radius: 9px;
+
+    font-size: 15px;
+
+    transition: 0.2s;
+}
+
+.menu a:hover {
+    background: #14243a;
+    color: white;
+}
+
+.menu a.active {
+    background: #1b3555;
+    color: white;
+}
+
+.menu-icon {
+    width: 24px;
+    text-align: center;
+    font-size: 18px;
+}
+
+.sidebar-bottom {
+    margin-top: auto;
+}
+
+.sidebar-divider {
+    height: 1px;
+    background: #1d2d43;
+    margin: 20px 10px;
+}
+
+/* MAIN */
+
+.main {
+    flex: 1;
+    padding: 0 35px 40px;
+    min-width: 0;
+}
+
+/* TOP BAR */
+
+.topbar {
+    height: 75px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom: 1px solid #17283d;
+    margin-bottom: 30px;
+}
+
+.search {
+    width: 300px;
+
+    background: #0d1c30;
+    border: 1px solid #20344d;
+    border-radius: 9px;
+
+    padding: 11px 15px;
+
+    color: #9eabc0;
+}
+
+.user-area {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.notification {
+    font-size: 20px;
+    color: #aebbd0;
+}
+
+.login-button {
+    padding: 9px 17px;
+
+    border: 1px solid #50647e;
+    border-radius: 7px;
+
+    color: white;
+    text-decoration: none;
+
+    font-size: 14px;
+}
+
+.signup-button {
+    padding: 10px 18px;
+
+    background: #e9ad3f;
+    color: #111;
+
+    border-radius: 7px;
+
+    text-decoration: none;
+
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+    .sidebar {
+        width: 70px;
+        padding: 20px 8px;
+    }
+
+    .logo {
+        justify-content: center;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .logo-text,
+    .menu-text {
+        display: none;
+    }
+
+    .menu a {
+        justify-content: center;
+        padding: 12px 5px;
+    }
+
+    .main {
+        padding: 0 15px 30px;
+    }
+
+    .search {
+        width: 150px;
+    }
+}
