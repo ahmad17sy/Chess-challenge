@@ -290,7 +290,21 @@
         .analyze-button:hover {
             background: #f2bc50;
         }
-
+.training-start-button {
+    min-height: 46px;
+    min-width: 180px;
+    padding: 0 24px;
+    font-size: 15px;
+    border-radius: 8px;
+}
+.training-next-button {
+    min-width: 180px;
+    min-height: 46px;
+    padding: 0 24px;
+    margin-top: 8px;
+    font-size: 15px;
+    border-radius: 8px;
+}
 
         .status-message {
             display: none;
@@ -562,6 +576,62 @@
             }
 
         }
+
+/* =========================
+   NEW PLAYER STATISTICS
+========================= */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+}
+
+.stats-grid .stat-card {
+    min-height: 115px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.stats-grid .stat-value {
+    font-size: 22px;
+    line-height: 1.25;
+    word-break: break-word;
+}
+
+/* =========================
+   OPENING ANALYSIS
+========================= */
+
+.stat-value-small {
+    font-size: 18px !important;
+    line-height: 1.35;
+}
+
+.analysis-card {
+    margin-top: 20px;
+}
+
+.analysis-card .section-title {
+    margin-bottom: 10px;
+}
+
+.opening-row {
+    min-height: 52px;
+}
+
+.opening-name {
+    max-width: 70%;
+    line-height: 1.4;
+}
+
+.opening-value {
+    text-align: right;
+    white-space: nowrap;
+}
+
 /* =========================
    TRAINING CHESSBOARD
 ========================= */
@@ -569,23 +639,18 @@
 #trainingChessboard {
     width: 640px;
     height: 640px;
-
     max-width: 100%;
-    max-height: 100%;
 
     display: grid;
 
-    grid-template-columns:
-        repeat(8, 1fr);
-
-    grid-template-rows:
-        repeat(8, 1fr);
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
 
     overflow: hidden;
 
     user-select: none;
+    touch-action: none;
 }
-
 
 #trainingChessboard .analysis-square {
     position: relative;
@@ -596,16 +661,13 @@
     box-sizing: border-box;
 }
 
-
 #trainingChessboard .analysis-light {
     background: #f0d9b5;
 }
 
-
 #trainingChessboard .analysis-dark {
     background: #b58863;
 }
-
 
 #trainingChessboard .chess-piece {
     width: 100%;
@@ -616,25 +678,303 @@
     display: block;
 
     position: relative;
-
     z-index: 3;
 
     user-select: none;
+    pointer-events: none;
 }
 
+
+/* =========================
+   DRAGGING
+========================= */
+
+#trainingDragPiece {
+    position: fixed;
+
+    width: 80px;
+    height: 80px;
+
+    object-fit: contain;
+
+    pointer-events: none;
+
+    z-index: 99999;
+
+    transform: translate(-50%, -50%) scale(1.08);
+
+    display: none;
+
+    filter: drop-shadow(0 5px 5px rgba(0,0,0,0.45));
+}
+
+#trainingChessboard .analysis-square.training-drag-from {
+    box-shadow:
+        inset 0 0 0 4px
+        rgba(255, 255, 255, 0.35);
+}
+
+#trainingChessboard .analysis-square.training-drag-over {
+    box-shadow:
+        inset 0 0 0 5px
+        rgba(255, 210, 70, 0.85);
+}
+
+#trainingChessboard .analysis-square.training-selected {
+    box-shadow:
+        inset 0 0 0 5px
+        rgba(255, 210, 70, 0.9);
+}
+
+
+/* =========================
+   LAST MOVE
+========================= */
+
+#trainingChessboard .analysis-square.training-last-move {
+    animation: trainingMoveFlash 0.45s ease-out;
+}
+
+#trainingChessboard .analysis-square.analysis-light.training-last-move {
+    background: #f7df8b;
+}
+
+#trainingChessboard .analysis-square.analysis-dark.training-last-move {
+    background: #c9a64b;
+}
+
+@keyframes trainingMoveFlash {
+
+    0% {
+        filter: brightness(1.25);
+    }
+
+    100% {
+        filter: brightness(1);
+    }
+
+}
+
+
+/* =========================
+   POSSIBLE MOVES
+========================= */
+
+#trainingChessboard .training-move-dot::after {
+    content: "";
+
+    position: absolute;
+
+    width: 22px;
+    height: 22px;
+
+    background: rgba(40, 40, 40, 0.38);
+
+    border-radius: 50%;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    z-index: 2;
+
+    pointer-events: none;
+}
+
+#trainingChessboard .training-capture::after {
+    content: "";
+
+    position: absolute;
+
+    width: 72%;
+    height: 72%;
+
+    border:
+        6px solid
+        rgba(40, 40, 40, 0.38);
+
+    border-radius: 50%;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    z-index: 2;
+
+    pointer-events: none;
+}
+
+
+/* =========================
+   TRAINING MODE
+========================= */
 
 #trainingBoardArea {
-    margin-top: 25px;
+    width: 100%;
+position: relative;
+    min-height: calc(100vh - 72px);
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: flex-start;
+
+    padding: 25px 20px 50px;
 }
 
+.training-header {
+    width: 640px;
+    max-width: 100%;
 
-#trainingQuestion {
-    margin-top: 15px;
+    position: relative;
 
-    color: #dbe5f2;
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+.training-header .section-title {
+    margin: 0;
+    text-align: center;
+    font-size: 24px;
+}
+
+.training-header .analyze-button {
+    position: absolute;
+
+    left: 0;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    min-width: 190px;
+    height: 46px;
+
+    padding: 0 22px;
 
     font-size: 15px;
+
+    border-radius: 8px;
 }
+.training-layout {
+    position: relative;
+
+    width: 640px;
+    max-width: 100%;
+
+    margin: 0 auto;
+}
+
+.training-board-wrapper {
+    width: 640px;
+    max-width: 100%;
+
+    margin: 0 auto;
+}
+
+#trainingQuestion {
+    position: absolute;
+
+    right: calc(100% + 30px);
+
+    top: 0;
+
+    width: 300px;
+
+    text-align: left;
+
+    font-size: 17px;
+
+    line-height: 1.6;
+}
+
+#trainingChessboard {
+    width: 640px;
+    height: 640px;
+    max-width: 100%;
+
+    margin: 0 auto;
+}
+
+/* =========================
+   TRAINING BUTTON
+========================= */
+
+.training-start-button {
+    min-height: 46px;
+
+    min-width: 170px;
+
+    padding: 0 24px;
+
+    font-size: 15px;
+
+    border-radius: 8px;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 700px) {
+
+    #trainingBoardArea {
+        padding-top: 20px;
+    }
+
+    .training-header {
+        flex-direction: column;
+
+        gap: 14px;
+    }
+
+    .training-header .analyze-button {
+        position: static;
+
+        transform: none;
+
+        align-self: flex-start;
+    }
+
+    #trainingChessboard {
+        width: min(640px, 100%);
+        height: auto;
+
+        aspect-ratio: 1 / 1;
+    }
+
+    #trainingChessboard .analysis-square {
+        width: auto;
+        height: auto;
+    }
+
+}
+
+@media (max-width: 650px) {
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
     </style>
 
 </head>
@@ -766,6 +1106,7 @@
 
 <main class="main">
 
+    <div id="statisticsView">
 
     <h1 class="page-title">
         Player Analysis
@@ -916,217 +1257,166 @@
 
     </div>
 
+<section class="results-section">
 
+    <h2 class="section-title">
+        Player Statistics
+    </h2>
 
-    <!-- =========================
-         PLAYER STATISTICS
-    ========================= -->
+    <div class="stats-grid">
 
-    <section class="results-section">
-
-
-        <h2 class="section-title">
-            Player Statistics
-        </h2>
-
-
-        <div class="stats-grid">
-
-
-            <div class="stat-card">
-
-                <div class="stat-label">
-                    Games Analyzed
-                </div>
-
-                <div
-                    class="stat-value"
-                    id="gamesCount"
-                >
-                    —
-                </div>
-
+        <div class="stat-card">
+            <div class="stat-label">
+                Human-like Moves
             </div>
 
+            <div
+                class="stat-value"
+                id="humanLikeRate"
+            >
+                —
+            </div>
+        </div>
 
-            <div class="stat-card">
 
-                <div class="stat-label">
-                    Win Rate
-                </div>
-
-                <div
-                    class="stat-value"
-                    id="winRate"
-                >
-                    —
-                </div>
-
+        <div class="stat-card">
+            <div class="stat-label">
+                Engine-like Moves
             </div>
 
+            <div
+                class="stat-value"
+                id="engineLikeRate"
+            >
+                —
+            </div>
+        </div>
 
-            <div class="stat-card">
 
-                <div class="stat-label">
-                    Draw Rate
-                </div>
-
-                <div
-                    class="stat-value"
-                    id="drawRate"
-                >
-                    —
-                </div>
-
+        <div class="stat-card">
+            <div class="stat-label">
+                Most Played Opening
             </div>
 
+            <div
+    class="stat-value stat-value-small"
+    id="mostPlayedOpening"
+>
+    —
+</div>
+        </div>
 
-            <div class="stat-card">
 
-                <div class="stat-label">
-                    Loss Rate
-                </div>
-
-                <div
-                    class="stat-value"
-                    id="lossRate"
-                >
-                    —
-                </div>
-
+        <div class="stat-card">
+            <div class="stat-label">
+                Best Opening
             </div>
 
+            <div
+    class="stat-value stat-value-small"
+    id="bestOpening"
+>
+    —
+</div>
+        </div>
+
+    </div>
+
+
+    <!-- MOST PLAYED OPENINGS -->
+
+    <div
+        class="analysis-card"
+        style="margin-top: 20px;"
+    >
+
+        <h3 class="section-title">
+            Most Played Openings
+        </h3>
+
+        <div id="topOpeningsList">
+
+            <div class="opening-row">
+                <span class="opening-name">1. —</span>
+                <span class="opening-value">—</span>
+            </div>
+
+            <div class="opening-row">
+                <span class="opening-name">2. —</span>
+                <span class="opening-value">—</span>
+            </div>
+
+            <div class="opening-row">
+                <span class="opening-name">3. —</span>
+                <span class="opening-value">—</span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- OPENING PERFORMANCE -->
+
+    <div
+        class="analysis-card"
+        style="margin-top: 20px;"
+    >
+
+        <h3 class="section-title">
+            Opening Performance
+        </h3>
+
+        <div class="opening-row">
+
+            <span class="opening-name">
+                Best Opening
+            </span>
+
+            <span
+                class="opening-value"
+                id="bestOpeningDetail"
+            >
+                —
+            </span>
 
         </div>
 
 
-    </section>
+        <div class="opening-row">
 
+            <span class="opening-name">
+                Hardest to Beat
+            </span>
 
-
-    <!-- =========================
-         OPENINGS
-    ========================= -->
-
-    <div class="analysis-grid">
-
-
-        <!-- MOST PLAYED -->
-
-        <section class="results-section">
-
-            <h2 class="section-title">
-                Most Played Openings
-            </h2>
-
-
-            <div
-                class="analysis-card"
-                id="mostPlayedOpenings"
+            <span
+                class="opening-value"
+                id="hardestOpening"
             >
+                —
+            </span>
 
-                <div class="opening-row">
-
-                    <span class="opening-name">
-                        No data yet
-                    </span>
-
-                    <span class="opening-value">
-                        —
-                    </span>
-
-                </div>
-
-            </div>
-
-        </section>
+        </div>
 
 
+        <div class="opening-row">
 
-        <!-- PERFORMANCE -->
+            <span class="opening-name">
+                Most Difficult to Win
+            </span>
 
-        <section class="results-section">
-
-            <h2 class="section-title">
-                Opening Performance
-            </h2>
-
-
-            <div
-                class="analysis-card"
-                id="openingPerformance"
+            <span
+                class="opening-value"
+                id="difficultOpening"
             >
+                —
+            </span>
 
-                <div class="opening-row">
-
-                    <span class="opening-name">
-                        Best Result
-                    </span>
-
-                    <span
-                        class="opening-value"
-                        id="bestResult"
-                    >
-                        —
-                    </span>
-
-                </div>
-
-
-                <div class="opening-row">
-
-                    <span class="opening-name">
-                        Most Losses
-                    </span>
-
-                    <span
-                        class="opening-value"
-                        id="mostLosses"
-                    >
-                        —
-                    </span>
-
-                </div>
-
-
-                <div class="opening-row">
-
-                    <span class="opening-name">
-                        White
-                    </span>
-
-                    <span
-                        class="opening-value"
-                        id="whitePerformance"
-                    >
-                        —
-                    </span>
-
-                </div>
-
-
-                <div class="opening-row">
-
-                    <span class="opening-name">
-                        Black
-                    </span>
-
-                    <span
-                        class="opening-value"
-                        id="blackPerformance"
-                    >
-                        —
-                    </span>
-
-                </div>
-
-            </div>
-
-        </section>
-
+        </div>
 
     </div>
 
+</section>
 
 
     <!-- =========================
@@ -1223,12 +1513,13 @@
                 <br><br>
 
                 <button
-                    class="analyze-button"
-                    id="startTrainingBtn"
-                    onclick="startOpponentTraining()"
-                >
-                    Start Training
-                </button>
+    class="analyze-button training-start-button"
+    id="startTrainingBtn"
+    type="button"
+    onclick="startOpponentTraining()"
+>
+    Start Training
+</button>
 
                 <div
                     id="trainingStatus"
@@ -1245,6 +1536,7 @@
 
 
     </section>
+</div>
 
 <!-- =========================
      OPPONENT TRAINING BOARD
@@ -1254,18 +1546,36 @@
     id="trainingBoardArea"
     style="display: none;"
 >
+    <div class="training-header">
 
-    <h2 class="section-title">
-        Opponent Training
-    </h2>
+        <button
+            class="analyze-button"
+            type="button"
+            onclick="backToPlayerStatistics()"
+        >
+            ← Back to Statistics
+        </button>
 
-    <div id="trainingChessboard"></div>
+        <h2 class="section-title">
+            Opponent Training
+        </h2>
+
+    </div>
+
+
+    <div class="training-layout">
 
     <div id="trainingQuestion">
         What would you play?
     </div>
 
+    <div class="training-board-wrapper">
+        <div id="trainingChessboard"></div>
+    </div>
+
 </div>
+</div>
+
 
 </main>
 
@@ -1283,13 +1593,11 @@
 function analyzeLichess() {
 
     const username =
-        document
-            .getElementById("lichessUsername")
-            .value
-            .trim();
-            const gameCount =
-    document.getElementById("gameCount").value;
-localStorage.setItem("analyzedLichessPlayer", username);
+        document.getElementById("lichessUsername").value.trim();
+
+    const gameCount =
+        document.getElementById("gameCount").value;
+
     const status =
         document.getElementById("lichessStatus");
 
@@ -1299,860 +1607,775 @@ localStorage.setItem("analyzedLichessPlayer", username);
         status.textContent =
             "Please enter a Lichess username.";
 
-        status.style.display =
-            "block";
+        status.style.display = "block";
 
         return;
     }
 
 
+    localStorage.setItem(
+        "analyzedLichessPlayer",
+        username
+    );
+
+
     status.textContent =
         "Analyzing Lichess games...";
 
-    status.style.display =
-        "block";
+    status.style.display = "block";
 
 
     fetch(
-    `http://localhost:3000/api/lichess/games/${encodeURIComponent(username)}?count=${gameCount}`
-)
+        `http://localhost:3000/api/lichess/games/${encodeURIComponent(username)}?count=${gameCount}`
+    )
 
-        .then(response => {
+    .then(response => {
 
-            if (!response.ok) {
-
-                throw new Error(
-                    "Could not load Lichess games."
-                );
-
-            }
-
-            return response.json();
-
-        })
-
-
-        .then(data => {
-
-            console.log(
-                "Lichess data:",
-                data
+        if (!response.ok) {
+            throw new Error(
+                "Could not load Lichess games."
             );
+        }
+
+        return response.json();
+
+    })
+
+    .then(data => {
+
+        console.log("Lichess data:", data);
 
 
-            const games =
-                data.games || [];
+        const games =
+            data.games || [];
 
 
-            if (games.length === 0) {
+        if (games.length === 0) {
 
-                status.textContent =
-                    "No games found for this player.";
+            status.textContent =
+                "No games found for this player.";
 
-                return;
+            return;
+        }
+
+
+        const playerName =
+            username.toLowerCase();
+
+
+        const total =
+            games.length;
+
+
+        // ========================================
+        // PLAYER RESULTS
+        // ========================================
+
+        let wins = 0;
+        let losses = 0;
+        let draws = 0;
+
+
+        games.forEach(game => {
+
+            const white =
+                game.players?.white?.user?.name
+                    ?.toLowerCase();
+
+            const black =
+                game.players?.black?.user?.name
+                    ?.toLowerCase();
+
+
+            if (!game.winner) {
+
+                draws++;
+
             }
 
+            else if (
+                game.winner === "white" &&
+                white === playerName
+            ) {
 
-            const playerName =
-                username.toLowerCase();
+                wins++;
 
+            }
 
-            // ========================================
-            // PLAYER RESULTS
-            // ========================================
+            else if (
+                game.winner === "black" &&
+                black === playerName
+            ) {
 
-            let wins = 0;
-            let losses = 0;
-            let draws = 0;
-
-
-            games.forEach(game => {
-
-                const white =
-                    game.players?.white?.user?.name
-                    ?.toLowerCase();
-
-
-                const black =
-                    game.players?.black?.user?.name
-                    ?.toLowerCase();
-
-
-                if (!game.winner) {
-
-                    draws++;
-
-                }
-
-                else if (
-                    game.winner === "white" &&
-                    white === playerName
-                ) {
-
-                    wins++;
-
-                }
-
-                else if (
-                    game.winner === "black" &&
-                    black === playerName
-                ) {
-
-                    wins++;
-
-                }
-
-                else {
-
-                    losses++;
-
-                }
-
-            });
-
-
-            const total =
-                games.length;
-                console.log(
-    "Games analyzed on page:",
-    games.length
-);
-
-
-            const winRate =
-                Math.round(
-                    (wins / total) * 100
-                );
-
-
-            const drawRate =
-                Math.round(
-                    (draws / total) * 100
-                );
-
-
-            const lossRate =
-                Math.round(
-                    (losses / total) * 100
-                );
-
-
-            // ========================================
-            // PLAYER STATISTICS
-            // ========================================
-
-            document
-                .getElementById("gamesCount")
-                .textContent = total;
-
-
-            document
-                .getElementById("winRate")
-                .textContent =
-                winRate + "%";
-
-
-            document
-                .getElementById("drawRate")
-                .textContent =
-                drawRate + "%";
-
-
-            document
-                .getElementById("lossRate")
-                .textContent =
-                lossRate + "%";
-
-
-            // ========================================
-            // MOST PLAYED OPENINGS
-            // ========================================
-
-            const openingsContainer =
-                document.getElementById(
-                    "mostPlayedOpenings"
-                );
-
-
-            openingsContainer.innerHTML = "";
-
-
-            const openings =
-                data.openings || [];
-
-
-            if (openings.length === 0) {
-
-                openingsContainer.innerHTML = `
-
-                    <div class="opening-row">
-
-                        <span class="opening-name">
-                            No opening data available
-                        </span>
-
-                        <span class="opening-value">
-                            —
-                        </span>
-
-                    </div>
-
-                `;
+                wins++;
 
             }
 
             else {
 
-                openings
-                    .slice(0, 5)
-                    .forEach(opening => {
+                losses++;
 
-                        const row =
-                            document.createElement("div");
+            }
 
-
-                        row.className =
-                            "opening-row";
+        });
 
 
-                        row.innerHTML = `
+        // ========================================
+        // HUMAN / ENGINE PLACEHOLDERS
+        // ========================================
 
-                            <span class="opening-name">
-                                ${opening.name}
-                            </span>
+        document.getElementById(
+            "humanLikeRate"
+        ).textContent = "—";
 
-                            <span class="opening-value">
-                                ${opening.count} games
-                            </span>
-
-                        `;
+        document.getElementById(
+            "engineLikeRate"
+        ).textContent = "—";
 
 
-                        openingsContainer
-                            .appendChild(row);
+        // ========================================
+        // OPENINGS
+        // ========================================
 
-                    });
+        const openings =
+            data.openings || [];
+
+
+        const mostPlayedElement =
+            document.getElementById(
+                "mostPlayedOpening"
+            );
+
+
+        if (openings.length > 0) {
+
+            const mostPlayed =
+                openings[0];
+
+            mostPlayedElement.textContent =
+                `${mostPlayed.name} (${mostPlayed.count})`;
+
+        }
+
+        else {
+
+            mostPlayedElement.textContent =
+                "No opening data";
+
+        }
+
+
+        // ========================================
+        // TOP 3 MOST PLAYED OPENINGS
+        // ========================================
+
+        const topOpeningsList =
+            document.getElementById(
+                "topOpeningsList"
+            );
+
+
+        topOpeningsList.innerHTML = "";
+
+
+        if (openings.length === 0) {
+
+            topOpeningsList.innerHTML = `
+                <div class="opening-row">
+                    <span class="opening-name">
+                        No opening data available
+                    </span>
+
+                    <span class="opening-value">
+                        —
+                    </span>
+                </div>
+            `;
+
+        }
+
+        else {
+
+            openings
+                .slice(0, 3)
+                .forEach((opening, index) => {
+
+                    const percentage =
+                        Math.round(
+                            (opening.count / total) * 100
+                        );
+
+
+                    const row =
+                        document.createElement("div");
+
+
+                    row.className =
+                        "opening-row";
+
+
+                    row.innerHTML = `
+                        <span class="opening-name">
+                            ${index + 1}. ${opening.name}
+                        </span>
+
+                        <span class="opening-value">
+                            ${opening.count} games (${percentage}%)
+                        </span>
+                    `;
+
+
+                    topOpeningsList.appendChild(row);
+
+                });
+
+        }
+
+
+        // ========================================
+        // OPENING PERFORMANCE DATA
+        // ========================================
+
+        const openingStats = {};
+
+
+        games.forEach(game => {
+
+            const openingName =
+                game.opening?.name;
+
+
+            if (!openingName) {
+                return;
+            }
+
+
+            if (!openingStats[openingName]) {
+
+                openingStats[openingName] = {
+
+                    games: 0,
+                    wins: 0,
+                    losses: 0,
+                    draws: 0
+
+                };
 
             }
 
 
-            // ========================================
-            // OPENING PERFORMANCE
-            // ========================================
-
-            const openingStats = {};
+            const stats =
+                openingStats[openingName];
 
 
-            games.forEach(game => {
-
-                const openingName =
-                    game.opening?.name;
+            stats.games++;
 
 
-                if (!openingName) {
-                    return;
-                }
+            const white =
+                game.players?.white?.user?.name
+                    ?.toLowerCase();
+
+            const black =
+                game.players?.black?.user?.name
+                    ?.toLowerCase();
 
 
-                if (!openingStats[openingName]) {
+            if (!game.winner) {
 
-                    openingStats[openingName] = {
+                stats.draws++;
 
-                        games: 0,
-                        wins: 0,
-                        losses: 0,
-                        draws: 0
+            }
+
+            else if (
+                (
+                    game.winner === "white" &&
+                    white === playerName
+                )
+                ||
+                (
+                    game.winner === "black" &&
+                    black === playerName
+                )
+            ) {
+
+                stats.wins++;
+
+            }
+
+            else {
+
+                stats.losses++;
+
+            }
+
+        });
+
+
+        const openingStatEntries =
+            Object.entries(openingStats);
+
+
+        // We only judge openings with at least 5 games.
+
+        const eligibleOpenings =
+            openingStatEntries.filter(
+                ([name, stats]) =>
+                    stats.games >= 5
+            );
+
+
+        // ========================================
+        // BEST OPENING
+        // Highest win rate
+        // ========================================
+
+        let bestOpening = null;
+
+
+        eligibleOpenings.forEach(
+            ([name, stats]) => {
+
+                const winRate =
+                    stats.wins / stats.games;
+
+
+                if (
+                    !bestOpening ||
+                    winRate > bestOpening.winRate
+                ) {
+
+                    bestOpening = {
+
+                        name,
+                        stats,
+                        winRate
 
                     };
 
                 }
 
-
-                openingStats[openingName].games++;
-
-
-                const white =
-                    game.players?.white?.user?.name
-                    ?.toLowerCase();
-
-
-                const black =
-                    game.players?.black?.user?.name
-                    ?.toLowerCase();
-
-
-                if (!game.winner) {
-
-                    openingStats[openingName].draws++;
-
-                }
-
-                else if (
-                    (
-                        game.winner === "white" &&
-                        white === playerName
-                    )
-                    ||
-                    (
-                        game.winner === "black" &&
-                        black === playerName
-                    )
-                ) {
-
-                    openingStats[openingName].wins++;
-
-                }
-
-                else {
-
-                    openingStats[openingName].losses++;
-
-                }
-
-            });
-
-
-            const openingStatEntries =
-                Object.entries(openingStats);
-
-
-            // ========================================
-            // BEST RESULT
-            // Minimum 10 games
-            // ========================================
-
-            let bestOpening = null;
-
-
-            openingStatEntries.forEach(
-                ([name, stats]) => {
-
-                    if (stats.games < 5) {
-                        return;
-                    }
-
-
-                    const currentScore =
-                        stats.wins / stats.games;
-
-
-                    if (
-                        !bestOpening ||
-                        currentScore >
-                        bestOpening.score
-                    ) {
-
-                        bestOpening = {
-
-                            name: name,
-
-                            stats: stats,
-
-                            score: currentScore
-
-                        };
-
-                    }
-
-                }
-            );
-
-
-            if (bestOpening) {
-
-                const percentage =
-                    Math.round(
-                        bestOpening.score * 100
-                    );
-
-
-                document
-                    .getElementById("bestResult")
-                    .textContent =
-                    `${bestOpening.name} (${percentage}% win rate)`;
-
             }
-
-            else {
-
-                document
-                    .getElementById("bestResult")
-                    .textContent =
-                    "Not enough games";
-
-            }
+        );
 
 
-            // ========================================
-            // MOST LOSSES
-            // Minimum 10 games
-            // ========================================
+        if (bestOpening) {
 
-            let worstOpening = null;
-
-
-            openingStatEntries.forEach(
-                ([name, stats]) => {
-
-                    if (stats.games < 5) {
-                        return;
-                    }
+            const rate =
+                Math.round(
+                    bestOpening.winRate * 100
+                );
 
 
-                    if (
-                        !worstOpening ||
-                        stats.losses >
-                        worstOpening.stats.losses
-                    ) {
-
-                        worstOpening = {
-
-                            name: name,
-
-                            stats: stats
-
-                        };
-
-                    }
-
-                }
-            );
+            document.getElementById(
+    "bestOpening"
+).textContent =
+    `${bestOpening.name} (${rate}% win rate)`;
 
 
-            if (worstOpening) {
+            document.getElementById(
+                "bestOpeningDetail"
+            ).textContent =
+                `${bestOpening.name} (${rate}% win rate)`;
+
+        }
+
+        else {
+
+            document.getElementById(
+                "bestOpening"
+            ).textContent =
+                "Not enough games";
+
+
+            document.getElementById(
+                "bestOpeningDetail"
+            ).textContent =
+                "Not enough games";
+
+        }
+
+
+        // ========================================
+        // HARDEST TO BEAT
+        // Lowest loss rate
+        // ========================================
+
+        let hardestOpening = null;
+
+
+        eligibleOpenings.forEach(
+            ([name, stats]) => {
 
                 const lossRate =
-                    Math.round(
-                        (
-                            worstOpening.stats.losses /
-                            worstOpening.stats.games
-                        ) * 100
-                    );
-
-
-                document
-                    .getElementById("mostLosses")
-                    .textContent =
-                    `${worstOpening.name} (${worstOpening.stats.losses} losses, ${lossRate}%)`;
-
-            }
-
-            else {
-
-                document
-                    .getElementById("mostLosses")
-                    .textContent =
-                    "Not enough games";
-
-            }
-
-
-            // ========================================
-            // WHITE / BLACK PERFORMANCE
-            // ========================================
-
-            let whiteGames = 0;
-            let whiteWins = 0;
-
-            let blackGames = 0;
-            let blackWins = 0;
-
-
-            games.forEach(game => {
-
-                const white =
-                    game.players?.white?.user?.name
-                    ?.toLowerCase();
-
-
-                const black =
-                    game.players?.black?.user?.name
-                    ?.toLowerCase();
+                    stats.losses / stats.games;
 
 
                 if (
-                    white === playerName
+                    !hardestOpening ||
+                    lossRate < hardestOpening.lossRate
                 ) {
 
-                    whiteGames++;
+                    hardestOpening = {
 
+                        name,
+                        stats,
+                        lossRate
 
-                    if (
-                        game.winner === "white"
-                    ) {
-
-                        whiteWins++;
-
-                    }
+                    };
 
                 }
+
+            }
+        );
+
+
+        if (hardestOpening) {
+
+            const rate =
+                Math.round(
+                    hardestOpening.lossRate * 100
+                );
+
+
+            document.getElementById(
+    "hardestOpening"
+).textContent =
+    `${hardestOpening.name} (${rate}% loss rate)`;
+
+        }
+
+        else {
+
+            document.getElementById(
+                "hardestOpening"
+            ).textContent =
+                "Not enough games";
+
+        }
+
+
+        // ========================================
+        // MOST DIFFICULT TO WIN
+        // Lowest win rate
+        // ========================================
+
+        let difficultOpening = null;
+
+
+        eligibleOpenings.forEach(
+            ([name, stats]) => {
+
+                const winRate =
+                    stats.wins / stats.games;
 
 
                 if (
-                    black === playerName
+                    !difficultOpening ||
+                    winRate < difficultOpening.winRate
                 ) {
 
-                    blackGames++;
+                    difficultOpening = {
 
+                        name,
+                        stats,
+                        winRate
 
-                    if (
-                        game.winner === "black"
-                    ) {
-
-                        blackWins++;
-
-                    }
+                    };
 
                 }
 
-            });
-
-
-            // ========================================
-            // WHITE
-            // ========================================
-
-            if (whiteGames >= 10) {
-
-                const whiteRate =
-                    Math.round(
-                        (whiteWins / whiteGames) * 100
-                    );
-
-
-                document
-                    .getElementById("whitePerformance")
-                    .textContent =
-                    `${whiteWins}/${whiteGames} wins (${whiteRate}%)`;
-
             }
-
-            else {
-
-                document
-                    .getElementById("whitePerformance")
-                    .textContent =
-                    "Not enough games";
-
-            }
+        );
 
 
-            // ========================================
-            // BLACK
-            // ========================================
+        if (difficultOpening) {
 
-            if (blackGames >= 10) {
-
-                const blackRate =
-                    Math.round(
-                        (blackWins / blackGames) * 100
-                    );
-
-
-                document
-                    .getElementById("blackPerformance")
-                    .textContent =
-                    `${blackWins}/${blackGames} wins (${blackRate}%)`;
-
-            }
-
-            else {
-
-                document
-                    .getElementById("blackPerformance")
-                    .textContent =
-                    "Not enough games";
-
-            }
-
-
-            // ========================================
-            // OPPONENT PREPARATION
-            // ========================================
-
-            const againstE4 =
-                data.againstE4 || [];
-
-
-            const againstD4 =
-                data.againstD4 || [];
-
-
-            const e4Entries =
-                againstE4;
-
-
-            const d4Entries =
-                againstD4;
-
-
-            // ========================================
-            // AGAINST 1.e4
-            // ========================================
-
-            const e4Text =
-                e4Entries.length > 0
-
-                    ? e4Entries
-                        .slice(0, 5)
-                        .map(
-                            item =>
-                                `${item.move} (${item.games})`
-                        )
-                        .join(", ")
-
-                    : "No games against 1.e4 found.";
-
-
-            document
-                .getElementById("againstE4")
-                .textContent =
-                e4Text;
-
-
-            // ========================================
-            // AGAINST 1.d4
-            // ========================================
-
-            const d4Text =
-                d4Entries.length > 0
-
-                    ? d4Entries
-                        .slice(0, 5)
-                        .map(
-                            item =>
-                                `${item.move} (${item.games})`
-                        )
-                        .join(", ")
-
-                    : "No games against 1.d4 found.";
-
-
-            document
-                .getElementById("againstD4")
-                .textContent =
-                d4Text;
-
-
-            // ========================================
-            // MOST FREQUENT OPENING
-            // Minimum 10 games
-            // ========================================
-
-            const frequentOpening =
-                openings.find(
-                    opening =>
-                        opening.count >= 10
+            const rate =
+                Math.round(
+                    difficultOpening.winRate * 100
                 );
 
 
-            if (frequentOpening) {
+            document.getElementById(
+    "difficultOpening"
+).textContent =
+    `${difficultOpening.name} (${rate}% win rate)`;
 
-                document
-                    .getElementById("frequentOpening")
-                    .textContent =
-                    `${frequentOpening.name} (${frequentOpening.count} games)`;
+        }
 
-            }
+        else {
 
-            else {
+            document.getElementById(
+                "difficultOpening"
+            ).textContent =
+                "Not enough games";
 
-                document
-                    .getElementById("frequentOpening")
-                    .textContent =
-                    "Not enough games";
-
-            }
+        }
 
 
-            // ========================================
-            // PREPARATION LOSSES
-            // Minimum 10 games
-            // ========================================
+        // ========================================
+        // OPPONENT PREPARATION
+        // ========================================
 
-            const preparationPatterns = [
+        const againstE4 =
+            data.againstE4 || [];
 
-                ...e4Entries
-                    .filter(
+
+        const againstD4 =
+            data.againstD4 || [];
+
+
+        // ========================================
+        // AGAINST 1.e4
+        // ========================================
+
+        const e4Text =
+            againstE4.length > 0
+
+                ? againstE4
+                    .slice(0, 5)
+                    .map(
                         item =>
-                            item.games >= 10
+                            `${item.move} (${item.games})`
                     )
-                    .map(item => ({
+                    .join(", ")
 
-                        side: "1.e4",
+                : "No games against 1.e4 found.";
 
-                        move: item.move,
 
-                        games: item.games,
+        document.getElementById(
+            "againstE4"
+        ).textContent =
+            e4Text;
 
-                        losses: item.losses
 
-                    })),
+        // ========================================
+        // AGAINST 1.d4
+        // ========================================
 
-                ...d4Entries
-                    .filter(
+        const d4Text =
+            againstD4.length > 0
+
+                ? againstD4
+                    .slice(0, 5)
+                    .map(
                         item =>
-                            item.games >= 10
+                            `${item.move} (${item.games})`
                     )
-                    .map(item => ({
+                    .join(", ")
 
-                        side: "1.d4",
-
-                        move: item.move,
-
-                        games: item.games,
-
-                        losses: item.losses
-
-                    }))
-
-            ];
+                : "No games against 1.d4 found.";
 
 
-            preparationPatterns.sort(
-                (a, b) =>
-                    b.losses - a.losses
-            );
+        document.getElementById(
+            "againstD4"
+        ).textContent =
+            d4Text;
 
 
-            const preparationLoss =
-                preparationPatterns[0];
+        // ========================================
+        // MOST FREQUENT OPENING
+        // ========================================
+
+        const frequentOpening =
+            openings[0];
 
 
-            if (preparationLoss) {
+        if (frequentOpening) {
 
-                const preparationLossRate =
-                    Math.round(
-                        (
-                            preparationLoss.losses /
-                            preparationLoss.games
-                        ) * 100
-                    );
+            document.getElementById(
+                "frequentOpening"
+            ).textContent =
+                `${frequentOpening.name} (${frequentOpening.count} games)`;
 
+        }
 
-                document
-                    .getElementById("preparationLosses")
-                    .textContent =
-                    `${preparationLoss.side} ${preparationLoss.move}: ${preparationLoss.losses} losses / ${preparationLoss.games} games (${preparationLossRate}%)`;
+        else {
 
-            }
+            document.getElementById(
+                "frequentOpening"
+            ).textContent =
+                "No opening data available.";
 
-            else {
-
-                document
-                    .getElementById("preparationLosses")
-                    .textContent =
-                    "Not enough games";
-
-            }
+        }
 
 
-            // ========================================
-            // REPEATED PATTERNS
-            // Minimum 10 games
-            // ========================================
+        // ========================================
+        // PREPARATION LOSSES
+        // ========================================
 
-            const repeatedPatterns = [];
+        const preparationPatterns = [
+
+            ...againstE4.map(item => ({
+
+                side: "1.e4",
+
+                move: item.move,
+
+                games: item.games,
+
+                losses: item.losses || 0
+
+            })),
+
+            ...againstD4.map(item => ({
+
+                side: "1.d4",
+
+                move: item.move,
+
+                games: item.games,
+
+                losses: item.losses || 0
+
+            }))
+
+        ];
 
 
-            if (
-                e4Entries.length > 0 &&
-                e4Entries[0].games >= 10
-            ) {
+        preparationPatterns.sort(
+            (a, b) =>
+                b.losses - a.losses
+        );
 
-                repeatedPatterns.push(
-                    `Against 1.e4: ${e4Entries[0].move} (${e4Entries[0].games} games)`
+
+        const preparationLoss =
+            preparationPatterns[0];
+
+
+        if (preparationLoss) {
+
+            const rate =
+                Math.round(
+                    (
+                        preparationLoss.losses /
+                        preparationLoss.games
+                    ) * 100
                 );
 
-            }
+
+            document.getElementById(
+                "preparationLosses"
+            ).textContent =
+                `${preparationLoss.side} ${preparationLoss.move}: ${preparationLoss.losses} losses / ${preparationLoss.games} games (${rate}%)`;
+
+        }
+
+        else {
+
+            document.getElementById(
+                "preparationLosses"
+            ).textContent =
+                "Not enough data";
+
+        }
 
 
-            if (
-                d4Entries.length > 0 &&
-                d4Entries[0].games >= 10
-            ) {
+        // ========================================
+        // REPEATED PATTERNS
+        // ========================================
 
-                repeatedPatterns.push(
-                    `Against 1.d4: ${d4Entries[0].move} (${d4Entries[0].games} games)`
-                );
-
-            }
+        const repeatedPatterns = [];
 
 
-            const repeatedOpening =
-                openings.find(
-                    opening =>
-                        opening.count >= 10
-                );
+        if (againstE4.length > 0) {
 
-
-            if (repeatedOpening) {
-
-                repeatedPatterns.push(
-                    `Most played: ${repeatedOpening.name} (${repeatedOpening.count} games)`
-                );
-
-            }
-
-
-            document
-                .getElementById("repeatedPatterns")
-                .textContent =
-                repeatedPatterns.length > 0
-
-                    ? repeatedPatterns.join(" • ")
-
-                    : "No repeated patterns detected yet.";
-
-
-            // ========================================
-            // COMPLETE
-            // ========================================
-
-            status.textContent =
-                `Analysis complete: ${total} games analyzed.`;
-
-            status.style.display =
-                "block";
-
-
-            console.log(
-                "Wins:",
-                wins
+            repeatedPatterns.push(
+                `Against 1.e4: ${againstE4[0].move} (${againstE4[0].games} games)`
             );
 
-            console.log(
-                "Draws:",
-                draws
+        }
+
+
+        if (againstD4.length > 0) {
+
+            repeatedPatterns.push(
+                `Against 1.d4: ${againstD4[0].move} (${againstD4[0].games} games)`
             );
 
-            console.log(
-                "Losses:",
-                losses
+        }
+
+
+        if (frequentOpening) {
+
+            repeatedPatterns.push(
+                `Most played: ${frequentOpening.name} (${frequentOpening.count} games)`
             );
 
-            console.log(
-                "Openings:",
-                openings
-            );
-
-        })
+        }
 
 
-        .catch(error => {
+        document.getElementById(
+            "repeatedPatterns"
+        ).textContent =
+            repeatedPatterns.length > 0
+                ? repeatedPatterns.join(" • ")
+                : "No repeated patterns detected yet.";
 
-            console.error(error);
+
+        // ========================================
+        // COMPLETE
+        // ========================================
+
+        status.textContent =
+            `Analysis complete: ${total} games analyzed.`;
+
+        status.style.display =
+            "block";
 
 
-            status.textContent =
-                "Could not connect to Lichess server.";
+        console.log("Wins:", wins);
+        console.log("Draws:", draws);
+        console.log("Losses:", losses);
+        console.log("Openings:", openings);
 
-            status.style.display =
-                "block";
+    })
 
-        });
+
+    .catch(error => {
+
+        console.error(error);
+
+        status.textContent =
+            "Could not connect to Lichess server.";
+
+        status.style.display =
+            "block";
+
+    });
 
 }
+
+
+window.analyzeLichess =
+    analyzeLichess;
+
+   function backToPlayerStatistics() {
+
+    const trainingArea =
+        document.getElementById("trainingBoardArea");
+
+    const statisticsView =
+        document.getElementById("statisticsView");
+
+
+    if (trainingArea) {
+        trainingArea.style.display = "none";
+    }
+
+
+    if (statisticsView) {
+        statisticsView.style.display = "block";
+    }
+
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+}
+
 // ========================================
 // CHESS.COM
 // ========================================
@@ -2177,10 +2400,123 @@ function analyzeChessCom() {
 let trainingPositions = [];
 let currentTrainingIndex = 0;
 let trainingGame = null;
+
+let trainingEngine = null;
+let trainingEngineReady = false;
+let trainingEngineBusy = false;
+let trainingEngineBestMove = null;
+let trainingEngineEvaluation = null;
+let trainingPlayerMove = null;
 let selectedTrainingSquare = null;
 let trainingBoardFlipped = false;
+let trainingLastMove = {
+    from: null,
+    to: null
+};
+let trainingPointerStartSquare = null;
+let trainingPointerStartX = 0;
+let trainingPointerStartY = 0;
+let trainingPointerMoved = false;
+let trainingDraggedPiece = null;
+let trainingDragImage = null;
+let trainingDragOverSquare = null;
+// =========================
+// TRAINING STOCKFISH ENGINE
+// =========================
 
+function createTrainingEngine() {
 
+    if (trainingEngine) {
+        return;
+    }
+
+    trainingEngine =
+        new Worker("./stockfish-18-lite-single.js");
+
+    trainingEngine.onmessage = function(event) {
+
+        const message = event.data;
+
+        if (typeof message !== "string") {
+            return;
+        }
+
+        if (message === "uciok") {
+
+            trainingEngine.postMessage("isready");
+
+            return;
+        }
+
+        if (message === "readyok") {
+
+            trainingEngineReady = true;
+
+            analyzeCurrentTrainingPosition();
+
+            return;
+        }
+
+        if (message.startsWith("info")) {
+
+            const scoreMatch =
+                message.match(/score (cp|mate) (-?\d+)/);
+
+            if (scoreMatch) {
+
+                const type = scoreMatch[1];
+                const value = Number(scoreMatch[2]);
+
+                if (type === "cp") {
+                    trainingEngineEvaluation = value / 100;
+                } else {
+                    trainingEngineEvaluation =
+                        value > 0 ? 100 : -100;
+                }
+            }
+
+            return;
+        }
+
+        if (message.startsWith("bestmove")) {
+
+            const parts = message.split(" ");
+
+            trainingEngineBestMove =
+                parts[1] || null;
+
+            trainingEngineBusy = false;
+
+            return;
+        }
+    };
+
+    trainingEngine.postMessage("uci");
+}
+function analyzeCurrentTrainingPosition() {
+
+    if (!trainingEngine || !trainingEngineReady) {
+        return;
+    }
+
+    if (!trainingGame) {
+        return;
+    }
+
+    trainingEngineBusy = true;
+    trainingEngineBestMove = null;
+    trainingEngineEvaluation = null;
+
+    trainingEngine.postMessage("stop");
+
+    trainingEngine.postMessage(
+        "position fen " + trainingGame.fen()
+    );
+
+    trainingEngine.postMessage(
+        "go depth 18"
+    );
+}
 // ========================================
 // START TRAINING
 // ========================================
@@ -2260,13 +2596,33 @@ fetch(
             currentTrainingIndex = 0;
 
 
-            document
-                .getElementById("trainingBoardArea")
-                .style.display = "block";
+/* Hide statistics and show training */
+
+const statisticsView =
+    document.getElementById("statisticsView");
+
+const trainingArea =
+    document.getElementById("trainingBoardArea");
 
 
-            showTrainingPosition();
+if (statisticsView) {
+    statisticsView.style.display = "none";
+}
 
+
+if (trainingArea) {
+    trainingArea.style.display = "flex";
+}
+
+
+window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+});
+
+
+showTrainingPosition();
+createTrainingEngine();
 
             status.textContent =
                 `${trainingPositions.length} training positions found.`;
@@ -2303,15 +2659,19 @@ function showTrainingPosition() {
     }
 
 
-    trainingGame =
-        new Chess(position.fen);
+    trainingGame = new Chess(position.fen);
+selectedTrainingSquare = null;
 
+trainingLastMove = {
+    from: null,
+    to: null
+};
+trainingPlayerMove = null;
+trainingEngineBestMove = null;
+trainingEngineEvaluation = null;
 
-    selectedTrainingSquare = null;
-
-
-    renderTrainingBoard();
-
+renderTrainingBoard();
+analyzeCurrentTrainingPosition();
 
     const question =
         document.getElementById(
@@ -2332,12 +2692,25 @@ function showTrainingPosition() {
 
 }
 
-// ========================================
-// RENDER TRAINING BOARD
-// ========================================
-// ========================================
-// RENDER TRAINING BOARD WITH SVG PIECES
-// ========================================
+function getTrainingLegalTargets(squareName) {
+
+    if (!trainingGame) {
+        return [];
+    }
+
+    const moves = trainingGame.moves({
+        square: squareName,
+        verbose: true
+    });
+
+    return moves.map(function(move) {
+        return {
+            square: move.to,
+            capture: move.captured !== undefined
+        };
+    });
+}
+
 function renderTrainingBoard() {
 
     const board =
@@ -2352,165 +2725,629 @@ function renderTrainingBoard() {
     const position =
         trainingGame.board();
 
-    let rows = [0, 1, 2, 3, 4, 5, 6, 7];
-    let cols = [0, 1, 2, 3, 4, 5, 6, 7];
+    let rows =
+        [0, 1, 2, 3, 4, 5, 6, 7];
+
+    let cols =
+        [0, 1, 2, 3, 4, 5, 6, 7];
 
     if (trainingBoardFlipped) {
         rows.reverse();
         cols.reverse();
     }
 
+
+    // ========================================
+    // CREATE BOARD
+    // ========================================
+
     for (let row = 0; row < 8; row++) {
 
         for (let col = 0; col < 8; col++) {
 
-            const boardRow = rows[row];
-            const boardCol = cols[col];
+            const boardRow =
+                rows[row];
+
+            const boardCol =
+                cols[col];
+
 
             const square =
                 document.createElement("div");
 
-            square.classList.add("analysis-square");
+
+            square.classList.add(
+                "analysis-square"
+            );
+
 
             if ((row + col) % 2 === 0) {
-                square.classList.add("analysis-light");
+
+                square.classList.add(
+                    "analysis-light"
+                );
+
             } else {
-                square.classList.add("analysis-dark");
+
+                square.classList.add(
+                    "analysis-dark"
+                );
+
             }
 
+
             const squareName =
-                String.fromCharCode(97 + boardCol) +
+                String.fromCharCode(
+                    97 + boardCol
+                ) +
                 (8 - boardRow);
 
-            square.dataset.square = squareName;
+
+            square.dataset.square =
+                squareName;
+                if (
+    trainingLastMove.from === squareName ||
+    trainingLastMove.to === squareName
+) {
+    square.classList.add("training-last-move");
+}
+if (selectedTrainingSquare === squareName) {
+    square.classList.add("training-selected");
+}
+
+if (selectedTrainingSquare !== null) {
+
+    const targets =
+        getTrainingLegalTargets(selectedTrainingSquare);
+
+    const target =
+        targets.find(function(item) {
+            return item.square === squareName;
+        });
+
+    if (target) {
+
+        if (target.capture) {
+            square.classList.add("training-capture");
+        } else {
+            square.classList.add("training-move-dot");
+        }
+    }
+}
 
             const piece =
                 position[boardRow][boardCol];
+
+
+            // ========================================
+            // PIECE
+            // ========================================
 
             if (piece) {
 
                 const image =
                     document.createElement("img");
 
+
                 const color =
-                    piece.color === "w" ? "w" : "b";
+                    piece.color === "w"
+                        ? "w"
+                        : "b";
+
 
                 const type =
                     piece.type.toUpperCase();
 
+
                 image.src =
-                    "./" + color + type + ".svg";
+                    "./" +
+                    color +
+                    type +
+                    ".svg";
 
-                image.classList.add("chess-piece");
 
-                image.draggable = true;
-
-                image.addEventListener(
-                    "dragstart",
-                    function(event) {
-
-                        if (
-                            piece.color !==
-                            trainingGame.turn()
-                        ) {
-                            event.preventDefault();
-                            return;
-                        }
-
-                        selectedTrainingSquare =
-                            squareName;
-
-                        event.dataTransfer.setData(
-                            "text/plain",
-                            squareName
-                        );
-                    }
+                image.classList.add(
+                    "chess-piece"
                 );
 
+
+                /*
+                 * The square receives the mouse/pointer
+                 * events, not the image.
+                 */
+
+                image.style.pointerEvents =
+                    "none";
+
+
+                image.draggable =
+                    false;
+
+
                 square.appendChild(image);
+
             }
 
-            square.addEventListener(
-                "click",
-                function() {
 
-                    const currentPiece =
-                        trainingGame.get(squareName);
+            board.appendChild(square);
 
-                    if (
-                        selectedTrainingSquare === null
-                    ) {
+        }
 
-                        if (!currentPiece) return;
+    }
 
-                        if (
-                            currentPiece.color !==
-                            trainingGame.turn()
-                        ) {
-                            return;
-                        }
 
-                        selectedTrainingSquare =
-                            squareName;
+    // ========================================
+    // INSTALL POINTER CONTROLS ONCE
+    // ========================================
 
-                        return;
-                    }
+    if (
+        board.dataset.pointerReady !==
+        "true"
+    ) {
 
-                    if (
-                        selectedTrainingSquare ===
-                        squareName
-                    ) {
-                        selectedTrainingSquare = null;
-                        return;
-                    }
+        board.dataset.pointerReady =
+            "true";
 
-                    makeTrainingMove(
-                        selectedTrainingSquare,
+
+        // ========================================
+        // POINTER DOWN
+        // ========================================
+
+        board.addEventListener(
+            "pointerdown",
+            function(event) {
+
+                const square =
+                    event.target.closest(
+                        ".analysis-square"
+                    );
+
+
+                if (!square) {
+                    return;
+                }
+
+
+                const squareName =
+                    square.dataset.square;
+
+
+                const piece =
+                    trainingGame.get(
                         squareName
                     );
 
-                    selectedTrainingSquare = null;
+
+                if (!piece) {
+                    return;
                 }
+
+
+                if (
+                    piece.color !==
+                    trainingGame.turn()
+                ) {
+
+                    return;
+
+                }
+
+
+                event.preventDefault();
+
+
+                trainingPointerStartSquare =
+                    squareName;
+
+
+                trainingPointerStartX =
+                    event.clientX;
+
+
+                trainingPointerStartY =
+                    event.clientY;
+
+
+                trainingPointerMoved =
+                    false;
+
+                    trainingDraggedPiece =
+    square.querySelector(
+        ".chess-piece"
+    );
+
+trainingDragImage = null;
+
+            }
+        );
+
+
+        // ========================================
+        // POINTER MOVE
+        // ========================================
+
+        board.addEventListener(
+            "pointermove",
+            function(event) {
+
+                if (
+                    trainingPointerStartSquare ===
+                    null
+                ) {
+
+                    return;
+
+                }
+
+
+                const dx =
+                    event.clientX -
+                    trainingPointerStartX;
+
+
+                const dy =
+                    event.clientY -
+                    trainingPointerStartY;
+
+
+                const distance =
+                    Math.sqrt(
+                        dx * dx +
+                        dy * dy
+                    );
+
+
+                /*
+                 * More than 5 pixels means
+                 * the user is dragging.
+                 */
+
+                if (distance > 5) {
+
+    trainingPointerMoved =
+        true;
+
+    event.preventDefault();
+
+
+    if (
+        trainingDraggedPiece &&
+        !trainingDragImage
+    ) {
+
+        trainingDragImage =
+            trainingDraggedPiece.cloneNode(
+                true
             );
 
-            square.addEventListener(
-                "dragover",
-                function(event) {
-                    event.preventDefault();
-                }
+        trainingDragImage.id =
+            "trainingDragPiece";
+
+        document.body.appendChild(
+            trainingDragImage
+        );
+
+        trainingDraggedPiece.style.opacity =
+            "0";
+    }
+
+
+    if (trainingDragImage) {
+
+    trainingDragImage.style.display =
+        "block";
+
+    trainingDragImage.style.left =
+        event.clientX + "px";
+
+    trainingDragImage.style.top =
+        event.clientY + "px";
+
+
+    // ========================================
+    // HIGHLIGHT START SQUARE
+    // ========================================
+
+    const startSquare =
+        board.querySelector(
+            `[data-square="${trainingPointerStartSquare}"]`
+        );
+
+
+    if (startSquare) {
+
+        startSquare.classList.add(
+            "training-drag-from"
+        );
+    }
+
+
+    // ========================================
+    // FIND CURRENT TARGET SQUARE
+    // ========================================
+
+    const element =
+        document.elementFromPoint(
+            event.clientX,
+            event.clientY
+        );
+
+
+    const targetSquare =
+        element
+            ? element.closest(
+                ".analysis-square"
+            )
+            : null;
+
+
+    // إزالة التحديد السابق
+
+    if (
+        trainingDragOverSquare &&
+        trainingDragOverSquare !==
+        targetSquare
+    ) {
+
+        trainingDragOverSquare.classList.remove(
+            "training-drag-over"
+        );
+    }
+
+
+    // تحديد المربع الحالي
+
+    if (targetSquare) {
+
+        targetSquare.classList.add(
+            "training-drag-over"
+        );
+
+        trainingDragOverSquare =
+            targetSquare;
+
+    } else {
+
+        trainingDragOverSquare =
+            null;
+    }
+}
+}
+
+            }
+        );
+board.addEventListener(
+    "pointerup",
+    function(event) {
+
+        event.preventDefault();
+        if (trainingDragOverSquare) {
+
+    trainingDragOverSquare.classList.remove(
+        "training-drag-over"
+    );
+
+    trainingDragOverSquare =
+        null;
+}
+
+
+const startSquare =
+    board.querySelector(
+        `[data-square="${trainingPointerStartSquare}"]`
+    );
+
+
+if (startSquare) {
+
+    startSquare.classList.remove(
+        "training-drag-from"
+    );
+}
+ if (trainingDragImage) {
+
+            trainingDragImage.remove();
+
+            trainingDragImage =
+                null;
+        }
+
+        if (trainingDraggedPiece) {
+
+            trainingDraggedPiece.style.opacity =
+                "1";
+
+            trainingDraggedPiece =
+                null;
+        }
+        const element =
+            document.elementFromPoint(
+                event.clientX,
+                event.clientY
             );
 
-            square.addEventListener(
-                "drop",
-                function(event) {
+        const targetSquare =
+            element
+                ? element.closest(
+                    ".analysis-square"
+                )
+                : null;
 
-                    event.preventDefault();
 
-                    const fromSquare =
-                        event.dataTransfer.getData(
-                            "text/plain"
-                        ) ||
-                        selectedTrainingSquare;
+        // لا يوجد مربع هدف
+        if (!targetSquare) {
 
-                    if (!fromSquare) return;
+            trainingPointerStartSquare =
+                null;
+
+            trainingPointerMoved =
+                false;
+
+            return;
+        }
+
+
+        const toSquare =
+            targetSquare.dataset.square;
+
+
+        // ========================================
+        // DRAG
+        // ========================================
+
+        if (
+            trainingPointerStartSquare !==
+            null
+        ) {
+
+            const fromSquare =
+                trainingPointerStartSquare;
+
+            const wasDrag =
+                trainingPointerMoved;
+
+
+            trainingPointerStartSquare =
+                null;
+
+            trainingPointerMoved =
+                false;
+
+
+            if (wasDrag) {
+
+                selectedTrainingSquare =
+                    null;
+
+
+                if (
+                    fromSquare !==
+                    toSquare
+                ) {
 
                     makeTrainingMove(
                         fromSquare,
-                        squareName
+                        toSquare
                     );
 
-                    selectedTrainingSquare = null;
                 }
+
+                return;
+            }
+
+
+            // ========================================
+            // CLICK
+            // ========================================
+
+            if (
+                selectedTrainingSquare ===
+                null
+            ) {
+
+                selectedTrainingSquare =
+                    fromSquare;
+
+                renderTrainingBoard();
+
+                return;
+            }
+
+
+            if (
+                selectedTrainingSquare ===
+                toSquare
+            ) {
+
+                selectedTrainingSquare =
+                    null;
+
+                renderTrainingBoard();
+
+                return;
+            }
+
+
+            const selectedFrom =
+                selectedTrainingSquare;
+
+
+            selectedTrainingSquare =
+                null;
+
+
+            makeTrainingMove(
+                selectedFrom,
+                toSquare
             );
 
-            board.appendChild(square);
+            return;
         }
-    }
-}
-// ========================================
-// HANDLE TRAINING MOVE
-// ========================================
 
+
+        // ========================================
+        // CLICK ON DESTINATION
+        // ========================================
+
+        if (
+            selectedTrainingSquare !==
+            null
+        ) {
+
+            if (
+                selectedTrainingSquare ===
+                toSquare
+            ) {
+
+                selectedTrainingSquare =
+                    null;
+
+                renderTrainingBoard();
+
+                return;
+            }
+
+
+            const selectedFrom =
+                selectedTrainingSquare;
+
+
+            selectedTrainingSquare =
+                null;
+
+
+            makeTrainingMove(
+                selectedFrom,
+                toSquare
+            );
+        }
+
+    }
+);
+
+        // ========================================
+        // POINTER CANCEL
+        // ========================================
+
+        board.addEventListener(
+            "pointercancel",
+            function() {
+
+                trainingPointerStartSquare =
+                    null;
+
+                trainingPointerMoved =
+                    false;
+
+                selectedTrainingSquare =
+                    null;
+
+            }
+        );
+
+    }
+
+}
 function makeTrainingMove(fromSquare, toSquare) {
 
     if (!trainingGame) {
@@ -2519,20 +3356,42 @@ function makeTrainingMove(fromSquare, toSquare) {
 
     try {
 
-        const move =
-            trainingGame.move({
-                from: fromSquare,
-                to: toSquare,
-                promotion: "q"
-            });
+       const move =
+    trainingGame.move({
+        from: fromSquare,
+        to: toSquare,
+        promotion: "q"
+    });
 
-        if (!move) {
-            return;
-        }
+if (!move) {
+    return;
+}
 
-        renderTrainingBoard();
+trainingPlayerMove = {
+    from: fromSquare,
+    to: toSquare,
+    san: move.san
+};
 
-        checkTrainingMove(move.san);
+trainingLastMove = {
+    from: fromSquare,
+    to: toSquare
+};
+
+renderTrainingBoard();
+
+setTimeout(function() {
+
+    trainingLastMove = {
+        from: null,
+        to: null
+    };
+
+    renderTrainingBoard();
+
+}, 450);
+
+checkTrainingMove(trainingPlayerMove);
 
     } catch (error) {
 
@@ -2550,73 +3409,157 @@ function makeTrainingMove(fromSquare, toSquare) {
 // ========================================
 // CHECK TRAINING MOVE
 // ========================================
-
 function checkTrainingMove(playerMove) {
-
-    const position =
-        trainingPositions[currentTrainingIndex];
-
-    if (!position) {
-        return;
-    }
-
-    const correctMove =
-        position.move;
 
     const question =
         document.getElementById(
             "trainingQuestion"
         );
 
-    if (playerMove === correctMove) {
+    if (!question) {
+        return;
+    }
+
+    if (!playerMove) {
+        return;
+    }
+
+    // Stockfish is still thinking
+    if (
+        trainingEngineBusy ||
+        !trainingEngineBestMove
+    ) {
 
         question.innerHTML = `
-            <strong style="color: #4caf50;">
-                Correct!
+            <strong>
+                Analyzing your move...
             </strong>
             <br><br>
-            You played:
-            <strong>${playerMove}</strong>
-            <br>
-            This was the move played in the game.
-            <br><br>
-
-            <button
-                class="analyze-button"
-                onclick="nextTrainingPosition()"
-            >
-                Next Position
-            </button>
+            Please wait for Stockfish.
         `;
+
+        setTimeout(function() {
+
+            checkTrainingMove(playerMove);
+
+        }, 250);
+
+        return;
+    }
+
+
+    // ========================================
+    // STOCKFISH BEST MOVE
+    // ========================================
+
+    const bestMove =
+        trainingEngineBestMove;
+
+
+    const bestFrom =
+        bestMove.substring(0, 2);
+
+
+    const bestTo =
+        bestMove.substring(2, 4);
+
+
+    // ========================================
+    // PLAYER MOVE
+    // ========================================
+
+    const playedFrom =
+        playerMove.from;
+
+
+    const playedTo =
+        playerMove.to;
+
+
+    const sameMove =
+        bestFrom === playedFrom &&
+        bestTo === playedTo;
+
+
+    // ========================================
+    // RESULT
+    // ========================================
+
+    let resultTitle = "";
+    let resultColor = "";
+    let explanation = "";
+
+
+    if (sameMove) {
+
+        resultTitle =
+            "Excellent!";
+
+        resultColor =
+            "#4caf50";
+
+        explanation =
+            "You found Stockfish's best move.";
 
     } else {
 
-        question.innerHTML = `
-            <strong style="color: #e9ad3f;">
-                Different move
-            </strong>
-            <br><br>
-            You played:
-            <strong>${playerMove}</strong>
-            <br>
-            Actual game move:
-            <strong>${correctMove}</strong>
-            <br><br>
+        resultTitle =
+            "Good try";
 
-            <button
-                class="analyze-button"
-                onclick="nextTrainingPosition()"
-            >
-                Next Position
-            </button>
-        `;
+        resultColor =
+            "#e9ad3f";
+
+        explanation =
+            "This was not Stockfish's best move.";
 
     }
 
+
+    question.innerHTML = `
+
+        <strong
+            style="
+                color: ${resultColor};
+                font-size: 20px;
+            "
+        >
+            ${resultTitle}
+        </strong>
+
+        <br><br>
+
+        You played:
+        <strong>
+            ${playerMove.san}
+        </strong>
+
+        <br><br>
+
+        Stockfish best move:
+        <strong>
+            ${bestMove}
+        </strong>
+
+        <br><br>
+
+        ${explanation}
+
+        <br><br>
+
+        <button
+            class="analyze-button training-next-button"
+            onclick="nextTrainingPosition()"
+        >
+            Next Position
+        </button>
+
+    `;
 }
 
 function nextTrainingPosition() {
-
+trainingPlayerMove = null;
+trainingEngineBestMove = null;
+trainingEngineEvaluation = null;
     currentTrainingIndex++;
 
 
